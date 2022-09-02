@@ -123,13 +123,11 @@
     </dependencies>
 
     <build>
-        <finalName>yituliuBackEnd_1</finalName>
+        <finalName>yituliuBackEnd_v2</finalName>
         <plugins>
             <plugin>
-
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
             </plugin>
 
         </plugins>

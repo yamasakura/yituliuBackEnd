@@ -25,7 +25,7 @@ public class Stage implements Serializable {
 	@ExcelProperty("系列编号")
 	private Integer chapterCode;
 	@ExcelProperty("消耗理智")
-	private Integer reason;
+	private Double reason;
 	@ExcelProperty("主产物")
 	private String main;
 	@ExcelProperty("主产物等级")
@@ -95,11 +95,11 @@ public class Stage implements Serializable {
 		this.chapterCode = chapterCode;
 	}
 
-	public Integer getReason() {
+	public Double getReason() {
 		return reason;
 	}
 
-	public void setReason(Integer reason) {
+	public void setReason(Double reason) {
 		this.reason = reason;
 	}
 

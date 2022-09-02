@@ -29,17 +29,9 @@ public interface ApiService {
     Page<StageResultVo> findDataByMainOrderByExpectAsc(String main, Double expect, Integer times,
                                                        Integer pageNum, Integer pageSize);
 
-    //根据材料名称查询关卡  按效率倒序（用于绿材料） 前端用
-    List<List<StageResultVo>> getDataByMainOrderByExpectAsc();
-
-    //关卡效率倒序
-    List<List<StageResultVo>> getDataByEffAndTimesOrderByEffDesc(Integer times, Double efficiency);
-
     //全部关卡效率
     List<StageResultVo> findByMainNotNull();
 
-    //根据章节名称  按章节内关卡顺序倒序
-    List<StageResultVo> getDataByChapterNameOrderByChapterCodeDesc(String stageId, Integer itemLevel);
 
     //给hguandl的api
     List<List<StageResultApiVo>> getDataByEffAndTimesOrderByEffDescAppApi(Integer times, Double efficiency);

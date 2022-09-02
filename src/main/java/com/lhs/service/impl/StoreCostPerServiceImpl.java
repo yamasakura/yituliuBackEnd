@@ -36,14 +36,13 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	@Autowired
 	private StoreCostPerService storeCostPerService ;
 
-	@Value("${store.path}")
-	private String storeFilePath;
 
-	@Value("${store.backups}")
-	private String storeBackups;
 
-	@Value("${fontEnd.path}")
-	private  String fontEndFilePath;
+	@Value("${frontEnd.backups}")
+	private String backupsPath;
+
+	@Value("${frontEnd.path}")
+	private  String frontEndFilePath;
 
 	@Override
 	public void save(List<StoreCostPer> storeCostPer) {
@@ -61,7 +60,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	@Override
 	public void updateByJsonPerm() {
 		List<ItemRevise> allItem =itemService.findAllItemRevise();
-		String str = ReadJsonUtil.readJson(storeFilePath+"//data.json");
+		String str = ReadJsonUtil.readJson(frontEndFilePath+"//permStoreData.json");
 		List<StoreCost> storeCosts = JSONArray.parseArray(str, StoreCost.class);
 
 		DecimalFormat dfbfb = new DecimalFormat("0.00");
@@ -134,21 +133,20 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 
 		Object fileVo = JSONObject.toJSON(jsonList);
-		SaveFile.save(storeBackups,"storeAct"+saveTime+".json",fileVo.toString());
-		SaveFile.save(storeFilePath,"storeAct.json",fileVo.toString());
+		SaveFile.save(backupsPath,"storeAct"+saveTime+".json",fileVo.toString());
+		SaveFile.save(frontEndFilePath,"storeAct.json",fileVo.toString());
 
 	}
 
 	@Override
 	public String readActStoreJson() {
-		String str = ReadJsonUtil.readJson(storeFilePath+"//storeAct.json");
-
+		String str = ReadJsonUtil.readJson(frontEndFilePath+"//storeAct.json");
 		return str;
 	}
 
 	@Override
 	public String readPermStoreJson() {
-		String str = ReadJsonUtil.readJson(fontEndFilePath+"//storePerm.json");
+		String str = ReadJsonUtil.readJson(frontEndFilePath+"//storePerm.json");
 		return str;
 	}
 

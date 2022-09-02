@@ -3,6 +3,8 @@ package com.lhs.service.impl;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.DBPogo.MaaTagDataStatistical;
 import com.lhs.bean.vo.MaaTagRequestVo;
+import com.lhs.common.exception.ServiceException;
+import com.lhs.common.util.ResultCode;
 import com.lhs.dao.MaaTagDataStatisticalDao;
 import com.lhs.dao.MaaTagResultDao;
 import com.lhs.service.MaaApiService;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sql.rowset.serial.SerialException;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -73,7 +76,7 @@ public class MaaAPIServiceImpl implements MaaApiService {
         List<MaaTagData> maaTagDataList = maaTagResultDao.findAll();
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.00");
 
-        double start = System.currentTimeMillis();//记录程序启动时间
+
         int topOperator = 0;  //高级资深总数
         int seniorOperator = 0; //资深总数
         int topAndSeniorOperator = 0; //高级资深含有资深总数
@@ -174,8 +177,6 @@ public class MaaAPIServiceImpl implements MaaApiService {
         }
 
         HashMap<String, Object> result = new HashMap<>();
-
-
         MaaTagDataStatistical maaStatistical = new MaaTagDataStatistical();
         maaStatistical.setId(new Date().getTime());
         maaStatistical.setTopOperator(topOperator);
@@ -197,8 +198,7 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
         System.out.println("快速复活的个数：" + gravel);
 
-        double end = System.currentTimeMillis();
-        System.out.println("本次计算用时" + (end - start) / 1000 + "s");
+
 
         return result;
     }
@@ -207,7 +207,9 @@ public class MaaAPIServiceImpl implements MaaApiService {
     public MaaTagDataStatistical getMaaTagDataStatistical() {
 
         List<MaaTagDataStatistical> maaTagDataStatistical = maaTagDataStatisticalDao.getMaaTagDataStatistical();
-
+        if(maaTagDataStatistical==null){
+             throw new ServiceException(ResultCode.DATA_NONE);
+        }
         return maaTagDataStatistical.get(0);
     }
 }

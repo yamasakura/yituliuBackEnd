@@ -19,21 +19,14 @@ public class Visits implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date visitsDay;
-
     private Integer visits;
-
-    private Integer  visitsOld;
-
-    private Integer  visitsNew;
-
-    private Integer  visitsBot;
 
     public Date getVisitsDay() {
         return visitsDay;
     }
 
-    public void setVisitsDay(Date day) {
-        this.visitsDay = day;
+    public void setVisitsDay(Date visitsDay) {
+        this.visitsDay = visitsDay;
     }
 
     public Integer getVisits() {
@@ -44,38 +37,11 @@ public class Visits implements Serializable {
         this.visits = visits;
     }
 
-    public Integer getVisitsOld() {
-        return visitsOld;
-    }
-
-    public void setVisitsOld(Integer visitsOld) {
-        this.visitsOld = visitsOld;
-    }
-
-    public Integer getVisitsNew() {
-        return visitsNew;
-    }
-
-    public void setVisitsNew(Integer visitsNew) {
-        this.visitsNew = visitsNew;
-    }
-
-    public Integer getVisitsBot() {
-        return visitsBot;
-    }
-
-    public void setVisitsBot(Integer visitsBot) {
-        this.visitsBot = visitsBot;
-    }
-
     @Override
     public String toString() {
         return "Visits{" +
-                "visitsDay='" + visitsDay + '\'' +
+                "visitsDay=" + visitsDay +
                 ", visits=" + visits +
-                ", visitsNew=" + visitsNew +
                 '}';
     }
-
-
 }

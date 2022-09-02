@@ -31,10 +31,8 @@ public class StageVo implements Serializable {
 	private Double spm;
 
 	private String itemType;
-	// 判断是否开放
 
 	private Integer isOpen;
-	// 判断是否有限时掉落
 
 	private Integer isSpecial;
 

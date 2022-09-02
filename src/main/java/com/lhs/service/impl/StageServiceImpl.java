@@ -7,6 +7,7 @@ import com.lhs.bean.DBPogo.Stage;
 import com.lhs.bean.vo.StageVo;
 import com.lhs.dao.StageDao;
 import com.lhs.service.StageService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,24 +37,8 @@ public class StageServiceImpl implements StageService {
         List<StageVo> allStage = new ArrayList<>();
         for (Stage stage : all) {
             StageVo stageVo = new StageVo();
-            stageVo.setStageEnName(stage.getStageEnName());
-            stageVo.setStageName(stage.getStageName());
-            stageVo.setMain(stage.getMain());
-            stageVo.setReason(Double.valueOf(stage.getReason()));
-            stageVo.setSecondary(stage.getSecondary());
-            stageVo.setSecondaryId(stage.getSecondaryId());
-            stageVo.setIsSpecial(stage.getIsSpecial());
-            stageVo.setMainLevel(stage.getMainLevel());
-            stageVo.setIsOpen(stage.getIsOpen());
-            stageVo.setStageId(stage.getStageId());
-            stageVo.setItemType(stage.getItemType());
-            stageVo.setIsShow(stage.getIsShow());
-            stageVo.setSpm(stage.getSpm());
-            stageVo.setIsValue(stage.getIsValue());
-            stageVo.setChapterCode(stage.getChapterCode());
-            stageVo.setChapterName(stage.getChapterName());
-            stageVo.setReasonEx(Double.valueOf(stage.getReason()));
-            stageVo.setActivityName(stage.getActivityName());
+            BeanUtils.copyProperties(stage,stageVo);
+            stageVo.setReasonEx(stage.getReason());
             allStage.add(stageVo);
         }
         return allStage;
@@ -106,7 +91,7 @@ public class StageServiceImpl implements StageService {
 
     @Override
     public void updateStageInfo(Integer isShow, String stageId) {
-        stageDao.updataStageInfo(isShow, stageId);
+        stageDao.updateStageInfo(isShow, stageId);
 
     }
 

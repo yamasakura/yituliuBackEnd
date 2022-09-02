@@ -3,6 +3,7 @@ package com.lhs.controller.maa;
 
 import com.alibaba.fastjson.JSONArray;
 import com.lhs.bean.DBPogo.MaaTagData;
+import com.lhs.bean.DBPogo.MaaTagDataStatistical;
 import com.lhs.bean.vo.MaaTagDataVo;
 import com.lhs.bean.vo.MaaTagRequestVo;
 import com.lhs.common.util.Result;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -56,19 +58,14 @@ public class MaaApiController {
         return Result.success(maaTagDataVoList);
     }
 
-    @ApiOperation("各类公招统计计算")
-    @GetMapping("/recruit/calculation")
-    public Result MaaTagResultCalculation() {
-        
-        return Result.success(maaApiService.maaTagDataCalculation());
-    }
+
 
 
     @ApiOperation("各类公招统计结果")
     @GetMapping("/recruit/statistical")
     public Result MaaTagResultStatistical() {
-
-        return Result.success(maaApiService.getMaaTagDataStatistical());
+        MaaTagDataStatistical maaTagDataStatistical = maaApiService.getMaaTagDataStatistical();
+        return Result.success(maaTagDataStatistical);
     }
 
 

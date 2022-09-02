@@ -6,6 +6,7 @@ import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.DBPogo.Stage;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.RecResultVo;
+import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.bean.vo.StageResultVo;
 import com.lhs.common.util.Result;
 import com.lhs.common.util.ResultCode;
@@ -94,7 +95,7 @@ public class ApiController {
 
 
     @ApiOperation("获取物品价值（主页用-所有物品价值）")
-    @GetMapping("/find/item/itemValue")
+    @GetMapping("/find/item/value")
     public Result findAllItem() {
         List<ItemRevise> all = itemService.findAllItemRevise();
         return Result.success(all);
@@ -102,7 +103,7 @@ public class ApiController {
 
 
     @ApiOperation("获取全部关卡效率（主页用-全部关卡效率）")
-    @GetMapping("/find/stage/allStage")
+    @GetMapping("/find/stage/all")
     public Result findAllStageEff() {
         List<StageResultVo> all = apiService.findByMainNotNull();
         return Result.success(all);
@@ -111,7 +112,7 @@ public class ApiController {
 
 
     @ApiOperation("获取往期活动地图效率")
-    @GetMapping("/find/stage/closedActivityStage")
+    @GetMapping("/find/stage/activity/closed")
     public Result findAllByStageId() {
         String StageClosedFile = apiService.readStageClosedFile();
         JSONArray jsonArray = JSONArray.parseArray(StageClosedFile);
@@ -127,7 +128,7 @@ public class ApiController {
 
 
     @ApiOperation("读取数据（公招）")
-    @GetMapping("/findTag/result/{type}/{tags}/{rarityMax}")
+    @GetMapping("/find/recruit/{type}/{tags}/{rarityMax}")
     public Result findAllRecruitmentInfoDataByType(@PathVariable("type") Integer type,
                                                    @PathVariable("tags") String[] tags,
                                                    @PathVariable("rarityMax") Integer rarityMax) {
@@ -135,6 +136,18 @@ public class ApiController {
         return Result.success(resultListVo);
     }
 
+
+    @ApiOperation("关卡效率API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500"),
+            @ApiImplicitParam(name = "efficiency", value = "效率最小值", required = true, paramType = "path", defaultValue = "1.0")})
+    @GetMapping("/app/{times}/{efficiency}")
+
+    public Result findEfficiencyDescAPI(@PathVariable("times") Integer times,
+                                        @PathVariable("efficiency") Double efficiency) {
+        List<List<StageResultApiVo>> byTimesApi = apiService.getDataByEffAndTimesOrderByEffDescAppApi(times, efficiency);
+        return Result.success(byTimesApi);
+    }
 
 
 }

@@ -29,23 +29,26 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
 
     @Override
-    public void setStageResultPercentageT3(Integer times, Double efficiency) {
+    public  List<List<StageResultVo>>  setStageResultPercentageT3(Integer times, Double efficiency) {
+
+
         Random random = new Random();
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
                 "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
+
+        List<List<StageResultVo>>  stageResultListT3= new ArrayList<>();
+
         for (String main : mainName) {
             List<StageResultVo> stageResultByTypeList =
                     stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc
                             (main, 1, efficiency, times);
             List<StageResultVo> stageResultByTypeListCopy = new ArrayList<>(stageResultByTypeList);
 
-
             for (int k = 0; k < stageResultByTypeList.size(); k++) {
                 if (stageResultByTypeListCopy.get(k).getIsUseValue() == 0 && (!"act_side12_".equals(stageResultByTypeListCopy.get(k).getChapterName()))
                         && (!"act_side12_rep_".equals(stageResultByTypeListCopy.get(k).getChapterName()))) {
                     StageResultVo stageResultVo = new StageResultVo();
                     BeanUtils.copyProperties(stageResultByTypeListCopy.get(k),stageResultVo);
-                    stageResultVo.setId((long)random.nextInt(1000000));
                     stageResultVo.setEfficiency(stageResultByTypeListCopy.get(k).getEfficiency() + 0.09);
                     stageResultVo.setSecondary("龙门币");
                     stageResultVo.setSecondaryId("4001");
@@ -61,7 +64,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             for (StageResultVo stageResultVo : stageResultByTypeList) {
                 if (stageResultVo.getIsUseValue() == 1) {
                     standard = stageResultVo.getEfficiency();
-//                    log.info("当前标准是"+stageResultVo.getStageName()+standard);
+//                    log.info("当前标准是"+stageResultVo.getStageName()+"——"+standard);
                     break;
                 }
             }
@@ -69,18 +72,23 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             for (StageResultVo stageResultVo : stageResultByTypeListCopy) {
                 double percentage = stageResultVo.getEfficiency() / standard;
                 DecimalFormat dfbfb = new DecimalFormat("0.0");
+//                log.info( stageResultVo.getStageName() +" = "+stageResultVo.getEfficiency() +" / "+ standard +" = "+
+//                        Double.valueOf(dfbfb.format(percentage * 100)));
                 stageResultVo.setPercentage(Double.valueOf(dfbfb.format(percentage * 100)));
             }
 
-
-            stageResultVoDao.saveAll(stageResultByTypeListCopy);
+            stageResultListT3.add(stageResultByTypeListCopy);
         }
 
+
+       return stageResultListT3;
 
     }
 
     @Override
-    public void setStageResultPercentageT2(Integer times, Double expect) {
+    public  List<List<StageResultVo>>  setStageResultPercentageT2(Integer times, Double expect) {
+
+        List<List<StageResultVo>>  stageResultListT2= new ArrayList<>();
 
         String[] mainName = new String[]{"装置", "聚酸酯", "固源岩", "异铁", "糖", "酮凝集", "破损装置", "酯原料", "源岩", "异铁碎片", "代糖", "双酮"};
         String[] typeName = new String[]{"全新装置", "聚酸酯组", "固源岩组", "聚酸酯组", "糖组", "酮凝集组", "全新装置", "聚酸酯组", "固源岩组", "聚酸酯组", "糖组", "酮凝集组"};
@@ -90,7 +98,6 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             List<StageResultVo> stageResultByExpect = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
                     mainName[i], 1, 50.0, 100);
             List<StageResultVo> page = new ArrayList<>(stageResultByExpect);
-
             double standard = 1.25;
             List<StageResultVo> stageResultByTypeList_t3 =
                     stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc
@@ -109,9 +116,52 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
                 stageResultVo.setPercentage(Double.valueOf(dfbfb.format(percentage * 100)));
             }
 
-            stageResultVoDao.saveAll(page);
+            stageResultListT2.add(page);
         }
+
+
+        return stageResultListT2;
     }
+
+
+    @Override
+    public   List<List<StageResultVo>>  setClosedActivityStagePercentage(String[] actNameList ) {
+
+        List<List<StageResultVo>>  stageResultListClosed= new ArrayList<>();
+        int pageNum = 0;
+        int pageSize = 6;
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+
+
+        for (String actName : actNameList) {
+            //查出活动关卡
+
+            List<StageResultVo> list = stageResultVoDao.findByChapterNameAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName,2);
+
+            for (StageResultVo stageResultVo : list) {
+                //查出主线关卡算相对效率
+                Page<StageResultVo> permStageList = stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
+                        stageResultVo.getType(), 1, 1.0, 0, pageable);
+
+                DecimalFormat dfbfb = new DecimalFormat("0.0");
+                double percentage = 0.0;
+                double standard = 1.25;
+                for (int k = 0; k < permStageList.getContent().size(); k++) {
+                    if (permStageList.getContent().get(k).getIsUseValue() == 1) {
+                        standard = permStageList.getContent().get(k).getEfficiency();
+                        break;
+                    }
+                }
+                percentage = stageResultVo.getEfficiency() / standard;
+                stageResultVo.setPercentage(Double.valueOf(dfbfb.format(percentage * 100)));
+            }
+
+            stageResultListClosed.add(list);
+        }
+
+        return  stageResultListClosed;
+    }
+
 
     @Override
     public HashMap<String, Double> getIterationItemValue(HashMap<String, List<PenguinData>> rawDataHashMap) {
@@ -125,7 +175,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             int min = 0;
             for (int j = 0; j < rawDataMapValue.size(); j++) {
                 if (rawDataMapValue.get(min).getExpect() > rawDataMapValue.get(j).getExpect()) {
-                    if (rawDataMapValue.get(min).getExpect() - rawDataMapValue.get(j).getExpect() > 2) {
+                    if (rawDataMapValue.get(min).getExpect() - rawDataMapValue.get(j).getExpect() > 1) {
                         min = j;
                     }
                 }
@@ -144,7 +194,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             }
 
             mianValueNum.put(itemName, 1.25 / rawDataList.get(0).getEfficiency());
-            log.info(rawDataList.get(0).getStageName() + "的临时效率是" + rawDataList.get(0).getEfficiency());
+//            log.info(rawDataList.get(0).getStageName() + "的临时效率是" + rawDataList.get(0).getEfficiency());
         }
 
         return mianValueNum;
@@ -192,41 +242,6 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         return list;
     }
 
-    @Override
-    public  void setClosedActivityStagePercentage(String[] actNameList ) {
-        int pageNum = 0;
-        int pageSize = 6;
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
-
-
-        for (String actName : actNameList) {
-            //查出活动关卡
-
-            List<StageResultVo> list = stageResultVoDao.findByChapterNameAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName,2);
-
-            for (StageResultVo stageResultVo : list) {
-                //查出主线关卡算相对效率
-                Page<StageResultVo> permStageList = stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
-                        stageResultVo.getType(), 1, 1.0, 0, pageable);
-
-                DecimalFormat dfbfb = new DecimalFormat("0.0");
-                double percentage = 0.0;
-                double standard = 1.25;
-                for (int k = 0; k < permStageList.getContent().size(); k++) {
-                    if (permStageList.getContent().get(k).getIsUseValue() == 1) {
-                        standard = permStageList.getContent().get(k).getEfficiency();
-                        break;
-                    }
-                }
-                percentage = stageResultVo.getEfficiency() / standard;
-                stageResultVo.setPercentage(Double.valueOf(dfbfb.format(percentage * 100)));
-            }
-
-            stageResultVoDao.saveAll(list);
-        }
-
-
-    }
 
     @Override
     public Double getConfidenceInterval(Integer penguinDataTimes, StageVo stageVo, HashMap<String, Double> itemValueMap, double probability, List<QuantileTable> quantileTableList) {
