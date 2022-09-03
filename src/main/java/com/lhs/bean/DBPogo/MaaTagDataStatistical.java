@@ -12,20 +12,19 @@ import java.util.Date;
 public class MaaTagDataStatistical {
 
     @Id
-    private    Long id;
-    private  int topOperator ;  //高级资深总数
-    private  int seniorOperator; //资深总数
-    private  int topAndSeniorOperator; //高级资深含有资深总数
-    private  int seniorOperatorCount;  //五星TAG总数
-    private  int rareOperatorCount;   //四星TAG总数
-    private  int commonOperatorCount; //三星TAG总数
-    private  int robot;                //小车TAG总数
-    private   int robotChoice;       //小车和其他组合共同出现次数
-    private   int vulcan;             //火神出现次数
-    private int gravel;         //砾出现次数
-    private int specialist;     //特种出现次数
-    private int jessica;    //杰西卡次数
-    private   double MaaTagsDataCount; //总数据量
+    private  Long id;
+    private  Integer topOperator ;  //高级资深总数
+    private  Integer seniorOperator; //资深总数
+    private  Integer topAndSeniorOperator; //高级资深含有资深总数
+    private  Integer seniorOperatorCount;  //五星TAG总数
+    private  Integer rareOperatorCount;   //四星TAG总数
+    private  Integer commonOperatorCount; //三星TAG总数
+    private  Integer robot;                //小车TAG总数
+    private  Integer robotChoice;       //小车和其他组合共同出现次数
+    private  Integer vulcan;             //火神出现次数
+    private  Integer gravel;         //砾出现次数
+    private  Integer jessica;    //杰西卡次数
+    private  Integer MaaTagsDataCount; //总数据量
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
@@ -38,107 +37,100 @@ public class MaaTagDataStatistical {
         this.id = id;
     }
 
-    public int getTopOperator() {
+    public Integer getTopOperator() {
         return topOperator;
     }
 
-    public void setTopOperator(int topOperator) {
+    public void setTopOperator(Integer topOperator) {
         this.topOperator = topOperator;
     }
 
-    public int getSeniorOperator() {
+    public Integer getSeniorOperator() {
         return seniorOperator;
     }
 
-    public void setSeniorOperator(int seniorOperator) {
+    public void setSeniorOperator(Integer seniorOperator) {
         this.seniorOperator = seniorOperator;
     }
 
-    public int getTopAndSeniorOperator() {
+    public Integer getTopAndSeniorOperator() {
         return topAndSeniorOperator;
     }
 
-    public void setTopAndSeniorOperator(int topAndSeniorOperator) {
+    public void setTopAndSeniorOperator(Integer topAndSeniorOperator) {
         this.topAndSeniorOperator = topAndSeniorOperator;
     }
 
-    public int getSeniorOperatorCount() {
+    public Integer getSeniorOperatorCount() {
         return seniorOperatorCount;
     }
 
-    public void setSeniorOperatorCount(int seniorOperatorCount) {
+    public void setSeniorOperatorCount(Integer seniorOperatorCount) {
         this.seniorOperatorCount = seniorOperatorCount;
     }
 
-    public int getRareOperatorCount() {
+    public Integer getRareOperatorCount() {
         return rareOperatorCount;
     }
 
-    public void setRareOperatorCount(int rareOperatorCount) {
+    public void setRareOperatorCount(Integer rareOperatorCount) {
         this.rareOperatorCount = rareOperatorCount;
     }
 
-    public int getCommonOperatorCount() {
+    public Integer getCommonOperatorCount() {
         return commonOperatorCount;
     }
 
-    public void setCommonOperatorCount(int commonOperatorCount) {
+    public void setCommonOperatorCount(Integer commonOperatorCount) {
         this.commonOperatorCount = commonOperatorCount;
     }
 
-    public int getRobot() {
+    public Integer getRobot() {
         return robot;
     }
 
-    public void setRobot(int robot) {
+    public void setRobot(Integer robot) {
         this.robot = robot;
     }
 
-    public int getRobotChoice() {
+    public Integer getRobotChoice() {
         return robotChoice;
     }
 
-    public void setRobotChoice(int robotChoice) {
+    public void setRobotChoice(Integer robotChoice) {
         this.robotChoice = robotChoice;
     }
 
-    public int getVulcan() {
+    public Integer getVulcan() {
         return vulcan;
     }
 
-    public void setVulcan(int vulcan) {
+    public void setVulcan(Integer vulcan) {
         this.vulcan = vulcan;
     }
 
-    public int getGravel() {
+    public Integer getGravel() {
         return gravel;
     }
 
-    public void setGravel(int gravel) {
+    public void setGravel(Integer gravel) {
         this.gravel = gravel;
     }
 
-    public int getSpecialist() {
-        return specialist;
-    }
 
-    public void setSpecialist(int specialist) {
-        this.specialist = specialist;
-    }
-
-    public int getJessica() {
+    public Integer getJessica() {
         return jessica;
     }
 
-    public void setJessica(int jessica) {
+    public void setJessica(Integer jessica) {
         this.jessica = jessica;
     }
 
-    public double getMaaTagsDataCount() {
+    public Integer getMaaTagsDataCount() {
         return MaaTagsDataCount;
     }
 
-    public void setMaaTagsDataCount(double maaTagsDataCount) {
+    public void setMaaTagsDataCount(Integer maaTagsDataCount) {
         MaaTagsDataCount = maaTagsDataCount;
     }
 

@@ -2,6 +2,8 @@ package com.lhs.controller.maa;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.DBPogo.MaaTagDataStatistical;
 import com.lhs.bean.vo.MaaTagDataVo;
@@ -13,9 +15,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags = "MAA接口")
@@ -59,13 +63,12 @@ public class MaaApiController {
     }
 
 
-
-
     @ApiOperation("各类公招统计结果")
     @GetMapping("/recruit/statistical")
     public Result MaaTagResultStatistical() {
-        MaaTagDataStatistical maaTagDataStatistical = maaApiService.getMaaTagDataStatistical();
-        return Result.success(maaTagDataStatistical);
+        String result = maaApiService.getMaaTagDataStatistical();
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        return Result.success(jsonObject);
     }
 
 

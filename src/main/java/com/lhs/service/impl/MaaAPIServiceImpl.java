@@ -1,20 +1,29 @@
 package com.lhs.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.DBPogo.MaaTagDataStatistical;
 import com.lhs.bean.vo.MaaTagRequestVo;
 import com.lhs.common.exception.ServiceException;
+import com.lhs.common.util.ReadJsonUtil;
 import com.lhs.common.util.ResultCode;
+import com.lhs.common.util.SaveFile;
 import com.lhs.dao.MaaTagDataStatisticalDao;
 import com.lhs.dao.MaaTagResultDao;
 import com.lhs.service.MaaApiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.sql.rowset.serial.SerialException;
+import java.io.File;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +35,9 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
     @Autowired
     private MaaTagDataStatisticalDao maaTagDataStatisticalDao;
+
+    @Value("${frontEnd.path}")
+    private  String frontEndFilePath ;
 
     @Override
     public String maaTagResultSave(MaaTagRequestVo maaTagRequestVo) {
@@ -60,20 +72,23 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
     @Override
     public List<MaaTagData> selectDataLimit10() {
-
         return maaTagResultDao.selectDataLimit10();
     }
 
-    @Override
-    public List<MaaTagData> findAllMaaTagData() {
-        return maaTagResultDao.findAll();
-    }
+
 
     @Override
-    public HashMap<String, Object> maaTagDataCalculation() {
+    public String maaTagDataCalculation() {
 
 
-        List<MaaTagData> maaTagDataList = maaTagResultDao.findAll();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long createTime = new Date().getTime();
+
+
+        long time = createTime - ((createTime + 28800000) % (86400000));
+//        System.out.println(simpleDateFormat.format(new Date(time)));
+        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThanEqual(new Date(time), new Date(time + 86400000));
+
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.00");
 
 
@@ -87,7 +102,6 @@ public class MaaAPIServiceImpl implements MaaApiService {
         int robotChoice = 0;       //小车和其他组合共同出现次数
         int vulcan = 0;             //火神出现次数
         int gravel = 0;            //砾出现次数
-        int specialist = 0;        //特种干员次数
         int jessica = 0;         //杰西卡次数
         int count = 1;
         for (MaaTagData maaTagData : maaTagDataList) {
@@ -98,7 +112,7 @@ public class MaaAPIServiceImpl implements MaaApiService {
             boolean jessicaSignMain = false; //杰西卡标记
             boolean jessicaSignItem = false;  //杰西卡标记
             boolean gravelSign = false; //砾标记
-            boolean specialistSign = false; //特种标记
+
             ArrayList<String> tags = new ArrayList<>(Arrays.asList(maaTagData.getTag1(), maaTagData.getTag2()
                     , maaTagData.getTag3(), maaTagData.getTag4(), maaTagData.getTag5()));
 
@@ -129,22 +143,20 @@ public class MaaAPIServiceImpl implements MaaApiService {
                 if ("快速复活".equals(tag)) {
                     gravelSign = true;
                 }
-                if ("特种干员".equals(tag)) {
-                    specialistSign = true;
-                }
+
             }
 
 
             if (maaTagData.getLevel() == 6) {
                 vulcanSignMain = false;
                 gravelSign = false;
-                specialistSign = false;
+
                 jessicaSignMain = false;
             }
             if (maaTagData.getLevel() == 5) {
                 seniorOperatorCount++;
                 gravelSign = false;
-                specialistSign = false;
+
                 jessicaSignMain = false;
             }
             if (maaTagData.getLevel() == 4) rareOperatorCount++;
@@ -164,11 +176,8 @@ public class MaaAPIServiceImpl implements MaaApiService {
                 gravel++;
             }
 
-            if(specialistSign){
-                specialist++;
-            }
 
-            if(jessicaSignMain&&jessicaSignItem){
+            if (jessicaSignMain && jessicaSignItem) {
                 jessica++;
             }
 
@@ -176,9 +185,9 @@ public class MaaAPIServiceImpl implements MaaApiService {
             count++;
         }
 
-        HashMap<String, Object> result = new HashMap<>();
+
         MaaTagDataStatistical maaStatistical = new MaaTagDataStatistical();
-        maaStatistical.setId(new Date().getTime());
+        maaStatistical.setId(time);
         maaStatistical.setTopOperator(topOperator);
         maaStatistical.setSeniorOperator(seniorOperator);
         maaStatistical.setTopAndSeniorOperator(topAndSeniorOperator);
@@ -189,27 +198,49 @@ public class MaaAPIServiceImpl implements MaaApiService {
         maaStatistical.setRobotChoice(robotChoice);
         maaStatistical.setVulcan(vulcan);
         maaStatistical.setGravel(gravel);
-        maaStatistical.setSpecialist(specialist);
+
         maaStatistical.setJessica(jessica);
         maaStatistical.setMaaTagsDataCount(maaTagDataList.size());
         maaStatistical.setCreateTime(new Date());
-
         maaTagDataStatisticalDao.save(maaStatistical);
 
-        System.out.println("快速复活的个数：" + gravel);
 
-
-
-        return result;
+        String json = saveStatistical();
+        return json;
     }
 
     @Override
-    public MaaTagDataStatistical getMaaTagDataStatistical() {
-
-        List<MaaTagDataStatistical> maaTagDataStatistical = maaTagDataStatisticalDao.getMaaTagDataStatistical();
-        if(maaTagDataStatistical==null){
-             throw new ServiceException(ResultCode.DATA_NONE);
-        }
-        return maaTagDataStatistical.get(0);
+    public String getMaaTagDataStatistical() {
+        return ReadJsonUtil.readJson(frontEndFilePath + "maaStatistical.json");
     }
+
+    @Override
+    public String saveStatistical() {
+        List<MaaTagDataStatistical> list = maaTagDataStatisticalDao.findAll();
+
+        MaaTagDataStatistical statistical = new MaaTagDataStatistical();
+        statistical.setTopOperator(list.stream().mapToInt(MaaTagDataStatistical::getTopOperator).sum());
+        statistical.setSeniorOperator(list.stream().mapToInt(MaaTagDataStatistical::getSeniorOperator).sum());
+        statistical.setTopAndSeniorOperator(list.stream().mapToInt(MaaTagDataStatistical::getTopAndSeniorOperator).sum());
+        statistical.setSeniorOperatorCount(list.stream().mapToInt(MaaTagDataStatistical::getSeniorOperatorCount).sum());
+        statistical.setRareOperatorCount(list.stream().mapToInt(MaaTagDataStatistical::getRareOperatorCount).sum());
+        statistical.setCommonOperatorCount(list.stream().mapToInt(MaaTagDataStatistical::getCommonOperatorCount).sum());
+        statistical.setRobot(list.stream().mapToInt(MaaTagDataStatistical::getRobot).sum());
+        statistical.setRobotChoice(list.stream().mapToInt(MaaTagDataStatistical::getRobotChoice).sum());
+        statistical.setVulcan(list.stream().mapToInt(MaaTagDataStatistical::getVulcan).sum());
+        statistical.setGravel(list.stream().mapToInt(MaaTagDataStatistical::getGravel).sum());
+        statistical.setJessica(list.stream().mapToInt(MaaTagDataStatistical::getJessica).sum());
+        statistical.setMaaTagsDataCount(list.stream().mapToInt(MaaTagDataStatistical::getMaaTagsDataCount).sum());
+//        statistical.set(list.stream().mapToInt(MaaTagDataStatistical::get).sum());
+
+
+        statistical.setCreateTime(new Date());
+        String json = JSON.toJSONString(statistical);
+        SaveFile.save(frontEndFilePath,"maaStatistical.json",json);
+
+       return    json;
+
+    }
+
+
 }

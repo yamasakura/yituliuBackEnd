@@ -44,9 +44,6 @@ public class ApiController {
     private CharTagDataService charTagDataService;
 
     @Autowired
-    private StageService stageService;
-
-    @Autowired
     private ItemService itemService;
 
 

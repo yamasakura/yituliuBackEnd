@@ -38,3 +38,4 @@ build/
 /src/main/resources/backups/
 /src/main/resources/fontEnd/
 /src/main/resources/penguin/
+/src/main/resources/application.properties
