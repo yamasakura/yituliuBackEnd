@@ -1,7 +1,7 @@
 # yituliuBackEnd
 一图流后端
 
-##运行环境
+## 运行环境
 后端主要组成为
 
 SpringBoot 
