@@ -87,7 +87,7 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
         long time = createTime - ((createTime + 28800000) % (86400000));
 //        System.out.println(simpleDateFormat.format(new Date(time)));
-        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThanEqual(new Date(time), new Date(time + 86400000));
+        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThanEqual(new Date(time-86400000), new Date(time));
 
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.00");
 
