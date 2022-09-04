@@ -10,35 +10,35 @@ import javax.persistence.Table;
 public class StageResultApiVo {
 
     @Id
-    private Long id;   //产物ID
+    private Long id;
 
-    private String itemId;  //关卡名称
+    private String itemId; //产物ID
 
-    private String stageName;
-    //样本次数
-    private Integer times;
-    //概率
-    private Double probability;
-    //期望理智
-    private Double expect;
-    //主产物
-    private String main;
-    //材料类型
-    private String type;
-    //副产物
-    private String secondary;
-    //效率
-    private Double efficiency;
-    //颜色
-    private Integer color;
-    //相对效率百分比
-    private Double percentage;
-    //更新时间
-    private String updateDate;
-    //每分钟消耗理智
-    private String spm;
-    //置信度
-    private Double confidence;
+    private String stageName;//关卡名称
+
+    private Integer times; //样本次数
+
+    private Double probability; //概率
+
+    private Double expect;//期望理智
+
+    private String main; //主产物
+
+    private String type;//材料类型
+
+    private String secondary; //副产物
+
+    private Double efficiency;//效率
+
+    private Integer color; //颜色
+
+    private Double percentage; //相对效率百分比
+
+    private String updateDate;//更新时间
+
+    private String spm; //每分钟消耗理智
+
+    private Double confidence; //置信度
 
     private  Integer isUseValue;
 

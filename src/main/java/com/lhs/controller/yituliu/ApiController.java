@@ -47,7 +47,7 @@ public class ApiController {
     private ItemService itemService;
 
 
-    @ApiOperation("根据主产物，按照效率降序排列（主页用-最优图）")
+    @ApiOperation("获取蓝材料最优图")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500"),
             @ApiImplicitParam(name = "efficiency", value = "效率最小值", required = true, paramType = "path", defaultValue = "1.0")})
@@ -61,7 +61,7 @@ public class ApiController {
     }
 
 
-    @ApiOperation("根据物品，按照期望升序排列(主页用-绿材料最优图)")
+    @ApiOperation("获取绿材料最优图")
     @GetMapping("/find/stage/t2")
     public Result findByMainOrderByExpectAsc() {
         String stageFileT2 = apiService.readStageFileT2();
@@ -72,7 +72,7 @@ public class ApiController {
 
 
 
-    @ApiOperation("获取活动商店性价比（主页用-活动商店）")
+    @ApiOperation("获取活动商店性价比")
     @GetMapping("/find/store/act")
     public Result findStoreAct() {
       String string = storeCostPerService.readActStoreJson();
@@ -81,7 +81,7 @@ public class ApiController {
     }
 
 
-    @ApiOperation("获取常驻商店性价比（主页用-常驻商店）")
+    @ApiOperation("获取常驻商店性价比")
     @GetMapping("/find/store/perm")
     public Result findAll() {
 
@@ -91,7 +91,7 @@ public class ApiController {
     }
 
 
-    @ApiOperation("获取物品价值（主页用-所有物品价值）")
+    @ApiOperation("获取物品价值")
     @GetMapping("/find/item/value")
     public Result findAllItem() {
         List<ItemRevise> all = itemService.findAllItemRevise();
@@ -99,13 +99,12 @@ public class ApiController {
     }
 
 
-    @ApiOperation("获取全部关卡效率（主页用-全部关卡效率）")
+    @ApiOperation("获取全部关卡效率")
     @GetMapping("/find/stage/all")
     public Result findAllStageEff() {
         List<StageResultVo> all = apiService.findByMainNotNull();
         return Result.success(all);
     }
-
 
 
     @ApiOperation("获取往期活动地图效率")
@@ -116,6 +115,7 @@ public class ApiController {
         return Result.success(jsonArray);
     }
 
+
     @ApiOperation(value = "按照商店类型获取")
     @GetMapping("/find/store/{type}")
     public Result findStoreType(@PathVariable("type") String type) {
@@ -124,8 +124,12 @@ public class ApiController {
     }
 
 
-    @ApiOperation("读取数据（公招）")
+    @ApiOperation("公招计算")
     @GetMapping("/find/recruit/{type}/{tags}/{rarityMax}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "是否可招募", required = true, paramType = "path", defaultValue = "1"),
+            @ApiImplicitParam(name = "tags", value = "TAG集合", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "rarityMax", value = "最高星级", required = true, paramType = "path", defaultValue = "5")})
     public Result findAllRecruitmentInfoDataByType(@PathVariable("type") Integer type,
                                                    @PathVariable("tags") String[] tags,
                                                    @PathVariable("rarityMax") Integer rarityMax) {
@@ -134,7 +138,7 @@ public class ApiController {
     }
 
 
-    @ApiOperation("关卡效率API")
+    @ApiOperation("关卡效率API（app用）")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500"),
             @ApiImplicitParam(name = "efficiency", value = "效率最小值", required = true, paramType = "path", defaultValue = "1.0")})

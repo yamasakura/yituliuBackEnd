@@ -49,6 +49,7 @@ public class SaveController {
     }
 
 
+
     @ApiOperation("保存企鹅物流数据")
     @GetMapping("/save/PenguinsData")
     public Result savePenguinsData() {
@@ -114,13 +115,11 @@ public class SaveController {
         storeAllData.add(storeCostPerService.findAll("yellow"));
         storeAllData.add(storeCostPerService.findAll("grey"));
         String stageFileT2 = JSON.toJSONString(storeAllData);
-
         SaveFile.save(frontEndFilePath,"storePerm.json",stageFileT2);
-
         return Result.success("成功更新");
     }
 
-    @ApiOperation(value = "更新活动商店性价比")
+    @ApiOperation(value = "更新活动商店性价比(用json文件更新)")
     @PostMapping("/update/store/act")
     public Result updateStoreNew(MultipartFile file) {
         storeCostPerService.updateByJsonAct(file);
