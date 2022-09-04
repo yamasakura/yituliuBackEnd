@@ -13,7 +13,7 @@ public interface MaaTagDataStatisticalDao extends JpaRepository<MaaTagDataStatis
 
     @Transactional
     @Modifying
-    @Query(value = "select * from maa_tag_data_statistical order by maa_tag_data_statistical.create_time  desc limit 2",nativeQuery = true)
+    @Query(value = "select * from maa_tag_data_statistical order by maa_tag_data_statistical.last_time  desc limit 2",nativeQuery = true)
     List<MaaTagDataStatistical> getMaaTagDataStatistical();
 
 

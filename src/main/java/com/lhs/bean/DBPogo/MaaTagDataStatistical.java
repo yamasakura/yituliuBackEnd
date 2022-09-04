@@ -25,6 +25,7 @@ public class MaaTagDataStatistical {
     private  Integer gravel;         //砾出现次数
     private  Integer jessica;    //杰西卡次数
     private  Integer MaaTagsDataCount; //总数据量
+    private Date lastTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
@@ -132,6 +133,14 @@ public class MaaTagDataStatistical {
 
     public void setMaaTagsDataCount(Integer maaTagsDataCount) {
         MaaTagsDataCount = maaTagsDataCount;
+    }
+
+    public Date getLastTime() {
+        return lastTime;
+    }
+
+    public void setLastTime(Date lastTime) {
+        this.lastTime = lastTime;
     }
 
     public Date getCreateTime() {

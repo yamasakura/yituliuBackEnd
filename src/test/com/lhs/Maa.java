@@ -25,9 +25,8 @@ public class Maa {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long createTime = new Date().getTime();
         
-        long time = createTime - ((createTime + 28800000) % (86400000))-86400000*2;
-        System.out.println(simpleDateFormat.format(new Date(time)));
-        List<MaaTagData> list = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThanEqual(new Date(time),new Date(time+86400000));
+
+        List<MaaTagData> list = maaTagResultDao.findByCreateTimeIsLessThan(new Date(1662220800000L));
 //        List<MaaTagData> list = maaTagResultDao.findAll();
         System.out.println(list.size()+"条数据");
         System.out.println("第一条"+list.get(0).getCreateTime()+"——最后一条"+list.get(list.size()-1).getCreateTime());

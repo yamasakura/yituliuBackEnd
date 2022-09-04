@@ -19,8 +19,8 @@ public interface MaaTagResultDao extends JpaRepository<MaaTagData, Long>{
 
 
 
-    List<MaaTagData> findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThanEqual(Date createTime, Date createTime2);
+    List<MaaTagData> findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThan(Date createTime, Date createTime2);
 
-    List<MaaTagData> findByCreateTimeIsLessThanEqual(Date createTime);
+    List<MaaTagData> findByCreateTimeIsLessThan(Date createTime);
 
 }

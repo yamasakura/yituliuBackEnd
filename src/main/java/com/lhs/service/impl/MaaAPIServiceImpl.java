@@ -82,14 +82,15 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long createTime = new Date().getTime();
-
-
-        long time = createTime - ((createTime + 28800000) % (86400000));
-//        System.out.println(simpleDateFormat.format(new Date(time)));
-        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThanEqual(new Date(time-86400000), new Date(time));
-
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.00");
+
+
+        List<MaaTagDataStatistical> maaTagDataStatistical = maaTagDataStatisticalDao.getMaaTagDataStatistical();
+        Date startDate = maaTagDataStatistical.get(0).getLastTime();
+        Date endDate = new Date();
+
+        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThan(startDate, endDate);
+//        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsLessThan(new Date(1662220800000L));
 
 
         int topOperator = 0;  //高级资深总数
@@ -187,7 +188,7 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
 
         MaaTagDataStatistical maaStatistical = new MaaTagDataStatistical();
-        maaStatistical.setId(time);
+        maaStatistical.setId(endDate.getTime());
         maaStatistical.setTopOperator(topOperator);
         maaStatistical.setSeniorOperator(seniorOperator);
         maaStatistical.setTopAndSeniorOperator(topAndSeniorOperator);
@@ -201,7 +202,8 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
         maaStatistical.setJessica(jessica);
         maaStatistical.setMaaTagsDataCount(maaTagDataList.size());
-        maaStatistical.setCreateTime(new Date());
+        maaStatistical.setCreateTime(endDate);
+        maaStatistical.setLastTime(maaTagDataList.get(maaTagDataList.size()-1).getCreateTime());
         maaTagDataStatisticalDao.save(maaStatistical);
 
 
