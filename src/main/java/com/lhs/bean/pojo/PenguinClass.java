@@ -1,7 +1,8 @@
 package com.lhs.bean.pojo;
 
-public class PenguinClass {
 
+//用于转换企鹅物流的api的实体类
+public class PenguinClass {
 
 //    企鹅物流数据
     private String stageId;  //关卡id

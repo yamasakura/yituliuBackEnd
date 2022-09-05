@@ -8,11 +8,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "stage")
+@Table(name = "stage")  //关卡的各类信息
 
-public class Stage implements Serializable {
-	private static final long serialVersionUID = 1L;
-
+public class Stage {
 	@Id
 	@ExcelProperty("关卡Id")
 	private String stageId;
@@ -51,9 +49,6 @@ public class Stage implements Serializable {
 	@ExcelProperty("活动名称")
 	private String activityName;
 
-	public static long getSerialVersionUID() {
-		return serialVersionUID;
-	}
 
 	public String getStageName() {
 		return stageName;

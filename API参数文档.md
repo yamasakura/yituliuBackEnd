@@ -28,7 +28,7 @@ url:  /api/find/stage/t3/{times}/{efficiency}
  类型Double    名称 efficiency  //绿票转化率
  类型Integer   名称 isShow   // 是否显示
  类型Integer   名称 isUseValue  //是否参与定价
- 类型Integer   名称 color  // 关卡标注颜色
+ 类型Integer   名称 color  // 关卡标注颜色 橙色:4 ,紫色:3 ,蓝色:2 ,绿色:1   红色:-1
  类型Double    名称 percentage    //理智转化率
  类型String    名称 updateDate  //更新时间
  类型String    名称 spm  //每分钟消耗理智
@@ -63,7 +63,7 @@ url:  /api/find/stage/t2
  类型Double    名称 efficiency  //绿票转化率
  类型Integer   名称 isShow   // 是否显示
  类型Integer   名称 isUseValue  //是否参与定价
- 类型Integer   名称 color  // 关卡标注颜色
+ 类型Integer   名称 color  // 关卡标注颜色 橙色:4 ,紫色:3 ,蓝色:2 ,绿色:1   红色:-1
  类型Double    名称 percentage    //理智转化率
  类型String    名称 updateDate  //更新时间
  类型String    名称 spm  //每分钟消耗理智
@@ -152,7 +152,7 @@ url:  /api/find/stage/activity/closed
  类型Double    名称 efficiency  //绿票转化率
  类型Integer   名称 isShow   // 是否显示
  类型Integer   名称 isUseValue  //是否参与定价
- 类型Integer   名称 color  // 关卡标注颜色
+ 类型Integer   名称 color  // 关卡标注颜色 橙色:4 ,紫色:3 ,蓝色:2 ,绿色:1   红色:-1
  类型Double    名称 percentage    //理智转化率
  类型String    名称 updateDate  //更新时间
  类型String    名称 spm  //每分钟消耗理智

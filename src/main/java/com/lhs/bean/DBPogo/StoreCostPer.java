@@ -5,9 +5,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Store_cost_per")
+@Table(name="Store_cost_per")  //性价比表，主要存常驻商店
 public class StoreCostPer {
-	private static final long serialVersionUID = 1L;
+
 
 	@Id
 	private Long id;

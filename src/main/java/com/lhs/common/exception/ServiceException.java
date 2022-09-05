@@ -7,8 +7,7 @@ import com.lhs.common.util.ResultCode;
  */
 public class ServiceException extends RuntimeException{
 
-	private static final long serialVersionUID = 1L;
-	
+
 	private ResultCode resultCode;
 	
 	public ServiceException(ResultCode resultCode) {

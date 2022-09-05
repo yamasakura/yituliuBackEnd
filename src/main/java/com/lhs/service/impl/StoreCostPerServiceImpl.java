@@ -4,7 +4,7 @@ package com.lhs.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.ItemRevise;
-import com.lhs.bean.DBPogo.StoreCost;
+import com.lhs.bean.vo.StoreJson;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.StoreJsonVo;
 import com.lhs.common.exception.ServiceException;
@@ -61,7 +61,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	public void updateByJsonPerm() {
 		List<ItemRevise> allItem =itemService.findAllItemRevise();
 		String str = ReadJsonUtil.readJson(frontEndFilePath+"//permStoreData.json");
-		List<StoreCost> storeCosts = JSONArray.parseArray(str, StoreCost.class);
+		List<StoreJson> storeJsons = JSONArray.parseArray(str, StoreJson.class);
 
 		DecimalFormat dfbfb = new DecimalFormat("0.00");
 
@@ -70,19 +70,19 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 		Long count = 1L;
 
 
-		for (int i = 0; i < storeCosts.size(); i++) {
+		for (int i = 0; i < Objects.requireNonNull(storeJsons).size(); i++) {
 			for (int j = 0; j < allItem.size(); j++) {
-				if (storeCosts.get(i).getItemName().equals(allItem.get(j).getItemName())) {
-					Double costPer = allItem.get(j).getItemValue() / Double.parseDouble(storeCosts.get(i).getCost());
+				if (storeJsons.get(i).getItemName().equals(allItem.get(j).getItemName())) {
+					Double costPer = allItem.get(j).getItemValue() / Double.parseDouble(storeJsons.get(i).getCost());
 					StoreCostPer storeCostPer = new StoreCostPer();
 					storeCostPer.setId(count);
 					count++;
 					storeCostPer.setItemId(allItem.get(j).getItemId());
-					storeCostPer.setItemName(storeCosts.get(i).getItemName());
-					storeCostPer.setStoreType(storeCosts.get(i).getType());
+					storeCostPer.setItemName(storeJsons.get(i).getItemName());
+					storeCostPer.setStoreType(storeJsons.get(i).getType());
 					storeCostPer.setCostPer(Double.valueOf(dfbfb.format(costPer)));
-					storeCostPer.setCost(Double.valueOf(storeCosts.get(i).getCost()));
-					storeCostPer.setRawCost(storeCosts.get(i).getRawCost());
+					storeCostPer.setCost(Double.valueOf(storeJsons.get(i).getCost()));
+					storeCostPer.setRawCost(storeJsons.get(i).getRawCost());
 					storeCostPer.setItemValue(allItem.get(j).getItemValue());
 					list.add(storeCostPer);
 				}
@@ -140,14 +140,12 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public String readActStoreJson() {
-		String str = ReadJsonUtil.readJson(frontEndFilePath+"//storeAct.json");
-		return str;
+		return ReadJsonUtil.readJson(frontEndFilePath+"//storeAct.json");
 	}
 
 	@Override
 	public String readPermStoreJson() {
-		String str = ReadJsonUtil.readJson(frontEndFilePath+"//storePerm.json");
-		return str;
+		return ReadJsonUtil.readJson(frontEndFilePath+"//storePerm.json");
 	}
 
 

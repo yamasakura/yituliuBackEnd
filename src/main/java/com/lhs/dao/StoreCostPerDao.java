@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface StoreCostPerDao extends JpaRepository<StoreCostPer, Long>{
 
+	//查询常驻商店性价比按性价比倒序
 	List<StoreCostPer> findByStoreTypeOrderByCostPerDesc(String type);
 	
 	

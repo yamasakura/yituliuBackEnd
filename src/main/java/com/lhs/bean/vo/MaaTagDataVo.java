@@ -7,7 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-
+//maa返回前端用的实体类
 public class MaaTagDataVo {
 
     private String tag1;

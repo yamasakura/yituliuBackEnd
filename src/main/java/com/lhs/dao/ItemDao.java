@@ -8,10 +8,6 @@ import java.util.List;
 
 public interface ItemDao extends JpaRepository<Item, Long>{
 
-	@Transactional
-	void deleteByItemId(String itemId);
-
-	@Transactional
-	List<Item> findAllByOrderByItemIdAsc();
+	List<Item> findByOrderByItemIdAsc();
 
 }

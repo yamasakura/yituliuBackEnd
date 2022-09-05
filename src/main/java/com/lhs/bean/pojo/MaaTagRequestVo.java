@@ -1,4 +1,4 @@
-package com.lhs.bean.vo;
+package com.lhs.bean.pojo;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -6,9 +6,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class MaaTagRequestVo implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+//用于接收maa的公招数据
+public class MaaTagRequestVo {
     private String uuid;
     private List<String> tags;
     private Integer level;
@@ -59,9 +58,6 @@ public class MaaTagRequestVo implements Serializable {
         this.result = result;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public String getSource() {
         return source;

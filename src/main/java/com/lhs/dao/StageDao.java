@@ -14,9 +14,6 @@ public interface StageDao extends JpaRepository<Stage, Long>{
     @Transactional
     @Modifying
     @Query(value = "UPDATE stage SET is_show =?1 WHERE stage_id = ?2",nativeQuery = true)
-    void updateStageInfo(Integer isShow, String stageId);
-
-
-    List<Stage>  findAllByStageNameNotNullOrderByChapterNameDesc();
+    void updateStageInfo(Integer isShow, String stageId);  //控制关卡是否可被查出
 
 }

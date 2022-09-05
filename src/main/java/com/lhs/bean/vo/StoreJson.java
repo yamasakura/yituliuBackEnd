@@ -1,8 +1,9 @@
-package com.lhs.bean.DBPogo;
+package com.lhs.bean.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 
-public class StoreCost {
+//用于读取常驻商店的json
+public class StoreJson {
 
     @ExcelProperty("素材名称")
     private  String itemName;
@@ -48,12 +49,12 @@ public class StoreCost {
         this.type = type;
     }
 
-    public StoreCost() {
+    public StoreJson() {
     }
 
     @Override
     public String toString() {
-        return "StoreCost{" +
+        return "StoreJson{" +
                 "itemName='" + itemName + '\'' +
                 ", cost='" + cost + '\'' +
                 ", type='" + type + '\'' +

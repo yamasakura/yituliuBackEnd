@@ -6,10 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "item_revise")
+@Table(name = "item_revise")   //用于存储最终的等效理智/绿票价值
 public class ItemRevise {
 
-    private static final long serialVersionUID = 1L;
 
     @Id
     private Long id;

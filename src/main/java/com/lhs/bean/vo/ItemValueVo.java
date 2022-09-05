@@ -1,7 +1,7 @@
 package com.lhs.bean.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-
+//前端导出物品价值表用的实体类
 public class ItemValueVo {
 
     @ExcelProperty("物品ID")

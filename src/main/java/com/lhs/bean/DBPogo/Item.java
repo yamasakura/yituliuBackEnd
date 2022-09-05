@@ -6,11 +6,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name="item")
-public class Item implements Serializable{
-	private static final long serialVersionUID = 1L;
-
-
+@Table(name="item")  //临时物品价值表，用于保存最终价值之前的临时等效理智/绿票价值
+public class Item {
 
 	@Id
 	private String itemId;  //物品id

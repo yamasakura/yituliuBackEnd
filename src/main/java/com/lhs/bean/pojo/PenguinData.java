@@ -1,9 +1,10 @@
 package com.lhs.bean.pojo;
 
 
+//临时计算结果，有很多字段对前端无用
+
 public class PenguinData {
     //临时关卡效率类
-
     private Long id;
     private String stageId;  // 关卡id
     private String chapterName; //章节名称
@@ -23,7 +24,7 @@ public class PenguinData {
     private String secondaryId; // 副产物id
     private Double efficiency;  //绿票转化率
     private Integer isShow;   // 是否显示
-    private Integer isValue;  //是否参与定价
+    private Integer isUseValue;  //是否参与定价
     private Integer isSpecial; //是否有特殊掉落
     private Integer isOpen;  //副本当前是否开启
     private Integer color;  // 关卡标注颜色
@@ -188,12 +189,12 @@ public class PenguinData {
         this.isShow = isShow;
     }
 
-    public Integer getIsValue() {
-        return isValue;
+    public Integer getIsUseValue() {
+        return isUseValue;
     }
 
-    public void setIsValue(Integer isValue) {
-        this.isValue = isValue;
+    public void setIsUseValue(Integer isUseValue) {
+        this.isUseValue = isUseValue;
     }
 
     public Integer getIsSpecial() {
@@ -297,7 +298,7 @@ public class PenguinData {
                 ", secondaryId='" + secondaryId + '\'' +
                 ", efficiency=" + efficiency +
                 ", isShow=" + isShow +
-                ", isValue=" + isValue +
+                ", isValue=" + isUseValue +
                 ", isSpecial=" + isSpecial +
                 ", isOpen=" + isOpen +
                 ", color=" + color +

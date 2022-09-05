@@ -1,14 +1,10 @@
 package com.lhs.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.DBPogo.MaaTagDataStatistical;
-import com.lhs.bean.vo.MaaTagRequestVo;
-import com.lhs.common.exception.ServiceException;
+import com.lhs.bean.pojo.MaaTagRequestVo;
 import com.lhs.common.util.ReadJsonUtil;
-import com.lhs.common.util.ResultCode;
 import com.lhs.common.util.SaveFile;
 import com.lhs.dao.MaaTagDataStatisticalDao;
 import com.lhs.dao.MaaTagResultDao;
@@ -18,12 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.sql.rowset.serial.SerialException;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -62,10 +55,8 @@ public class MaaAPIServiceImpl implements MaaApiService {
         maaTagData.setSource(maaTagRequestVo.getSource());
         maaTagData.setVersion(maaTagRequestVo.getVersion());
         maaTagData.setId(Long.parseLong(id));
-
         maaTagData.setUid(maaTagRequestVo.getUuid());
-        MaaTagData save = maaTagResultDao.save(maaTagData);
-
+        maaTagResultDao.save(maaTagData);
 
         return "新增成功";
     }
@@ -84,14 +75,12 @@ public class MaaAPIServiceImpl implements MaaApiService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.00");
 
-
         List<MaaTagDataStatistical> maaTagDataStatistical = maaTagDataStatisticalDao.getMaaTagDataStatistical();
         Date startDate = maaTagDataStatistical.get(0).getLastTime();
         Date endDate = new Date();
 
         List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThan(startDate, endDate);
 //        List<MaaTagData> maaTagDataList = maaTagResultDao.findByCreateTimeIsLessThan(new Date(1662220800000L));
-
 
         int topOperator = 0;  //高级资深总数
         int seniorOperator = 0; //资深总数

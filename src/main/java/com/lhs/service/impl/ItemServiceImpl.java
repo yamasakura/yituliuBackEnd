@@ -30,23 +30,27 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemReviseDao itemReviseDao;
 
-
+    /**
+     * 重置临时价值表，仅效率计算开始时重置一次
+     */
     public void resetItemShopValue() {
-        HashMap<String, Double> itemShopValue = new HashMap<>();
+        //拿到物品表的初始信息
         String[][] itemRaw = getItemInfo();
+        //保存材料的价值和名称，<名称，价值>
+        HashMap<String, Double> itemShopValue = new HashMap<>();
+         //加工站平均产出t1
         double workShopValue_t1 = (1.667 * 0.263 + 2.5 * 0.175 + 2.5 * 0.175 + 2.92 * 0.14 + 2.92 * 0.14 + 3.75
                 * 0.105) * 0.2 - 0.45;
-
+         //加工站平均产出t1
         double workShopValue_t2 = (5.0 * 0.263 + 7.5 * 0.175 + 7.5 * 0.175 + 8.75 * 0.14 + 8.75 * 0.14 + 11.25
                 * 0.105) * 0.2 - 0.9;
-
+        //加工站平均产出t3
         double workShopValue_t3 = (0.099 * 25 + 0.082 * 30 + 0.082 * 30 + 0.066 * 35 + 0.066 * 35 + 0.049 * 45 + 0.074 * 30
                 + 0.066 * 35 + 0.059 * 40 + 0.049 * 45 + 0.059 * 40 + 0.066 * 35 + 0.066 * 30 + 0.059 * 40
                 + 0.059 * 40) * 0.2 - 1.35;
-
+        //加工站平均产出t4
         double workShopValue_t4 = (0.09 * 100 + 0.067 * 130 + 0.067 * 125 + 0.06 * 145 + 0.06 * 130 + 0.045 * 135 + 0.077 * 105 +
                 0.067 * 130 + 0.067 * 120 + 0.06 * 130 + 0.077 * 110 + 0.067 * 120 + 0.067 * 135 + 0.067 * 115 + 0.067 * 120) * 0.2 - 1.8;
-
 
         itemShopValue.put("固源岩组", 25.0);
         itemShopValue.put("糖组", 30.0);
@@ -99,7 +103,6 @@ public class ItemServiceImpl implements ItemService {
         itemShopValue.put("聚合剂", itemShopValue.get("提纯源岩") * 1 + itemShopValue.get("异铁块") + itemShopValue.get("酮阵列") - workShopValue_t4);
         itemShopValue.put("晶体电子单元", itemShopValue.get("聚合凝胶") * 2 + itemShopValue.get("炽合金块") + itemShopValue.get("晶体电路") - workShopValue_t4);
 
-
         List<Item> itemShopList = new ArrayList<>();
 
         for (String[] str : itemRaw) {
@@ -127,7 +130,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findAll() {
-        return itemDao.findAllByOrderByItemIdAsc();
+        return itemDao.findByOrderByItemIdAsc();
     }
 
     @Override
@@ -135,25 +138,28 @@ public class ItemServiceImpl implements ItemService {
         return itemReviseDao.findAll();
     }
 
+    /**
+     * 用于计算等效理智价值
+     * @param hashMap map为<材料名,1.25/材料的最优常驻关卡的效率>
+     * @return
+     */
     @Override
-    public List<ItemRevise> itemResvise(HashMap<String, Double> hashMap) {
-        for (Map.Entry<String, Double> entry : hashMap.entrySet()) {
+    public List<ItemRevise> itemRevise(HashMap<String, Double> hashMap) {
+//        for (Map.Entry<String, Double> entry : hashMap.entrySet()) {
 //            log.info(entry.getKey() + ": " + entry.getValue());
-        }
-//        拿到上一次迭代后的材料价值
+//        }
+//        拿到上一次临时计算的材料等效价值
         List<Item> itemTemporaryDataList = itemDao.findAll();
-
-        HashMap<String, Double> itemTemporaryMap = new HashMap<>();
-
 //        list转为map方便调用
+        HashMap<String, Double> itemTemporaryMap = new HashMap<>();
         for (Item item : itemTemporaryDataList) {
             itemTemporaryMap.put(item.getItemName(), item.getItemValue());
         }
 
+        //拿到物品表的初始信息
         String[][] itemRaw = getItemInfo();
 
-
-        //加工站的期望产出值近乎无波动，目前用固定值替代
+        //加工站的期望产出值近乎无波动，目前用固定值替代，（大概可能也许没准有空改）
         double workShopValue_t1 = 0.513182485 - 0.45;
         double workShopValue_t2 = 1.538558598 - 0.9;
         double workShopValue_t3 = 6.937 - 1.35;
@@ -166,7 +172,8 @@ public class ItemServiceImpl implements ItemService {
         HashMap<String, Double> itemValue = new HashMap<>();
 
         for (String item_t3 : item_t3List) {
-       //  材料上次迭代价值*1.25/关卡效率
+            //  材料上次迭代价值*1.25/关卡效率
+            //map中保存的是：    （材料名称，map的value（即1.25/关卡效率）*上次计算后的价值）
             itemValue.put(item_t3, hashMap.get(item_t3) * itemTemporaryMap.get(item_t3));
         }
 
@@ -206,11 +213,14 @@ public class ItemServiceImpl implements ItemService {
         itemValue.put("聚合剂", itemValue.get("提纯源岩") * 1 + itemValue.get("异铁块") + itemValue.get("酮阵列") - workShopValue_t4);
         itemValue.put("晶体电子单元", itemValue.get("聚合凝胶") * 2 + itemValue.get("炽合金块") + itemValue.get("晶体电路") - workShopValue_t4);
 
+
+//        保存入最终材料等效价值表的材料等效价值集合
         List<ItemRevise> itemReviseList = new ArrayList<>();
-
-
+//        保存入临时材料等效价值表的材料等效价值集合
         List<Item> itemTemporaryList = new ArrayList<>();
+
         Long id = 0L;
+//        将上面计算后的价值存入俩个集合
         for (String[] str : itemRaw) {
             if (itemValue.get(str[1]) != null) {
                 ItemRevise itemResult = new ItemRevise();
@@ -247,15 +257,21 @@ public class ItemServiceImpl implements ItemService {
         }
 
 
-        itemDao.deleteAll();
-        itemDao.saveAll(itemTemporaryList);
-        itemReviseDao.deleteAll();
-        itemReviseDao.saveAll(itemReviseList);
+        itemDao.deleteAll();  //清空表
+        itemDao.saveAll(itemTemporaryList); //存入临时表
+        itemReviseDao.deleteAll(); //清空表
+        itemReviseDao.saveAll(itemReviseList);  //存入最终表
 
 
         return itemReviseList;
     }
 
+
+    /**
+     * //    导出物品价值表，但是用前端专用导出类先转一次
+     *
+     * @param response
+     */
     @Override
     public void exportItemData(HttpServletResponse response) {
         try {
@@ -285,7 +301,11 @@ public class ItemServiceImpl implements ItemService {
 
     }
 
-
+    /**
+     * 物品表的初始信息，理论上可以用json，但是我懒得改了
+     *
+     * @return
+     */
     private static String[][] getItemInfo() {
         return new String[][]{
                 {"30135", "D32钢", "", "orange", "1"}, {"30125", "双极纳米片", "", "orange", "1"},

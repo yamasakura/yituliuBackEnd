@@ -8,10 +8,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "char_tag_data")
-public class CharTagData implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+@Table(name = "char_tag_data")//干员tag库
+public class CharTagData  {
 
     @Id
     @ExcelProperty("序号")
@@ -37,9 +35,6 @@ public class CharTagData implements Serializable {
     @ExcelProperty("词条值")
     private String tagValue;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public Integer getId() {
         return id;

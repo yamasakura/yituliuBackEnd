@@ -8,7 +8,6 @@ public class RecResultVo {
     private List<Object> result;
     private String lessRarity;
 
-
     public String getTags() {
         return tags;
     }

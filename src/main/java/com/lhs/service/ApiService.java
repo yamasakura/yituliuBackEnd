@@ -33,10 +33,10 @@ public interface ApiService {
     List<StageResultVo> findByMainNotNull();
 
 
-    //给hguandl的api
+    //给hguandl的api   这个是给别人的api可以不用管
     List<List<StageResultApiVo>> getDataByEffAndTimesOrderByEffDescAppApi(Integer times, Double efficiency);
 
-    //给hguandl的api
+    //给hguandl的api   这个是给别人的api可以不用管
     Page<StageResultApiVo> findDataByTypeAndTimesAndEffOrderByEffDescAppApi(String main, Integer times,
                                                                             Double efficiency, Integer pageNum, Integer pageSize);
 

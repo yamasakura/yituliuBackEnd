@@ -1,10 +1,8 @@
 package com.lhs.service;
 
 import com.lhs.bean.DBPogo.MaaTagData;
-import com.lhs.bean.DBPogo.MaaTagDataStatistical;
-import com.lhs.bean.vo.MaaTagRequestVo;
+import com.lhs.bean.pojo.MaaTagRequestVo;
 
-import java.util.HashMap;
 import java.util.List;
 
 public interface MaaApiService {

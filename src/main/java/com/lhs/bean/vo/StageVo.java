@@ -3,8 +3,7 @@ package com.lhs.bean.vo;
 import java.io.Serializable;
 
 
-public class StageVo implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class StageVo  {
 
 	private String stageName;
 
@@ -44,9 +43,7 @@ public class StageVo implements Serializable {
 
 	private String activityName;
 
-	public static long getSerialVersionUID() {
-		return serialVersionUID;
-	}
+
 
 	public String getStageName() {
 		return stageName;

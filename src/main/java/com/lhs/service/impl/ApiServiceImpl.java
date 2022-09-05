@@ -39,12 +39,15 @@ public class ApiServiceImpl implements ApiService {
     @Autowired
     private StageResultVoApiDao stageResultVoApiDao;
 
-    @Autowired
-    private IpDataDao ipDataDao;
 
     @Value("${frontEnd.path}")
     private  String frontEndFilePath ;
 
+
+    /**
+     * 查找所有主产物不为空的关卡
+     * @return
+     */
     @Override
     public List<StageResultVo> findByMainNotNull() {
         List<StageResultVo> list = stageResultVoDao.findByTypeNotNullAndEfficiencyLessThanOrderByEfficiencyDesc(1.9);
@@ -54,7 +57,10 @@ public class ApiServiceImpl implements ApiService {
          return list ;
     }
 
-
+    /**
+     * 读取T3材料关卡效率文件
+     * @return
+     */
     @Override
     public String readStageFileT3() {
         String jsonFile = ReadJsonUtil.readJson(frontEndFilePath+"stageT3.json");  //从保存文件读取
@@ -64,6 +70,10 @@ public class ApiServiceImpl implements ApiService {
         return jsonFile;
     }
 
+    /**
+     * 读取T2材料关卡效率文件
+     * @return
+     */
     @Override
     public String readStageFileT2() {
 
@@ -74,6 +84,10 @@ public class ApiServiceImpl implements ApiService {
         return jsonFile;
     }
 
+    /**
+     * 读取已关闭活动的json
+     * @return
+     */
     @Override
     public String readStageClosedFile() {
 
@@ -85,9 +99,15 @@ public class ApiServiceImpl implements ApiService {
     }
 
 
-
-
-
+    /**
+     *
+     * @param main  主产物
+     * @param efficiency  期望理智
+     * @param times  样本量
+     * @param pageNum  页数
+     * @param pageSize 每页个数
+     * @return
+     */
     @Override
     public Page<StageResultVo> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
         if (main != null && pageNum != null && pageSize != null) {
@@ -105,17 +125,21 @@ public class ApiServiceImpl implements ApiService {
     }
 
 
-
-
-
-
-
-
+    /**
+     *
+     * @param main  主产物
+     * @param expect  期望理智
+     * @param times  样本量
+     * @param pageNum  页数
+     * @param pageSize 每页个数
+     * @return
+     */
     @Override
     public Page<StageResultVo> findDataByMainOrderByExpectAsc(String main, Double expect, Integer times, Integer pageNum, Integer pageSize) {
 
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
+
             Page<StageResultVo> page = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
                     main, 1,50.0, 100, pageable);
             if (page != null) {
@@ -126,6 +150,8 @@ public class ApiServiceImpl implements ApiService {
         } else {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
+
+
     }
 
 
@@ -199,7 +225,9 @@ public class ApiServiceImpl implements ApiService {
         return visitVo;
     }
 
-
+    /**
+     *  这个是给别人的api可以不用管
+     */
     @Override
     public List<List<StageResultApiVo>> getDataByEffAndTimesOrderByEffDescAppApi(Integer times, Double efficiency) {
         double start = System.currentTimeMillis();
@@ -221,17 +249,19 @@ public class ApiServiceImpl implements ApiService {
 
         double end = System.currentTimeMillis();
         System.out.println("查找用时:---" + (end - start) + "ms");
-
         return pageList;
-
-
 
     }
 
+
+    /**
+     *  这个是给别人的api可以不用管
+     */
     @Override
     public Page<StageResultApiVo> findDataByTypeAndTimesAndEffOrderByEffDescAppApi(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
+
             Page<StageResultApiVo> page = stageResultVoApiDao.findByTypeAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
                     main,  efficiency,times, pageable);
             if (page != null) {

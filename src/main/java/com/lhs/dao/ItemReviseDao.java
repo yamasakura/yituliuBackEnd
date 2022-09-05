@@ -9,15 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface ItemReviseDao extends JpaRepository<ItemRevise, Long>{
-
-
-
-	@Transactional
-	List<ItemRevise> findAllByOrderByItemIdAsc();
-
-	@Transactional
-	@Modifying
-	@Query(value = "TRUNCATE TABLE item_revise",nativeQuery = true)
-	void deleteQuery();
+	//查询物品价值按id升序
+	List<ItemRevise> findByOrderByItemIdAsc();
 
 }

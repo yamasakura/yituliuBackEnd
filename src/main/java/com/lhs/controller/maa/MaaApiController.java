@@ -3,11 +3,9 @@ package com.lhs.controller.maa;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.MaaTagData;
-import com.lhs.bean.DBPogo.MaaTagDataStatistical;
 import com.lhs.bean.vo.MaaTagDataVo;
-import com.lhs.bean.vo.MaaTagRequestVo;
+import com.lhs.bean.pojo.MaaTagRequestVo;
 import com.lhs.common.util.Result;
 import com.lhs.service.MaaApiService;
 import io.swagger.annotations.Api;
@@ -15,11 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Api(tags = "MAA接口")

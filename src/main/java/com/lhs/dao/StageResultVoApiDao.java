@@ -19,7 +19,6 @@ public interface StageResultVoApiDao extends JpaRepository<StageResultApiVo, Lon
     void deleteQuery();
 
 
-
     //根据物品类别查询效率升序
     Page<StageResultApiVo> findByTypeAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(String type, Double efficiency, Integer times, Pageable pageable);
     //查询所有关卡信息

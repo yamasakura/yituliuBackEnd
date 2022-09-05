@@ -4,11 +4,10 @@ package com.lhs.bean.vo;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "stage_result_vo")
+@Table(name = "stage_result_vo")  //关卡效率返回前端时用的实体类
 public class StageResultVo {
 
     @Id
-//    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String stageId;  // 关卡id
     private String chapterName; //章节名称

@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="quantile_table")
+@Table(name="quantile_table")   //样本置信度参照表
 public class QuantileTable {
     @Id
     @ExcelProperty("区间")

@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Entity
 @Table(name="visits")
-public class Visits implements Serializable {
+public class Visits {
 
 
     @Id

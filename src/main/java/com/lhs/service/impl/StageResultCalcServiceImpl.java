@@ -68,7 +68,12 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         stageResultVoDao.deleteAllInBatch();
     }
 
-
+    /**
+     * 前几天临时改的，暂时用循环实现，回头再优化了
+     * @param indexNum  计算次数
+     * @param countNum  计算结束次数
+     * @return
+     */
     @Override
     public List<PenguinData> stageResult(Integer indexNum, Integer countNum) {
         SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
@@ -81,18 +86,18 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
         String saveTime = simpleDateFormat_dd.format(new Date());
 
-//获取企鹅物流数据 <
+//读取企鹅物流数据
         JSONObject matrixJson = null;
         String jsonFile = ReadJsonUtil.readJson(penguinFilePath+"matrix"+saveTime+".json");  //从保存文件读取
-//        System.out.println(jsonFile);
-        String url = "https://penguin-stats.io/PenguinStats/api/v2/result/matrix?show_closed_zones=true";   //API读取
+        matrixJson =  JSONObject.parseObject(jsonFile); //json化
 
-            matrixJson =  JSONObject.parseObject(jsonFile); //json化
 
-//            matrixJson =  JSONObject.parseObject(HttpUtil.GetBody(url));
+//        企鹅物流的api，但是链接不稳定，目前采用本地读取
+//        String url = "https://penguin-stats.io/PenguinStats/api/v2/result/matrix?show_closed_zones=true";   //API读取
+//        matrixJson =  JSONObject.parseObject(HttpUtil.GetBody(url));
 
-        List<PenguinData> penguinDataList = null;  //临时关卡效率结果
 
+            List<PenguinData> penguinDataList = new ArrayList<>();  //临时关卡效率结果，有部分字段仅在计算中使用
             List<StageVo> stageInfoList = stageService.findAllVo();  //所有关卡信息
             List<Item> itemList = itemService.findAll();    //临时材料价值
             HashMap<String, Double> itemValueMap = new HashMap<>();
@@ -240,7 +245,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 penguinData.setUpdateDate(updateTime);
                 penguinData.setSpm(String.valueOf(stageInfoList.get(stageInfoListIndex).getSpm()));
                 penguinData.setIsShow(stageInfoList.get(stageInfoListIndex).getIsShow());
-                penguinData.setIsValue(stageInfoList.get(stageInfoListIndex).getIsValue());
+                penguinData.setIsUseValue(stageInfoList.get(stageInfoListIndex).getIsValue());
                 penguinData.setIsSpecial(stageInfoList.get(stageInfoListIndex).getIsSpecial());
                 penguinData.setIsOpen(stageInfoList.get(stageInfoListIndex).getIsOpen());
                 penguinData.setActivityName(exItem);
@@ -278,8 +283,10 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 //        }
 
 
-        // 将计算完的结果按分类放入map中，方便后面为他们赋值颜色值
+        // 将计算完的结果按分类放入map中，方便后面为他们赋值颜色等级
+        //存入的是<材料名，所有该种材料关卡效率结果的集合>
             HashMap<String, List<PenguinData>> rawDataHashMap = new HashMap<>();
+                   //
                 for (PenguinData rawData : penguinDataList) {
                     //筛选条件  1.主产物不为空，2.该关卡是要显示的关卡，3.该关卡的主产物等级是T3，4.样本量大于500
                     if (rawData.getMain() != null && rawData.getIsShow() == 1 &&rawData.getMainLevel()>2&&rawData.getTimes()>500) {
@@ -294,14 +301,14 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                     }
                 }
 
-               //会返回一个map，map值为<材料名,1.25/材料的最优常驻关卡的效率>  1.25为绿票与理智转化比
-            HashMap<String, Double> desc = stageResultSetInfoService.getIterationItemValue(rawDataHashMap);
+               //会返回一个map，map值为<材料名,1.25/材料的最优常驻关卡的效率>  1.25为绿票与理智转化比,也是绿票绝对效率的上限
+            HashMap<String, Double> iterationItemValue = stageResultSetInfoService.getIterationItemValue(rawDataHashMap);
 
+//          当循环次数=结束次数不再计算材料等效价值
             if (indexNum !=(countNum-1)) {
-                //这里是进行材料价值的迭代
-                itemService.itemResvise(desc);
+                //这里是进行材料等效价值的计算
+                itemService.itemRevise(iterationItemValue);
             }
-
 
 
         return penguinDataList;

@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 @Entity
-@Table(name = "maa_tag_data_statistical")
+@Table(name = "maa_tag_data_statistical")//maa公招统计结果
 public class MaaTagDataStatistical {
 
     @Id

@@ -6,7 +6,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "maa_tag_data")
+@Table(name = "maa_tag_data")  //存储maa的公招数据
 public class MaaTagData {
 
     @Id
