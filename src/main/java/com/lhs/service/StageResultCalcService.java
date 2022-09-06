@@ -15,7 +15,4 @@ public interface StageResultCalcService {
 
 	//计算关卡效率（循环次数，结束次数）
 	List<PenguinData> stageResult(Integer i,Integer countNum);
-
-
-
 }
