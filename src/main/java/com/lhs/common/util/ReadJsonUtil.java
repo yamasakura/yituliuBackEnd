@@ -71,5 +71,4 @@ public class ReadJsonUtil {
             e.printStackTrace();
         }
     }
-
 }

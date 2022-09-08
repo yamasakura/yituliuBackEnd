@@ -3,27 +3,20 @@ package com.lhs.controller.yituliu;
 
 import com.alibaba.fastjson.JSONArray;
 import com.lhs.bean.DBPogo.ItemRevise;
-import com.lhs.bean.DBPogo.Stage;
 import com.lhs.bean.DBPogo.StoreCostPer;
+import com.lhs.bean.vo.EfficiencyVo;
 import com.lhs.bean.vo.RecResultVo;
 import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.bean.vo.StageResultVo;
 import com.lhs.common.util.Result;
-import com.lhs.common.util.ResultCode;
 import com.lhs.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -46,18 +39,17 @@ public class ApiController {
     @Autowired
     private ItemService itemService;
 
-
     @ApiOperation("获取蓝材料最优图")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500"),
             @ApiImplicitParam(name = "efficiency", value = "效率最小值", required = true, paramType = "path", defaultValue = "1.0")})
     @GetMapping("/find/stage/t3/{times}/{efficiency}")
-
     public Result findByTypeAndEndsOrderByEfficiencyDesc(@PathVariable("times") Integer times,
                                                          @PathVariable("efficiency") Double efficiency) {
         String stageFileT3 = apiService.readStageFileT3();
         JSONArray jsonArray = JSONArray.parseArray(stageFileT3);
-        return Result.success(jsonArray);
+        List<EfficiencyVo> resultList = EfficiencyVo.getListByJSONArray(jsonArray);
+        return Result.success(resultList);
     }
 
 
@@ -70,13 +62,11 @@ public class ApiController {
     }
 
 
-
-
     @ApiOperation("获取活动商店性价比")
     @GetMapping("/find/store/act")
     public Result findStoreAct() {
-      String string = storeCostPerService.readActStoreJson();
-      JSONArray jsonArray = JSONArray.parseArray(string);
+        String string = storeCostPerService.readActStoreJson();
+        JSONArray jsonArray = JSONArray.parseArray(string);
         return Result.success(jsonArray);
     }
 
