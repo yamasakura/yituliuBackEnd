@@ -3,27 +3,19 @@ package com.lhs.controller.yituliu;
 
 import com.alibaba.fastjson.JSONArray;
 import com.lhs.bean.DBPogo.ItemRevise;
-import com.lhs.bean.DBPogo.Stage;
+import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.RecResultVo;
 import com.lhs.bean.vo.StageResultApiVo;
-import com.lhs.bean.vo.StageResultVo;
 import com.lhs.common.util.Result;
-import com.lhs.common.util.ResultCode;
 import com.lhs.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -102,7 +94,7 @@ public class ApiController {
     @ApiOperation("获取全部关卡效率")
     @GetMapping("/find/stage/all")
     public Result findAllStageEff() {
-        List<StageResultVo> all = apiService.findByMainNotNull();
+        List<StageResultData> all = apiService.findByMainNotNull();
         return Result.success(all);
     }
 

@@ -1,8 +1,7 @@
 package com.lhs.service;
 
-import com.alibaba.fastjson.JSONArray;
+import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.vo.StageResultApiVo;
-import com.lhs.bean.vo.StageResultVo;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,14 +22,14 @@ public interface ApiService {
 
 
     //根据掉落物品类型和样本数查询关卡  按效率倒序 数据库查询用
-    Page<StageResultVo> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency,
-                                                                   Integer pageNum, Integer pageSize);
+    Page<StageResultData> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency,
+                                                                     Integer pageNum, Integer pageSize);
     //根据材料名称查询关卡  按效率倒序 数据库查询用
-    Page<StageResultVo> findDataByMainOrderByExpectAsc(String main, Double expect, Integer times,
-                                                       Integer pageNum, Integer pageSize);
+    Page<StageResultData> findDataByMainOrderByExpectAsc(String main, Double expect, Integer times,
+                                                         Integer pageNum, Integer pageSize);
 
     //全部关卡效率
-    List<StageResultVo> findByMainNotNull();
+    List<StageResultData> findByMainNotNull();
 
 
     //给hguandl的api   这个是给别人的api可以不用管

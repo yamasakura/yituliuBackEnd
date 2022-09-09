@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "stage_result_api_vo") //关卡效率返回前端时用的实体类
+@Table(name = "stage_result_api_vo") //不用管,给别人的api
 public class StageResultApiVo {
 
     @Id

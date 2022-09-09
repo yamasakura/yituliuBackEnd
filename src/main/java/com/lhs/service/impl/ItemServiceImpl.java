@@ -282,7 +282,7 @@ public class ItemServiceImpl implements ItemService {
             response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
 
             List<ItemRevise> list = itemReviseDao.findAll();
-            DecimalFormat DF3 = new DecimalFormat("0.000");
+            DecimalFormat DF3 = new DecimalFormat("0.0000");
 
             ArrayList<ItemValueVo> valueVoArrayList = new ArrayList<>();
             for (ItemRevise itemRevise : list) {

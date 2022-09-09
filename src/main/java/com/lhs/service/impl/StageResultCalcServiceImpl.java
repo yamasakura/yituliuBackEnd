@@ -3,11 +3,10 @@ package com.lhs.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.lhs.bean.pojo.PenguinData;
+import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.Item;
 import com.lhs.bean.pojo.PenguinClass;
 import com.lhs.bean.DBPogo.QuantileTable;
-import com.lhs.bean.vo.StageResultVo;
 import com.lhs.bean.vo.StageVo;
 import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.ReadJsonUtil;
@@ -54,9 +53,9 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
 
     @Override
-    public void saveAll(List<StageResultVo> stageResultVo) {
-        if (stageResultVo != null) {
-            stageResultVoDao.saveAll(stageResultVo);
+    public void saveAll(List<StageResultData> stageResultData) {
+        if (stageResultData != null) {
+            stageResultVoDao.saveAll(stageResultData);
         } else {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
@@ -75,7 +74,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
      * @return
      */
     @Override
-    public List<PenguinData> stageResult(Integer indexNum, Integer countNum) {
+    public List<StageResultData> stageResult(Integer indexNum, Integer countNum) {
         SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.0");
         SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
@@ -97,7 +96,9 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 //        matrixJson =  JSONObject.parseObject(HttpUtil.GetBody(url));
 
 
-            List<PenguinData> penguinDataList = new ArrayList<>();  //临时关卡效率结果，有部分字段仅在计算中使用
+            List<StageResultData> stageResultDataList = new ArrayList<>();  //临时关卡效率结果，有部分字段仅在计算中使用
+
+
             List<StageVo> stageInfoList = stageService.findAllVo();  //所有关卡信息
             List<Item> itemList = itemService.findAll();    //临时材料价值
             HashMap<String, Double> itemValueMap = new HashMap<>();
@@ -110,7 +111,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             List<PenguinClass> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinClass.class);  //转为集合
 
 
-            penguinDataList = new ArrayList<>();
+            stageResultDataList = new ArrayList<>();
 
 
             double sum = 0.0;  //关卡效率临时结果
@@ -140,7 +141,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                         sum = 0.0;
                         sumEx = 0.0;
                         confidenceInterval = 0.0;
-                        rawDataListIndex = penguinDataList.size();
+                        rawDataListIndex = stageResultDataList.size();
                         exItem = "1";
                     }
                 }
@@ -218,85 +219,84 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 //            log.info(stageInfoList.get(stageInfoListIndex).getStageName()+" ,requestEx：" + requestEx +" ,sumEx：" + sumEx + ",reasonEx：" + reasonEx + ",efficiencyEx：" + efficiencyEx);
 
                 //存储原始数据
-                PenguinData penguinData = new PenguinData();
-                penguinData.setId((long)i);
-                penguinData.setStageId(stageInfoList.get(stageInfoListIndex).getStageId());
-                penguinData.setStageName(stageInfoList.get(stageInfoListIndex).getStageName());
-                penguinData.setCode(stageInfoList.get(stageInfoListIndex).getChapterCode());
-                penguinData.setChapterName(stageInfoList.get(stageInfoListIndex).getChapterName());
-                penguinData.setItemId(itemList.get(itemListIndex).getItemId());
-                penguinData.setItemName(itemList.get(itemListIndex).getItemName());
-                penguinData.setTimes(penguinDataTimes);
-                penguinData.setProbability(probability);
+                StageResultData stageResultData = new StageResultData();
+                stageResultData.setId((long)i);
+                stageResultData.setStageId(stageInfoList.get(stageInfoListIndex).getStageId());
+                stageResultData.setStageName(stageInfoList.get(stageInfoListIndex).getStageName());
+                stageResultData.setCode(stageInfoList.get(stageInfoListIndex).getChapterCode());
+                stageResultData.setChapterName(stageInfoList.get(stageInfoListIndex).getChapterName());
+                stageResultData.setItemId(itemList.get(itemListIndex).getItemId());
+                stageResultData.setItemName(itemList.get(itemListIndex).getItemName());
+                stageResultData.setTimes(penguinDataTimes);
+                stageResultData.setProbability(probability);
                 if ("1-7".equals((stageInfoList.get(stageInfoListIndex).getStageName())) && "30012".equals(itemList.get(itemListIndex).getItemId())) {
-                    penguinData.setExpect(expect * 5);
+                    stageResultData.setExpect(expect * 5);
                 } else {
-                    penguinData.setExpect(expect);
+                    stageResultData.setExpect(expect);
                 }
-                penguinData.setEfficiency(efficiency);
+                stageResultData.setEfficiency(efficiency);
                 if (itemList.get(itemListIndex).getItemName().equals(stageInfoList.get(stageInfoListIndex).getMain())) {
-                    penguinData.setMain(stageInfoList.get(stageInfoListIndex).getMain());
-                    penguinData.setType(stageInfoList.get(stageInfoListIndex).getItemType());
+                    stageResultData.setMain(stageInfoList.get(stageInfoListIndex).getMain());
+                    stageResultData.setItemType(stageInfoList.get(stageInfoListIndex).getItemType());
                 }
-                penguinData.setSecondary(stageInfoList.get(stageInfoListIndex).getSecondary());
-                penguinData.setSecondaryId(stageInfoList.get(stageInfoListIndex).getSecondaryId());
+                stageResultData.setSecondary(stageInfoList.get(stageInfoListIndex).getSecondary());
+                stageResultData.setSecondaryId(stageInfoList.get(stageInfoListIndex).getSecondaryId());
 //                System.out.println(stageInfoList.get(stageInfoListIndex).getSecondaryId());
-                penguinData.setColor(2);
-                penguinData.setUpdateDate(updateTime);
-                penguinData.setSpm(String.valueOf(stageInfoList.get(stageInfoListIndex).getSpm()));
-                penguinData.setIsShow(stageInfoList.get(stageInfoListIndex).getIsShow());
-                penguinData.setIsUseValue(stageInfoList.get(stageInfoListIndex).getIsValue());
-                penguinData.setIsSpecial(stageInfoList.get(stageInfoListIndex).getIsSpecial());
-                penguinData.setIsOpen(stageInfoList.get(stageInfoListIndex).getIsOpen());
-                penguinData.setActivityName(exItem);
-                penguinData.setRequest(request);
-                penguinData.setEfficiencyEx(efficiencyEx);
-                penguinData.setMainLevel(stageInfoList.get(stageInfoListIndex).getMainLevel());
-                penguinData.setActivityName(stageInfoList.get(stageInfoListIndex).getActivityName());
-                penguinData.setConfidence(confidenceInterval);
+                stageResultData.setColor(2);
+                stageResultData.setUpdateDate(updateTime);
+                stageResultData.setSpm(String.valueOf(stageInfoList.get(stageInfoListIndex).getSpm()));
+                stageResultData.setIsShow(stageInfoList.get(stageInfoListIndex).getIsShow());
+                stageResultData.setIsUseValue(stageInfoList.get(stageInfoListIndex).getIsValue());
+                stageResultData.setIsSpecial(stageInfoList.get(stageInfoListIndex).getIsSpecial());
+                stageResultData.setActivityName(exItem);
+                stageResultData.setRequest(request);
+                stageResultData.setEfficiencyEx(efficiencyEx);
+                stageResultData.setMainLevel(stageInfoList.get(stageInfoListIndex).getMainLevel());
+                stageResultData.setActivityName(stageInfoList.get(stageInfoListIndex).getActivityName());
+                stageResultData.setConfidence(confidenceInterval);
 
-                for (int k = rawDataListIndex; k < penguinDataList.size(); k++) {
-                    penguinDataList.get(k).setEfficiency(efficiency);
-                    penguinDataList.get(k).setEfficiencyEx(efficiencyEx);
-
+                for (int k = rawDataListIndex; k < stageResultDataList.size(); k++) {
+                    stageResultDataList.get(k).setEfficiency(efficiency);
+                    stageResultDataList.get(k).setEfficiencyEx(efficiencyEx);
                 }
 
 
-                penguinDataList.add(penguinData);
+                stageResultDataList.add(stageResultData);
+//                System.out.println(stageResultData);
             }
 
 
             try {
                 //这里是将多索雷斯的关卡转化为通用关卡存储格式
-                for (int i = 0; i < penguinDataList.size(); i++) {
-                    if ("双日城大乐透".equals(penguinDataList.get(i).getType()) && penguinDataList.get(i).getTimes() > 100) {
-                        List<PenguinData> dataList = stageResultSetInfoService.setSpecialActivityStage(penguinDataList.get(i));
-                        penguinDataList.addAll(dataList);
+                for (int i = 0; i < stageResultDataList.size(); i++) {
+                    if ("双日城大乐透".equals(stageResultDataList.get(i).getItemType()) && stageResultDataList.get(i).getTimes() > 100) {
+                        List<StageResultData> dataList = stageResultSetInfoService.setSpecialActivityStage(stageResultDataList.get(i));
+                        stageResultDataList.addAll(dataList);
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-//        for(PenguinData penguinData:penguinDataList){
+//        for(StageResultData penguinData:stageResultDataList){
 //            System.out.println(penguinData);
 //        }
 
 
         // 将计算完的结果按分类放入map中，方便后面为他们赋值颜色等级
         //存入的是<材料名，所有该种材料关卡效率结果的集合>
-            HashMap<String, List<PenguinData>> rawDataHashMap = new HashMap<>();
+            HashMap<String, List<StageResultData>> rawDataHashMap = new HashMap<>();
                    //
-                for (PenguinData rawData : penguinDataList) {
+                for (StageResultData rawData : stageResultDataList) {
                     //筛选条件  1.主产物不为空，2.该关卡是要显示的关卡，3.该关卡的主产物等级是T3，4.样本量大于500
                     if (rawData.getMain() != null && rawData.getIsShow() == 1 &&rawData.getMainLevel()>2&&rawData.getTimes()>500) {
-                        if (rawDataHashMap.get(rawData.getType()) == null) {
-                            List<PenguinData> rawDataListValue = Collections.singletonList(rawData);
-                            rawDataHashMap.put(rawData.getType(), rawDataListValue);
+                        if (rawDataHashMap.get(rawData.getItemType()) == null) {
+                            List<StageResultData> rawDataListValue = Collections.singletonList(rawData);
+                            rawDataHashMap.put(rawData.getItemType(), rawDataListValue);
                         } else {
-                            List<PenguinData> rawDataListValue = new ArrayList<>(rawDataHashMap.get(rawData.getType()));
+                            List<StageResultData> rawDataListValue = new ArrayList<>(rawDataHashMap.get(rawData.getItemType()));
                             rawDataListValue.add(rawData);
-                            rawDataHashMap.put(rawData.getType(), rawDataListValue);
+                            rawDataHashMap.put(rawData.getItemType(), rawDataListValue);
                         }
                     }
                 }
@@ -311,7 +311,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             }
 
 
-        return penguinDataList;
+        return stageResultDataList;
     }
 
 

@@ -2,14 +2,17 @@ package com.lhs.controller.yituliu;
 
 
 import com.alibaba.fastjson.JSON;
+import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.StoreCostPer;
-import com.lhs.bean.vo.StageResultVo;
+import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.common.util.HttpRequestUtil;
 import com.lhs.common.util.Result;
 import com.lhs.common.util.SaveFile;
+import com.lhs.dao.StageResultVoApiDao;
 import com.lhs.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +43,64 @@ public class SaveController {
 
     @Autowired
     private StoreCostPerService storeCostPerService;
+
+    @Autowired
+    private StageResultCalcService stageResultCalcService;
+
+    @Autowired
+    private StageResultVoApiDao stageResultVoApiDao;
+
+
+    @ApiOperation("更新关卡数据")
+    @GetMapping("/update/{mini}")
+    public Result update(@PathVariable("mini") Integer mini) {
+        double start = System.currentTimeMillis();//记录程序启动时间
+        itemService.resetItemShopValue();
+
+        List<StageResultData> list = new ArrayList<>();
+
+        int countNum = 7;
+        for(int i=0;i<countNum;i++){
+            list =  stageResultCalcService.stageResult(i,countNum);
+        }
+
+        List<StageResultData> stageResultDataList = new ArrayList<>();
+        List<StageResultApiVo> stageResultApiVoList = new ArrayList<>();
+        for(StageResultData rawData:list ){
+            if(rawData.getIsSpecial()==1&&mini==1){
+                rawData.setEfficiency(rawData.getEfficiency()+0.045);
+            }
+//            System.out.println(rawData);
+            if ("1-7".equals((rawData.getStageName()))&&"30012".equals(rawData.getItemId())) {
+                rawData.setExpect(rawData.getExpect()/5);
+            } else {
+                rawData.setExpect(rawData.getExpect());
+            }
+
+            StageResultApiVo stageResultApiVo = new StageResultApiVo();
+            stageResultApiVo.setId(rawData.getId());
+            BeanUtils.copyProperties(rawData,stageResultApiVo);
+            if ("1-7".equals((rawData.getStageName()))&&"30012".equals(rawData.getItemId())) {
+                stageResultApiVo.setExpect(rawData.getExpect()/5);
+            } else {
+                stageResultApiVo.setExpect(rawData.getExpect());
+            }
+
+            if(rawData.getIsShow()==1){
+                stageResultApiVoList.add(stageResultApiVo);
+            }
+        }
+
+        stageResultCalcService.deleteAllInBatch();
+        stageResultVoApiDao.deleteAll();
+        stageResultCalcService.saveAll(list);
+        stageResultVoApiDao.saveAll(stageResultApiVoList);
+
+
+        double end = System.currentTimeMillis();
+        return Result.success("本次计算用时"+(end - start)/1000+"s");
+    }
+
 
 
     @ApiOperation("导出物品价值表")
@@ -76,9 +137,9 @@ public class SaveController {
                 "act_side7", "act_side6", "act_side5", "act_side4", "act_side3", "act_side0"
         };
 
-        List<List<StageResultVo>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(500, 1.0);
-        List<List<StageResultVo>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(100,50.0);
-        List<List<StageResultVo>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList);
+        List<List<StageResultData>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(500, 1.0);
+        List<List<StageResultData>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(100,50.0);
+        List<List<StageResultData>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList);
 
         String stageFileT3 = JSON.toJSONString(pageListT3);
         SaveFile.save(frontEndFilePath,"stageT3.json",stageFileT3);

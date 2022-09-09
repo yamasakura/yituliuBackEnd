@@ -1,8 +1,8 @@
 package com.lhs.service.impl;
 
 import com.lhs.bean.DBPogo.QuantileTable;
-import com.lhs.bean.pojo.PenguinData;
-import com.lhs.bean.vo.StageResultVo;
+import com.lhs.bean.DBPogo.StageResultData;
+
 import com.lhs.bean.vo.StageVo;
 import com.lhs.dao.StageResultVoDao;
 import com.lhs.service.StageResultSetInfoService;
@@ -34,60 +34,66 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @return
      */
     @Override
-    public List<List<StageResultVo>> setStageResultPercentageT3(Integer times, Double efficiency) {
+    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency) {
         Random random = new Random();
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
                 "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
 
         //最终返回的结果集合
-        List<List<StageResultVo>> stageResultListT3 = new ArrayList<>();
+        List<List<StageResultData>> stageResultListT3 = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         for (String main : mainName) {
 //            根据材料类型查出关卡,是否可查出取决于isShow属性,1为可显示
-            List<StageResultVo> stageResultByTypeList =
-                    stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc
+            List<StageResultData> stageResultByTypeList =
+                    stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc
                             (main, 1, efficiency, times);
 //            复制一个集合 ,对数据库查出的集合直接进行set操作会改变session缓存中的数据，数据库的值也会更新,虽然好像也没啥事,但是还是复制了一下
-            List<StageResultVo> stageResultByTypeListCopy = new ArrayList<>(stageResultByTypeList);
+            List<StageResultData> stageResultByTypeListCopy = new ArrayList<>(stageResultByTypeList);
 
 
             for (int k = 0; k < stageResultByTypeList.size(); k++) {
 //                当该关卡未被用于材料定价,判断他是活动本
-                if (stageResultByTypeListCopy.get(k).getIsUseValue() == 0 && (!"act_side12_".equals(stageResultByTypeListCopy.get(k).getChapterName()))
-                        && (!"act_side12_rep_".equals(stageResultByTypeListCopy.get(k).getChapterName()))) {
+                if (stageResultByTypeList.get(k).getIsUseValue() == 0 && (!"act_side12_".equals(stageResultByTypeList.get(k).getChapterName()))
+                        && (!"act_side12_rep_".equals(stageResultByTypeList.get(k).getChapterName()))) {
 //                    这里会加一个单独的计算入商店无限池的龙门币后的活动本效率
-                    StageResultVo stageResultVo = new StageResultVo();
-                    BeanUtils.copyProperties(stageResultByTypeListCopy.get(k), stageResultVo);
-                    stageResultVo.setEfficiency(stageResultByTypeListCopy.get(k).getEfficiency() + 0.09);
-                    stageResultVo.setSecondary("龙门币");
-                    stageResultVo.setSecondaryId("4001");
-                    stageResultVo.setColor(-1);  //设置颜色为-1,前端会判断为红色
-                    stageResultByTypeListCopy.add(0, stageResultVo);  //塞入复制后的集合中
+                    StageResultData stageResultData = new StageResultData();
+                    BeanUtils.copyProperties(stageResultByTypeListCopy.get(k), stageResultData);
+                    stageResultData.setEfficiency(stageResultByTypeListCopy.get(k).getEfficiency() + 0.09);
+                    stageResultData.setSecondary("龙门币");
+                    stageResultData.setSecondaryId("4001");
+                    stageResultData.setColor(-1);  //设置颜色为-1,前端会判断为红色
+                    stageResultByTypeListCopy.add(0, stageResultData);  //塞入复制后的集合中
                 }
+
+
             }
 
 
             double standard = 1.25;    //绿票绝对效率的上限  等同于理智转化率100%
 
 //      实际效率可能会比这个浮动0.几,下面会找出来每个材料排在第一的关卡效率作为标准,但是需要他是作为定价本使用的,判断isUseValue是1
-            for (StageResultVo stageResultVo : stageResultByTypeList) {
-                if (stageResultVo.getIsUseValue() == 1) {
-                    standard = stageResultVo.getEfficiency();
-//                    log.info("当前标准是"+stageResultVo.getStageName()+"——"+standard);
+            for (StageResultData stageResultData : stageResultByTypeList) {
+                if (stageResultData.getIsUseValue() == 1) {
+                    standard = stageResultData.getEfficiency();
+//                    log.info("当前标准是"+stageResultData.getStageName()+"——"+standard);
                     break;
                 }
             }
 
             //将绿票绝对效率转化为理智转化率100%
-            for (StageResultVo stageResultVo : stageResultByTypeListCopy) {
-//                log.info( stageResultVo.getStageName() +" = "+stageResultVo.getEfficiency() +" / "+ standard +" = "+
-//                        Double.valueOf(dfbfb.format(percentage * 100)));
-                stageResultVo.setPercentage(Double.valueOf(decimalFormat.format(stageResultVo.getEfficiency() / standard * 100)));
+            for (StageResultData stageResultData : stageResultByTypeListCopy) {
+//                log.info( stageResultData.getStageName() +" = "+stageResultData.getEfficiency() +" / "+ standard +" = "+
+//                        Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
+                stageResultData.setPercentage(Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
+
             }
+
             //组装成返回结果
             stageResultListT3.add(stageResultByTypeListCopy);
         }
+
+
 
 
         return stageResultListT3;
@@ -95,9 +101,9 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
     }
 
     @Override
-    public List<List<StageResultVo>> setStageResultPercentageT2(Integer times, Double expect) {
+    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect) {
         //最终返回的结果集合
-        List<List<StageResultVo>> stageResultListT2 = new ArrayList<>();
+        List<List<StageResultData>> stageResultListT2 = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         String[] mainName = new String[]{"装置", "聚酸酯", "固源岩", "异铁", "糖", "酮凝集", "破损装置", "酯原料", "源岩", "异铁碎片", "代糖", "双酮"};
@@ -106,27 +112,30 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for (int i = 0; i < mainName.length; i++) {
             //  根据材料名称查出关卡,是否可查出取决于isShow属性,1为可显示
-            List<StageResultVo> stageResultByExpect = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
+            List<StageResultData> stageResultByExpect = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
                     mainName[i], 1, 50.0, 100);
-            List<StageResultVo> page = new ArrayList<>(stageResultByExpect);
+            List<StageResultData> page = new ArrayList<>(stageResultByExpect);
             // 根据材料类型(这里查的是t2材料的上位t3材料)查出关卡,是否可查出取决于isShow属性,1为可显示
-            List<StageResultVo> stageResultByTypeList_t3 =
-                    stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc
-                            (typeName[i], 1, expect, times);
+            List<StageResultData> stageResultByTypeList_t3 =
+                    stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc
+                            (typeName[i], 1, 1.0, 500);
 
             double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
             //      实际效率可能会比这个浮动0.几,下面会找出来每个材料排在第一的关卡效率作为标准,但是需要他是作为定价本使用的,判断isUseValue是1
-            for (StageResultVo resultVo : stageResultByTypeList_t3) {
+            for (StageResultData resultVo : stageResultByTypeList_t3) {
                 if (resultVo.getIsUseValue() == 1) {
                     standard = resultVo.getEfficiency();
+//                    log.info("当前标准是"+resultVo.getStageName()+"——"+standard);
                     break;
                 }
             }
 
 
             //将绿票绝对效率转化为理智转化率100%
-            for (StageResultVo stageResultVo : page) {
-                stageResultVo.setPercentage(Double.valueOf(decimalFormat.format(stageResultVo.getEfficiency() / standard * 100)));
+            for (StageResultData stageResultData : page) {
+//                log.info( stageResultData.getStageName() +" = "+stageResultData.getEfficiency() +" / "+ standard +" = "+
+//                        Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
+                stageResultData.setPercentage(Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
             }
 
             stageResultListT2.add(page);
@@ -138,9 +147,9 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
 
     @Override
-    public List<List<StageResultVo>> setClosedActivityStagePercentage(String[] actNameList) {
+    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList) {
         //最终返回的结果集合
-        List<List<StageResultVo>> stageResultListClosed = new ArrayList<>();
+        List<List<StageResultData>> stageResultListClosed = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         int pageNum = 0;
@@ -149,12 +158,12 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for (String actName : actNameList) {
             //查出循环中当前活动名称的关卡
-            List<StageResultVo> list = stageResultVoDao.findByChapterNameAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName, 2);
+            List<StageResultData> list = stageResultVoDao.findByChapterNameAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName, 2);
 
-            for (StageResultVo stageResultVo : list) {
+            for (StageResultData stageResultData : list) {
                 // 根据材料类型查出关卡,是否可查出取决于isShow属性,1为可显示
-                Page<StageResultVo> permStageList = stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
-                        stageResultVo.getType(), 1, 1.0, 50, pageable);
+                Page<StageResultData> permStageList = stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
+                        stageResultData.getItemType(), 1, 1.0, 50, pageable);
                 double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
                 //      实际效率可能会比这个浮动0.几,下面会找出来每个材料排在第一的关卡效率作为标准,但是需要他是作为定价本使用的,判断isUseValue是1
                 for (int k = 0; k < permStageList.getContent().size(); k++) {
@@ -164,7 +173,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
                     }
                 }
                 //将绿票绝对效率转化为理智转化率100%
-                stageResultVo.setPercentage(Double.valueOf(decimalFormat.format(stageResultVo.getEfficiency() / standard * 100)));
+                stageResultData.setPercentage(Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
             }
 
             stageResultListClosed.add(list);
@@ -178,7 +187,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @return HashMap<String, Double>  map为<材料名,1.25/材料的最优常驻关卡的效率>  1.25为绿票与理智转化比,也是绿票绝对效率的上限
      */
     @Override
-    public HashMap<String, Double> getIterationItemValue(HashMap<String, List<PenguinData>> rawDataHashMap) {
+    public HashMap<String, Double> getIterationItemValue(HashMap<String, List<StageResultData>> rawDataHashMap) {
 
         //map为<材料名,1.25/材料的最优常驻关卡的效率>  1.25为绿票与理智转化比,也是绿票绝对效率的上限
         HashMap<String, Double> mianValueNum = new HashMap<>();
@@ -186,12 +195,12 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
                 "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
         for (String itemName : mainName) {
-            List<PenguinData> rawDataMapValue = rawDataHashMap.get(itemName);
+            List<StageResultData> rawDataMapValue = rawDataHashMap.get(itemName);
 
-            rawDataMapValue.sort(comparing(PenguinData::getEfficiency).reversed());  //按关卡效率倒序排序
+            rawDataMapValue.sort(comparing(StageResultData::getEfficiency).reversed());  //按关卡效率倒序排序
 
             //用于保存材料定价本的关卡集合
-            List<PenguinData> rawDataList = new ArrayList<>();
+            List<StageResultData> rawDataList = new ArrayList<>();
 
             int min = 0;  // 期望理智最低的关卡的索引
        //通过判断期望理智给关卡赋予一个值,前端判断后渲染颜色   橙色:4 ,紫色:3 ,蓝色:2 ,绿色:1   红色:-1(这里不会用到)
@@ -217,9 +226,9 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
 
 //   判断是否用于材料定价,是则加入集合中
-            for (PenguinData penguinData : rawDataMapValue) {
-                if (penguinData.getIsUseValue() == 1) {
-                    rawDataList.add(penguinData);
+            for (StageResultData stageResultData : rawDataMapValue) {
+                if (stageResultData.getIsUseValue() == 1) {
+                    rawDataList.add(stageResultData);
                 }
             }
             //map为<材料名,1.25/材料的最优常驻关卡的效率>  1.25为绿票与理智转化比,也是绿票绝对效率的上限
@@ -232,10 +241,10 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
     }
 
     @Override
-    public List<PenguinData> setSpecialActivityStage(PenguinData penguinData) {
-        double number = penguinData.getEfficiency() - 0.054;
+    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData) {
+        double number = stageResultData.getEfficiency() - 0.054;
         DecimalFormat decimalFormat2 = new DecimalFormat("0.00");
-        List<PenguinData> list = new ArrayList<>();
+        List<StageResultData> list = new ArrayList<>();
         Random random = new Random();
         String[] item = new String[]{"异铁组", "轻锰矿", "固源岩组", "固源岩", "糖", "聚酸酯", "异铁", "酮凝集", "装置"};
         String[] itemid = new String[]{"30043", "30083", "30013", "30012", "30022", "30032", "30042", "30052", "30062"};
@@ -245,24 +254,25 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         double reason = 18.0;
 
         for (int i = 0; i < item.length; i++) {
-            PenguinData stageData = new PenguinData();
-            stageData.setId(penguinData.getId() + random.nextInt(100000));
-            stageData.setStageName(penguinData.getStageName());
+            StageResultData stageData = new StageResultData();
+            stageData.setId(stageResultData.getId() + random.nextInt(100000));
+            stageData.setStageName(stageResultData.getStageName());
             stageData.setIsUseValue(0);
-            stageData.setIsShow(penguinData.getIsShow());
+            stageData.setIsShow(stageResultData.getIsShow());
             stageData.setSecondary("1");
-            stageData.setChapterName(penguinData.getChapterName() + "_");
-            stageData.setCode(penguinData.getCode());
-            stageData.setTimes(penguinData.getTimes());
-            stageData.setConfidence(penguinData.getConfidence());
+            stageData.setChapterName(stageResultData.getChapterName() + "_");
+            stageData.setCode(stageResultData.getCode());
+            stageData.setTimes(stageResultData.getTimes());
+            stageData.setConfidence(stageResultData.getConfidence());
             stageData.setColor(2);
-            stageData.setIsShow(penguinData.getIsShow());
-            stageData.setSpm(penguinData.getSpm());
+            stageData.setIsShow(stageResultData.getIsShow());
+            stageData.setSpm(stageResultData.getSpm());
             stageData.setMain(item[i]);
-            stageData.setType(item[i]);
+            stageData.setIsSpecial(stageResultData.getIsSpecial());
+            stageData.setItemType(item[i]);
             stageData.setItemId(itemid[i]);
             stageData.setProbability((reason * number) / cost[i]);
-            stageData.setActivityName(penguinData.getActivityName());
+            stageData.setActivityName(stageResultData.getActivityName());
             stageData.setMainLevel(itemLevel[i]);
             stageData.setExpect(Double.valueOf(decimalFormat2.format(cost[i] / number)));
             stageData.setEfficiency(Double.valueOf(decimalFormat2.format(

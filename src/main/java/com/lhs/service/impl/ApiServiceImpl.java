@@ -1,12 +1,9 @@
 package com.lhs.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.lhs.bean.DBPogo.IpData;
+import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.Visits;
 import com.lhs.bean.vo.StageResultApiVo;
-import com.lhs.bean.vo.StageResultVo;
 import com.lhs.common.exception.ServiceException;
-import com.lhs.common.util.IpUtil;
 import com.lhs.common.util.ReadJsonUtil;
 import com.lhs.common.util.ResultCode;
 import com.lhs.dao.*;
@@ -49,8 +46,8 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public List<StageResultVo> findByMainNotNull() {
-        List<StageResultVo> list = stageResultVoDao.findByTypeNotNullAndEfficiencyLessThanOrderByEfficiencyDesc(1.9);
+    public List<StageResultData> findByMainNotNull() {
+        List<StageResultData> list = stageResultVoDao.findByItemTypeNotNullAndEfficiencyLessThanOrderByEfficiencyDesc(1.9);
           if(list==null){
               throw  new ServiceException(ResultCode.DATA_NONE);
           }
@@ -109,10 +106,10 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public Page<StageResultVo> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
+    public Page<StageResultData> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
-            Page<StageResultVo> page = stageResultVoDao.findByTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
+            Page<StageResultData> page = stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
                     main, 1, efficiency,times, pageable);
             if (page != null) {
                 return page;
@@ -135,12 +132,12 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public Page<StageResultVo> findDataByMainOrderByExpectAsc(String main, Double expect, Integer times, Integer pageNum, Integer pageSize) {
+    public Page<StageResultData> findDataByMainOrderByExpectAsc(String main, Double expect, Integer times, Integer pageNum, Integer pageSize) {
 
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-            Page<StageResultVo> page = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
+            Page<StageResultData> page = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
                     main, 1,50.0, 100, pageable);
             if (page != null) {
                 return page;

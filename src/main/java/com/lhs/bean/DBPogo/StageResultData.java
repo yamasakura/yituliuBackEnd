@@ -1,10 +1,13 @@
-package com.lhs.bean.pojo;
+package com.lhs.bean.DBPogo;
 
 
-//临时计算结果，有很多字段对前端无用
+import javax.persistence.*;
 
-public class PenguinData {
-    //临时关卡效率类
+@Entity
+@Table(name = "stage_result_data")  //关卡效率返回前端时用的实体类
+public class StageResultData {
+
+    @Id
     private Long id;
     private String stageId;  // 关卡id
     private String chapterName; //章节名称
@@ -19,23 +22,20 @@ public class PenguinData {
     private Double expect; // 期望理智
     private String main; // 主产物
     private Integer mainLevel; // 主产物
-    private String type;  //材料类型
+    private String itemType;  //材料类型
     private String secondary; // 副产物
-    private String secondaryId; // 副产物id
+    private String secondaryId;  // 副产物id
     private Double efficiency;  //绿票转化率
     private Integer isShow;   // 是否显示
     private Integer isUseValue;  //是否参与定价
-    private Integer isSpecial; //是否有特殊掉落
-    private Integer isOpen;  //副本当前是否开启
+    private Integer isSpecial;
     private Integer color;  // 关卡标注颜色
     private Double percentage;    //理智转化率
-    private String updateDate;  //更新时间
     private String spm;  //每分钟消耗理智
-    private Integer reason;  //关卡消耗理智
     private String activityName; //活动名称
     private Double efficiencyEx;  // 绿票转化率（ 理智小样
     private Double confidence;  // 样本置信度
-
+    private String updateDate;  //更新时间
 
     public Long getId() {
         return id;
@@ -149,12 +149,12 @@ public class PenguinData {
         this.mainLevel = mainLevel;
     }
 
-    public String getType() {
-        return type;
+    public String getItemType() {
+        return itemType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setItemType(String type) {
+        this.itemType = type;
     }
 
     public String getSecondary() {
@@ -181,6 +181,14 @@ public class PenguinData {
         this.efficiency = efficiency;
     }
 
+    public Integer getIsSpecial() {
+        return isSpecial;
+    }
+
+    public void setIsSpecial(Integer isSpecial) {
+        this.isSpecial = isSpecial;
+    }
+
     public Integer getIsShow() {
         return isShow;
     }
@@ -195,22 +203,6 @@ public class PenguinData {
 
     public void setIsUseValue(Integer isUseValue) {
         this.isUseValue = isUseValue;
-    }
-
-    public Integer getIsSpecial() {
-        return isSpecial;
-    }
-
-    public void setIsSpecial(Integer isSpecial) {
-        this.isSpecial = isSpecial;
-    }
-
-    public Integer getIsOpen() {
-        return isOpen;
-    }
-
-    public void setIsOpen(Integer isOpen) {
-        this.isOpen = isOpen;
     }
 
     public Integer getColor() {
@@ -245,14 +237,6 @@ public class PenguinData {
         this.spm = spm;
     }
 
-    public Integer getReason() {
-        return reason;
-    }
-
-    public void setReason(Integer reason) {
-        this.reason = reason;
-    }
-
     public String getActivityName() {
         return activityName;
     }
@@ -269,6 +253,8 @@ public class PenguinData {
         this.efficiencyEx = efficiencyEx;
     }
 
+
+
     public Double getConfidence() {
         return confidence;
     }
@@ -279,34 +265,31 @@ public class PenguinData {
 
     @Override
     public String toString() {
-        return "PenguinData{" +
+        return "StageResultData{" +
                 "id=" + id +
                 ", stageId='" + stageId + '\'' +
                 ", chapterName='" + chapterName + '\'' +
                 ", code=" + code +
-                ", times=" + times +
                 ", itemId='" + itemId + '\'' +
-                ", itemName='" + itemName + '\'' +
                 ", stageName='" + stageName + '\'' +
                 ", stageEnName='" + stageEnName + '\'' +
+                ", times=" + times +
                 ", probability=" + probability +
                 ", request=" + request +
                 ", expect=" + expect +
                 ", main='" + main + '\'' +
-                ", type='" + type + '\'' +
+                ", type='" + itemType + '\'' +
                 ", secondary='" + secondary + '\'' +
                 ", secondaryId='" + secondaryId + '\'' +
                 ", efficiency=" + efficiency +
-                ", isShow=" + isShow +
-                ", isValue=" + isUseValue +
-                ", isSpecial=" + isSpecial +
-                ", isOpen=" + isOpen +
                 ", color=" + color +
                 ", percentage=" + percentage +
                 ", updateDate='" + updateDate + '\'' +
                 ", spm='" + spm + '\'' +
-                ", reason=" + reason +
+                ", isUseValue=" + isUseValue +
+                ", isShow=" + isShow +
                 ", activityName='" + activityName + '\'' +
+
                 ", efficiencyEx=" + efficiencyEx +
                 ", confidence='" + confidence + '\'' +
                 '}';
