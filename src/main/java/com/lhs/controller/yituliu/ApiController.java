@@ -141,6 +141,4 @@ public class ApiController {
         List<List<StageResultApiVo>> byTimesApi = apiService.getDataByEffAndTimesOrderByEffDescAppApi(times, efficiency);
         return Result.success(byTimesApi);
     }
-
-
 }
