@@ -356,8 +356,8 @@ public class ItemServiceImpl implements ItemService {
                 {"charm_coin_3", "双日城大乐透", "18", "purple", "9"}, {"charm_coin_4", "翡翠庭院至臻", "100", "orange", "9"},
                 {"charm_r1", "标志物 - 20代金券", "15", "grey", "9"}, {"charm_r2", "标志物 - 40代金券", "30", "blue", "9"},
                 {"trap_oxygen_3", "沙兹专业镀膜装置", "45", "orange", "9"},
-//                		{"ap_supply_lt_010", "应急理智小样",  "0.000001", "purple"},
-//                 		{"randomMaterial_6", "罗德岛物资补给Ⅲ",  "0.000001", "green"},
+                		{"ap_supply_lt_010", "应急理智小样",  "0.000001", "purple", "11"},
+                 		{"randomMaterial_6", "罗德岛物资补给Ⅲ",  "14", "green", "11"},
         };
     }
 }

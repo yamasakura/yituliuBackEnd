@@ -109,7 +109,7 @@ public class ApiServiceImpl implements ApiService {
     public Page<StageResultData> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
-            Page<StageResultData> page = stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
+            Page<StageResultData> page = stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
                     main, 1, efficiency,times, pageable);
             if (page != null) {
                 return page;
@@ -137,7 +137,7 @@ public class ApiServiceImpl implements ApiService {
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-            Page<StageResultData> page = stageResultVoDao.findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(
+            Page<StageResultData> page = stageResultVoDao.findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
                     main, 1,50.0, 100, pageable);
             if (page != null) {
                 return page;

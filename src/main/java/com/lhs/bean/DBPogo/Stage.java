@@ -5,7 +5,6 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "stage")  //关卡的各类信息
@@ -15,15 +14,13 @@ public class Stage {
 	@ExcelProperty("关卡Id")
 	private String stageId;
 	@ExcelProperty("关卡名称cn")
-	private String stageName;
-	@ExcelProperty("关卡名称en")
-	private String stageEnName;
+	private String stageCode;
 	@ExcelProperty("关卡系列")
-	private String chapterName;
+	private String zoneId;
 	@ExcelProperty("系列编号")
-	private Integer chapterCode;
+	private Integer code;
 	@ExcelProperty("消耗理智")
-	private Double reason;
+	private Double apCost;
 	@ExcelProperty("主产物")
 	private String main;
 	@ExcelProperty("主产物等级")
@@ -32,14 +29,14 @@ public class Stage {
 	private String secondary;
 	@ExcelProperty("副产物Id")
 	private String secondaryId;
-	@ExcelProperty("spm")
+	@ExcelProperty("apm")
 	private Double spm;
 	@ExcelProperty("掉落大类")
 	private String itemType;
 	@ExcelProperty("是否开放")
 	private Integer isOpen;
 	@ExcelProperty("是否特殊掉落")
-	private Integer isSpecial;
+	private Integer stageState;
 	@ExcelProperty("是否用于定价")
 	private Integer isValue;
 	@ExcelProperty("是否显示")
@@ -48,23 +45,12 @@ public class Stage {
 	private String stageType;
 	@ExcelProperty("活动名称")
 	private String activityName;
-
-
-	public String getStageName() {
-		return stageName;
-	}
-
-	public void setStageName(String stageName) {
-		this.stageName = stageName;
-	}
-
-	public String getStageEnName() {
-		return stageEnName;
-	}
-
-	public void setStageEnName(String stageEnName) {
-		this.stageEnName = stageEnName;
-	}
+	@ExcelProperty("第X部")
+	private Integer part;
+	@ExcelProperty("第X部顺序")
+	private Integer partNo;
+	@ExcelProperty("理论通关时间")
+	private Integer minClearTime;
 
 	public String getStageId() {
 		return stageId;
@@ -74,28 +60,36 @@ public class Stage {
 		this.stageId = stageId;
 	}
 
-	public String getChapterName() {
-		return chapterName;
+	public String getStageCode() {
+		return stageCode;
 	}
 
-	public void setChapterName(String chapterName) {
-		this.chapterName = chapterName;
+	public void setStageCode(String stageCode) {
+		this.stageCode = stageCode;
 	}
 
-	public Integer getChapterCode() {
-		return chapterCode;
+	public String getZoneId() {
+		return zoneId;
 	}
 
-	public void setChapterCode(Integer chapterCode) {
-		this.chapterCode = chapterCode;
+	public void setZoneId(String zoneId) {
+		this.zoneId = zoneId;
 	}
 
-	public Double getReason() {
-		return reason;
+	public Integer getCode() {
+		return code;
 	}
 
-	public void setReason(Double reason) {
-		this.reason = reason;
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public Double getApCost() {
+		return apCost;
+	}
+
+	public void setApCost(Double apCost) {
+		this.apCost = apCost;
 	}
 
 	public String getMain() {
@@ -134,16 +128,16 @@ public class Stage {
 		return spm;
 	}
 
-	public void setSpm(Double spm) {
-		this.spm = spm;
+	public void setSpm(Double apm) {
+		this.spm = apm;
 	}
 
 	public String getItemType() {
 		return itemType;
 	}
 
-	public void setItemType(String type) {
-		this.itemType = type;
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
 	}
 
 	public Integer getIsOpen() {
@@ -154,12 +148,12 @@ public class Stage {
 		this.isOpen = isOpen;
 	}
 
-	public Integer getIsSpecial() {
-		return isSpecial;
+	public Integer getStageState() {
+		return stageState;
 	}
 
-	public void setIsSpecial(Integer isSpecial) {
-		this.isSpecial = isSpecial;
+	public void setStageState(Integer stageState) {
+		this.stageState = stageState;
 	}
 
 	public Integer getIsValue() {
@@ -194,26 +188,52 @@ public class Stage {
 		this.activityName = activityName;
 	}
 
+	public Integer getPart() {
+		return part;
+	}
+
+	public void setPart(Integer part) {
+		this.part = part;
+	}
+
+	public Integer getPartNo() {
+		return partNo;
+	}
+
+	public void setPartNo(Integer partNo) {
+		this.partNo = partNo;
+	}
+
+	public Integer getMinClearTime() {
+		return minClearTime;
+	}
+
+	public void setMinClearTime(Integer minClearTime) {
+		this.minClearTime = minClearTime;
+	}
+
 	@Override
 	public String toString() {
 		return "Stage{" +
-				"stageName='" + stageName + '\'' +
-				", stageEnName='" + stageEnName + '\'' +
-				", stageId='" + stageId + '\'' +
-				", chapterName='" + chapterName + '\'' +
-				", chapterCode=" + chapterCode +
-				", reason=" + reason +
+				"stageId='" + stageId + '\'' +
+				", stageCode='" + stageCode + '\'' +
+				", zoneId='" + zoneId + '\'' +
+				", code=" + code +
+				", apCost=" + apCost +
 				", main='" + main + '\'' +
+				", mainLevel=" + mainLevel +
 				", secondary='" + secondary + '\'' +
 				", secondaryId='" + secondaryId + '\'' +
-				", spm=" + spm +
-				", type='" + itemType + '\'' +
+				", apm=" + spm +
+				", itemType='" + itemType + '\'' +
 				", isOpen=" + isOpen +
-				", isSpecial=" + isSpecial +
+				", stageState=" + stageState +
 				", isValue=" + isValue +
 				", isShow=" + isShow +
 				", stageType='" + stageType + '\'' +
 				", activityName='" + activityName + '\'' +
+				", part=" + part +
+				", partNo=" + partNo +
 				'}';
 	}
 }

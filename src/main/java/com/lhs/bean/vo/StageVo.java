@@ -1,23 +1,21 @@
 package com.lhs.bean.vo;
 
-import java.io.Serializable;
-
 
 public class StageVo  {
 
-	private String stageName;
 
-	private String stageEnName;
 
 	private String stageId;
 
-	private String chapterName;
+	private String stageCode;
 
-	private Integer chapterCode;
+	private String zoneId;
 
-	private Double reason;
+	private Integer code;
 
-	private Double reasonEx;
+	private Double apCost;
+
+	private Double apCostEx;
 
 	private String main;
 
@@ -33,7 +31,7 @@ public class StageVo  {
 
 	private Integer isOpen;
 
-	private Integer isSpecial;
+	private Integer stageState;
 
 	private Integer isValue;
 
@@ -43,23 +41,9 @@ public class StageVo  {
 
 	private String activityName;
 
+	private Integer part;
 
-
-	public String getStageName() {
-		return stageName;
-	}
-
-	public void setStageName(String stageName) {
-		this.stageName = stageName;
-	}
-
-	public String getStageEnName() {
-		return stageEnName;
-	}
-
-	public void setStageEnName(String stageEnName) {
-		this.stageEnName = stageEnName;
-	}
+	private Integer partNo;
 
 	public String getStageId() {
 		return stageId;
@@ -69,28 +53,44 @@ public class StageVo  {
 		this.stageId = stageId;
 	}
 
-	public String getChapterName() {
-		return chapterName;
+	public String getStageCode() {
+		return stageCode;
 	}
 
-	public void setChapterName(String chapterName) {
-		this.chapterName = chapterName;
+	public void setStageCode(String stageCode) {
+		this.stageCode = stageCode;
 	}
 
-	public Integer getChapterCode() {
-		return chapterCode;
+	public String getZoneId() {
+		return zoneId;
 	}
 
-	public void setChapterCode(Integer chapterCode) {
-		this.chapterCode = chapterCode;
+	public void setZoneId(String zoneId) {
+		this.zoneId = zoneId;
 	}
 
-	public Double getReason() {
-		return reason;
+	public Integer getCode() {
+		return code;
 	}
 
-	public void setReason(Double reason) {
-		this.reason = reason;
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public Double getApCost() {
+		return apCost;
+	}
+
+	public void setApCost(Double apCost) {
+		this.apCost = apCost;
+	}
+
+	public Double getApCostEx() {
+		return apCostEx;
+	}
+
+	public void setApCostEx(Double apCostEx) {
+		this.apCostEx = apCostEx;
 	}
 
 	public String getMain() {
@@ -149,12 +149,12 @@ public class StageVo  {
 		this.isOpen = isOpen;
 	}
 
-	public Integer getIsSpecial() {
-		return isSpecial;
+	public Integer getStageState() {
+		return stageState;
 	}
 
-	public void setIsSpecial(Integer isSpecial) {
-		this.isSpecial = isSpecial;
+	public void setStageState(Integer stageState) {
+		this.stageState = stageState;
 	}
 
 	public Integer getIsValue() {
@@ -181,14 +181,6 @@ public class StageVo  {
 		this.stageType = stageType;
 	}
 
-	public Double getReasonEx() {
-		return reasonEx;
-	}
-
-	public void setReasonEx(Double reasonEx) {
-		this.reasonEx = reasonEx;
-	}
-
 	public String getActivityName() {
 		return activityName;
 	}
@@ -197,26 +189,45 @@ public class StageVo  {
 		this.activityName = activityName;
 	}
 
+	public Integer getPart() {
+		return part;
+	}
+
+	public void setPart(Integer part) {
+		this.part = part;
+	}
+
+	public Integer getPartNo() {
+		return partNo;
+	}
+
+	public void setPartNo(Integer partNo) {
+		this.partNo = partNo;
+	}
+
 	@Override
 	public String toString() {
 		return "StageVo{" +
-				"stageName='" + stageName + '\'' +
-				", stageEnName='" + stageEnName + '\'' +
-				", stageId='" + stageId + '\'' +
-				", chapterName='" + chapterName + '\'' +
-				", chapterCode=" + chapterCode +
-				", reason=" + reason +
-				", reasonEx=" + reasonEx +
+				"stageId='" + stageId + '\'' +
+				", stageCode='" + stageCode + '\'' +
+				", zoneId='" + zoneId + '\'' +
+				", code=" + code +
+				", apCost=" + apCost +
+				", apCostEx=" + apCostEx +
 				", main='" + main + '\'' +
+				", mainLevel=" + mainLevel +
 				", secondary='" + secondary + '\'' +
 				", secondaryId='" + secondaryId + '\'' +
-				", spm=" + spm +
-				", type='" + itemType + '\'' +
+				", apm=" + spm +
+				", itemType='" + itemType + '\'' +
 				", isOpen=" + isOpen +
-				", isSpecial=" + isSpecial +
+				", stageState=" + stageState +
 				", isValue=" + isValue +
 				", isShow=" + isShow +
 				", stageType='" + stageType + '\'' +
+				", activityName='" + activityName + '\'' +
+				", part=" + part +
+				", partNo=" + partNo +
 				'}';
 	}
 }

@@ -5,40 +5,30 @@ package com.lhs.bean.vo;
 
 public class StageResultVo {//返回前端的结果
 
-    private String updateDate;  // 更新时间
-    private String itemType;  // 物品类型
+    private String stageCode;   // 关卡名称
     private String itemId;  //物品id
-    private String stageId;  // 关卡id
-    private Integer times;  // 样本次数
-    private String stageName;   // 关卡名称
-    private Double probability;   // 概率
-    private Double request;   // 单项结果
-    private Double expect; // 期望理智
-    private String main; // 主产物
-    private String secondary; // 副产物
+    private String itemType;  // 物品类型
+    private Double apExpect; // 期望理智
     private String secondaryId; // 副产物id
-    private Double efficiency;  //绿票转化率
-    private Integer color;  // 关卡标注颜色
-    private Double percentage;    //理智转化率
+    private String secondary; // 副产物
+    private Double knockRating;   // 概率
+    private Double stageEfficiency;    //理智转化率
+    private Integer sampleSize;  // 样本次数
+    private Integer stageColor;  // 关卡标注颜色
     private String spm;  //每分钟消耗理智
     private String activityName; //活动名称
-    private Double efficiencyEx;  // 绿票转化率（ 理智小样
-    private Double confidence;  // 样本置信度
+    private Double sampleConfidence;  // 样本置信度
+    private String updateTime;  // 更新时间
+    private Integer stageState;
+    private Integer minClearTime;
 
-    public String getUpdateDate() {
-        return updateDate;
+
+    public String getStageCode() {
+        return stageCode;
     }
 
-    public void setUpdateDate(String updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
+    public void setStageCode(String stageCode) {
+        this.stageCode = stageCode;
     }
 
     public String getItemId() {
@@ -49,68 +39,20 @@ public class StageResultVo {//返回前端的结果
         this.itemId = itemId;
     }
 
-    public String getStageId() {
-        return stageId;
+    public String getItemType() {
+        return itemType;
     }
 
-    public void setStageId(String stageId) {
-        this.stageId = stageId;
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 
-    public Integer getTimes() {
-        return times;
+    public Double getApExpect() {
+        return apExpect;
     }
 
-    public void setTimes(Integer times) {
-        this.times = times;
-    }
-
-    public String getStageName() {
-        return stageName;
-    }
-
-    public void setStageName(String stageName) {
-        this.stageName = stageName;
-    }
-
-    public Double getProbability() {
-        return probability;
-    }
-
-    public void setProbability(Double probability) {
-        this.probability = probability;
-    }
-
-    public Double getRequest() {
-        return request;
-    }
-
-    public void setRequest(Double request) {
-        this.request = request;
-    }
-
-    public Double getExpect() {
-        return expect;
-    }
-
-    public void setExpect(Double expect) {
-        this.expect = expect;
-    }
-
-    public String getMain() {
-        return main;
-    }
-
-    public void setMain(String main) {
-        this.main = main;
-    }
-
-    public String getSecondary() {
-        return secondary;
-    }
-
-    public void setSecondary(String secondary) {
-        this.secondary = secondary;
+    public void setApExpect(Double apExpect) {
+        this.apExpect = apExpect;
     }
 
     public String getSecondaryId() {
@@ -121,28 +63,44 @@ public class StageResultVo {//返回前端的结果
         this.secondaryId = secondaryId;
     }
 
-    public Double getEfficiency() {
-        return efficiency;
+    public String getSecondary() {
+        return secondary;
     }
 
-    public void setEfficiency(Double efficiency) {
-        this.efficiency = efficiency;
+    public void setSecondary(String secondary) {
+        this.secondary = secondary;
     }
 
-    public Integer getColor() {
-        return color;
+    public Double getKnockRating() {
+        return knockRating;
     }
 
-    public void setColor(Integer color) {
-        this.color = color;
+    public void setKnockRating(Double knockRating) {
+        this.knockRating = knockRating;
     }
 
-    public Double getPercentage() {
-        return percentage;
+    public Double getStageEfficiency() {
+        return stageEfficiency;
     }
 
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
+    public void setStageEfficiency(Double stageEfficiency) {
+        this.stageEfficiency = stageEfficiency;
+    }
+
+    public Integer getSampleSize() {
+        return sampleSize;
+    }
+
+    public void setSampleSize(Integer sampleSize) {
+        this.sampleSize = sampleSize;
+    }
+
+    public Integer getStageColor() {
+        return stageColor;
+    }
+
+    public void setStageColor(Integer stageColor) {
+        this.stageColor = stageColor;
     }
 
     public String getSpm() {
@@ -161,44 +119,57 @@ public class StageResultVo {//返回前端的结果
         this.activityName = activityName;
     }
 
-    public Double getEfficiencyEx() {
-        return efficiencyEx;
+    public Double getSampleConfidence() {
+        return sampleConfidence;
     }
 
-    public void setEfficiencyEx(Double efficiencyEx) {
-        this.efficiencyEx = efficiencyEx;
+    public void setSampleConfidence(Double sampleConfidence) {
+        this.sampleConfidence = sampleConfidence;
     }
 
-    public Double getConfidence() {
-        return confidence;
+    public String getUpdateTime() {
+        return updateTime;
     }
 
-    public void setConfidence(Double confidence) {
-        this.confidence = confidence;
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getStageState() {
+        return stageState;
+    }
+
+    public void setStageState(Integer stageState) {
+        this.stageState = stageState;
+    }
+
+    public Integer getMinClearTime() {
+        return minClearTime;
+    }
+
+    public void setMinClearTime(Integer minClearTime) {
+        this.minClearTime = minClearTime;
     }
 
     @Override
     public String toString() {
         return "StageResultVo{" +
-                "updateData='" + updateDate + '\'' +
-                ", itemType='" + itemType + '\'' +
+                "stageCode='" + stageCode + '\'' +
                 ", itemId='" + itemId + '\'' +
-                ", stageId='" + stageId + '\'' +
-                ", times=" + times +
-                ", stageName='" + stageName + '\'' +
-                ", probability=" + probability +
-                ", request=" + request +
-                ", expect=" + expect +
-                ", main='" + main + '\'' +
-                ", secondary='" + secondary + '\'' +
+                ", itemType='" + itemType + '\'' +
+                ", apExpect=" + apExpect +
                 ", secondaryId='" + secondaryId + '\'' +
-                ", efficiency=" + efficiency +
-                ", color=" + color +
-                ", percentage=" + percentage +
-                ", spm='" + spm + '\'' +
+                ", secondary='" + secondary + '\'' +
+                ", knockRating=" + knockRating +
+                ", stageEfficiency=" + stageEfficiency +
+                ", sampleSize=" + sampleSize +
+                ", stageColor=" + stageColor +
+                ", apm='" + spm + '\'' +
                 ", activityName='" + activityName + '\'' +
-                ", efficiencyEx=" + efficiencyEx +
-                ", confidence=" + confidence +
+                ", sampleConfidence=" + sampleConfidence +
+                ", updateTime='" + updateTime + '\'' +
+                ", stageState=" + stageState +
+                ", minClearTime=" + minClearTime +
                 '}';
     }
 }

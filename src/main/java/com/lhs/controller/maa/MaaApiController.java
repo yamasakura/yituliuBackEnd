@@ -6,7 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.vo.MaaTagDataVo;
 import com.lhs.bean.pojo.MaaTagRequestVo;
+import com.lhs.common.exception.ServiceException;
+import com.lhs.common.util.ReadJsonUtil;
 import com.lhs.common.util.Result;
+import com.lhs.common.util.ResultCode;
 import com.lhs.service.MaaApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -64,6 +67,20 @@ public class MaaApiController {
         String result = maaApiService.getMaaTagDataStatistical();
         JSONObject jsonObject = JSONObject.parseObject(result);
         return Result.success(jsonObject);
+    }
+
+    @ApiOperation("查询干员专精或进阶材料")
+    @GetMapping("/itemCost/{name}")
+    public Result MaaTagResultStatistical(@PathVariable("name") String name) {
+
+        String json = ReadJsonUtil.readJson("//springboot1//bot//itemCost.json");
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        if(jsonObject.get(name)==null){
+            throw new ServiceException(ResultCode.DATA_NONE);
+        }
+        Object byName = jsonObject.get(name);
+
+        return Result.success(byName);
     }
 
 

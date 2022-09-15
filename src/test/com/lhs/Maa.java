@@ -1,6 +1,8 @@
 package com.lhs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.MaaTagData;
+import com.lhs.common.util.ReadJsonUtil;
 import com.lhs.dao.MaaTagResultDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,4 +38,16 @@ public class Maa {
 
 
     }
+
+    @Test
+    public  void itemCost() {
+        String json = ReadJsonUtil.readJson("C:\\Users\\李会山\\Desktop\\maa\\skillsMap.json");
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        Object byName = jsonObject.get("银灰");
+        JSONObject byNameJson = JSONObject.parseObject(byName.toString());
+        Object o = byNameJson.get("allSkill");
+        System.out.println(o);
+    }
+
+
 }

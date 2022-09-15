@@ -38,7 +38,7 @@ public class StageServiceImpl implements StageService {
         for (Stage stage : all) {
             StageVo stageVo = new StageVo();
             BeanUtils.copyProperties(stage,stageVo);
-            stageVo.setReasonEx(stage.getReason());
+            stageVo.setApCostEx(stage.getApCost());
             allStage.add(stageVo);
         }
         return allStage;
@@ -54,7 +54,10 @@ public class StageServiceImpl implements StageService {
 
                 @Override
                 public void invoke(Stage stage, AnalysisContext analysisContext) {
-                    if("1-7".equals(stage.getStageName()))  stage.setMainLevel(3);
+                    if("1-7".equals(stage.getStageCode()))  stage.setMainLevel(3);
+                    if(stage.getMinClearTime()>10000) stage.setSpm(stage.getApCost()/stage.getMinClearTime()*60000);
+                    System.out.println(stage.getApCost()/stage.getMinClearTime()*60000);
+//                    System.out.println(stage.getApm());
                     list.add(stage);
                 }
 

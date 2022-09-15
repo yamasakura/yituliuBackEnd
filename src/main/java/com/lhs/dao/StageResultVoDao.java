@@ -11,21 +11,19 @@ import java.util.List;
 public interface StageResultVoDao extends JpaRepository<StageResultData, Long> {
 
     //根据活动名称前缀如act12_side，效率降序
-    List<StageResultData> findByChapterNameAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String chapterName, Integer mainLevel);
+    List<StageResultData> findByZoneIdAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String chapterName, Integer mainLevel);
 
     //根据物品类别查询，效率降序
-    List<StageResultData> findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(String type, Integer isShow, Double efficiency, Integer times);
+    List<StageResultData> findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(String itemType, Integer isShow, Double efficiency, Integer times);
 
     //根据物品名称查询，期望理智升序
-    List<StageResultData> findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(String type, Integer isShow, Double expect, Integer times);
-
+    List<StageResultData> findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(String type, Integer isShow, Double expect, Integer times);
 
     //根据物品类别查询，关卡效率降序
-    Page<StageResultData> findByItemTypeAndIsShowAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(String type, Integer isShow, Double efficiency, Integer times, Pageable pageable);
+    Page<StageResultData> findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(String type, Integer isShow, Double efficiency, Integer times, Pageable pageable);
 
     //根据物品名称查询，期望理智升序
-    Page<StageResultData> findByItemNameAndIsShowAndExpectLessThanAndTimesGreaterThanOrderByExpectAsc(String itemName, Integer isShow, Double expect, Integer times, Pageable pageable);
-
+    Page<StageResultData> findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(String itemName, Integer isShow, Double expect, Integer times, Pageable pageable);
 
     //查询所有关卡信息
     List<StageResultData> findByItemTypeNotNullAndEfficiencyLessThanOrderByEfficiencyDesc(Double efficiency);

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.StageResultApiVo;
+import com.lhs.bean.vo.StageResultVo;
 import com.lhs.common.util.HttpRequestUtil;
 import com.lhs.common.util.Result;
 import com.lhs.common.util.SaveFile;
@@ -51,58 +52,6 @@ public class SaveController {
     private StageResultVoApiDao stageResultVoApiDao;
 
 
-    @ApiOperation("更新关卡数据")
-    @GetMapping("/update/{mini}")
-    public Result update(@PathVariable("mini") Integer mini) {
-        double start = System.currentTimeMillis();//记录程序启动时间
-        itemService.resetItemShopValue();
-
-        List<StageResultData> list = new ArrayList<>();
-
-        int countNum = 7;
-        for(int i=0;i<countNum;i++){
-            list =  stageResultCalcService.stageResult(i,countNum);
-        }
-
-        List<StageResultData> stageResultDataList = new ArrayList<>();
-        List<StageResultApiVo> stageResultApiVoList = new ArrayList<>();
-        for(StageResultData rawData:list ){
-            if(rawData.getIsSpecial()==1&&mini==1){
-                rawData.setEfficiency(rawData.getEfficiency()+0.045);
-            }
-//            System.out.println(rawData);
-            if ("1-7".equals((rawData.getStageName()))&&"30012".equals(rawData.getItemId())) {
-                rawData.setExpect(rawData.getExpect()/5);
-            } else {
-                rawData.setExpect(rawData.getExpect());
-            }
-
-            StageResultApiVo stageResultApiVo = new StageResultApiVo();
-            stageResultApiVo.setId(rawData.getId());
-            BeanUtils.copyProperties(rawData,stageResultApiVo);
-            if ("1-7".equals((rawData.getStageName()))&&"30012".equals(rawData.getItemId())) {
-                stageResultApiVo.setExpect(rawData.getExpect()/5);
-            } else {
-                stageResultApiVo.setExpect(rawData.getExpect());
-            }
-
-            if(rawData.getIsShow()==1){
-                stageResultApiVoList.add(stageResultApiVo);
-            }
-        }
-
-        stageResultCalcService.deleteAllInBatch();
-        stageResultVoApiDao.deleteAll();
-        stageResultCalcService.saveAll(list);
-        stageResultVoApiDao.saveAll(stageResultApiVoList);
-
-
-        double end = System.currentTimeMillis();
-        return Result.success("本次计算用时"+(end - start)/1000+"s");
-    }
-
-
-
     @ApiOperation("导出物品价值表")
     @GetMapping("/export/item/value")
     public void exportItemData(HttpServletResponse response) {
@@ -128,8 +77,8 @@ public class SaveController {
 
 
     @ApiOperation("保存关卡数据文件")
-    @GetMapping("/save/stage/result")
-    public Result saveStageData() {
+    @GetMapping("/save/stage/result/{stageState}")
+    public Result saveStageData(@PathVariable("stageState") Integer stageState) {
         String[] actNameList = new String[]{
                 "act_side20", "act_side19",
                 "act_side18", "act_side17", "act_side16", "act_side15", "act_side14", "act_side13",
@@ -137,30 +86,35 @@ public class SaveController {
                 "act_side7", "act_side6", "act_side5", "act_side4", "act_side3", "act_side0"
         };
 
-        List<List<StageResultData>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(500, 1.0);
-        List<List<StageResultData>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(100,50.0);
-        List<List<StageResultData>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList);
+        List<List<StageResultData>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(500, 1.0,stageState);
+        List<List<StageResultData>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(100,50.0,stageState);
+        List<List<StageResultData>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList,stageState);
 
-        String stageFileT3 = JSON.toJSONString(pageListT3);
-        SaveFile.save(frontEndFilePath,"stageT3.json",stageFileT3);
 
-        String stageFileT2 = JSON.toJSONString(pageListT2);
-        SaveFile.save(frontEndFilePath,"stageT2.json",stageFileT2);
+        List<List<StageResultVo>> pageListT3Vo = getStageResultVo(pageListT3);
+        String stageFileT3 = JSON.toJSONString(pageListT3Vo);
+        SaveFile.save(frontEndFilePath, "stageT3.json", stageFileT3);
 
-        String closedStage = JSON.toJSONString(closedStageList);
-        SaveFile.save(frontEndFilePath,"closedStage.json",closedStage);
+        List<List<StageResultVo>> pageListT2Vo = getStageResultVo(pageListT2);
+        String stageFileT2 = JSON.toJSONString(pageListT2Vo);
+        SaveFile.save(frontEndFilePath, "stageT2.json", stageFileT2);
+
+
+        List<List<StageResultVo>> closedStageListVo = getStageResultVo(closedStageList);
+        String closedStage = JSON.toJSONString(closedStageListVo);
+        SaveFile.save(frontEndFilePath, "closedStage.json", closedStage);
 
 
         HashMap<Object, Object> hashMap = new LinkedHashMap<>();
-        File fileT3 = new File(frontEndFilePath+"closedStage.json");
-        File fileT2 = new File(frontEndFilePath+"closedStage.json");
-        File fileClosed = new File(frontEndFilePath+"closedStage.json");
-        hashMap.put("t3文件",fileT3.exists());
-        hashMap.put("t3文件大小",fileT3.length());
-        hashMap.put("t2文件",fileT2.exists());
-        hashMap.put("t2文件大小",fileT2.length());
-        hashMap.put("closed文件",fileClosed.exists());
-        hashMap.put("closed文件大小",fileClosed.length());
+        File fileT3 = new File(frontEndFilePath + "closedStage.json");
+        File fileT2 = new File(frontEndFilePath + "closedStage.json");
+        File fileClosed = new File(frontEndFilePath + "closedStage.json");
+        hashMap.put("t3文件", fileT3.exists());
+        hashMap.put("t3文件大小", fileT3.length());
+        hashMap.put("t2文件", fileT2.exists());
+        hashMap.put("t2文件大小", fileT2.length());
+        hashMap.put("closed文件", fileClosed.exists());
+        hashMap.put("closed文件大小", fileClosed.length());
         return Result.success(hashMap);
     }
 
@@ -187,4 +141,20 @@ public class SaveController {
         return Result.success("成功更新");
     }
 
+
+    private static List<List<StageResultVo>> getStageResultVo(List<List<StageResultData>> list) {
+        List<List<StageResultVo>> stageResultVo = new ArrayList<>();
+        for (List<StageResultData> stageResultData : list) {
+            List<StageResultVo> stageResultList = new ArrayList<>();
+            for (StageResultData stageResultDatum : stageResultData) {
+                StageResultVo stageResult = new StageResultVo();
+
+                BeanUtils.copyProperties(stageResultDatum, stageResult);
+                stageResultList.add(stageResult);
+            }
+            stageResultVo.add(stageResultList);
+        }
+
+        return stageResultVo;
+    }
 }

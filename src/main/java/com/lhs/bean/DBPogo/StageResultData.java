@@ -10,16 +10,15 @@ public class StageResultData {
     @Id
     private Long id;
     private String stageId;  // 关卡id
-    private String chapterName; //章节名称
+    private String zoneId; //章节名称
     private Integer code;  //章节顺序
-    private Integer times;  // 样本次数
+    private Integer sampleSize;  // 样本次数
     private String itemId;   //产物ID
     private String itemName;    //产物名称
-    private String stageName;   // 关卡名称
-    private String stageEnName;
-    private Double probability;   // 概率
-    private Double request;   // 单项结果
-    private Double expect; // 期望理智
+    private String stageCode;   // 关卡名称
+    private Double knockRating;   // 概率
+    private Double result;   // 单项结果
+    private Double apExpect; // 期望理智
     private String main; // 主产物
     private Integer mainLevel; // 主产物
     private String itemType;  //材料类型
@@ -27,15 +26,18 @@ public class StageResultData {
     private String secondaryId;  // 副产物id
     private Double efficiency;  //绿票转化率
     private Integer isShow;   // 是否显示
-    private Integer isUseValue;  //是否参与定价
-    private Integer isSpecial;
-    private Integer color;  // 关卡标注颜色
-    private Double percentage;    //理智转化率
+    private Integer isValue;  //是否参与定价
+    private Integer stageState;  //关卡类型 0-普通，1-ss，2—故事集，3-理智小样
+    private Integer stageColor;  // 关卡标注颜色
+    private Double stageEfficiency;    //理智转化率
     private String spm;  //每分钟消耗理智
     private String activityName; //活动名称
     private Double efficiencyEx;  // 绿票转化率（ 理智小样
-    private Double confidence;  // 样本置信度
-    private String updateDate;  //更新时间
+    private Double sampleConfidence;  // 样本置信度
+    private String updateTime;  //更新时间
+    private Integer minClearTime;
+    private Integer part;
+    private Integer partNo;
 
     public Long getId() {
         return id;
@@ -53,12 +55,12 @@ public class StageResultData {
         this.stageId = stageId;
     }
 
-    public String getChapterName() {
-        return chapterName;
+    public String getZoneId() {
+        return zoneId;
     }
 
-    public void setChapterName(String chapterName) {
-        this.chapterName = chapterName;
+    public void setZoneId(String chapterName) {
+        this.zoneId = chapterName;
     }
 
     public Integer getCode() {
@@ -69,12 +71,12 @@ public class StageResultData {
         this.code = code;
     }
 
-    public Integer getTimes() {
-        return times;
+    public Integer getSampleSize() {
+        return sampleSize;
     }
 
-    public void setTimes(Integer times) {
-        this.times = times;
+    public void setSampleSize(Integer times) {
+        this.sampleSize = times;
     }
 
     public String getItemId() {
@@ -93,44 +95,37 @@ public class StageResultData {
         this.itemName = itemName;
     }
 
-    public String getStageName() {
-        return stageName;
+    public String getStageCode() {
+        return stageCode;
     }
 
-    public void setStageName(String stageName) {
-        this.stageName = stageName;
+    public void setStageCode(String stageName) {
+        this.stageCode = stageName;
     }
 
-    public String getStageEnName() {
-        return stageEnName;
+
+    public Double getKnockRating() {
+        return knockRating;
     }
 
-    public void setStageEnName(String stageEnName) {
-        this.stageEnName = stageEnName;
+    public void setKnockRating(Double probability) {
+        this.knockRating = probability;
     }
 
-    public Double getProbability() {
-        return probability;
+    public Double getResult() {
+        return result;
     }
 
-    public void setProbability(Double probability) {
-        this.probability = probability;
+    public void setResult(Double result) {
+        this.result = result;
     }
 
-    public Double getRequest() {
-        return request;
+    public Double getApExpect() {
+        return apExpect;
     }
 
-    public void setRequest(Double request) {
-        this.request = request;
-    }
-
-    public Double getExpect() {
-        return expect;
-    }
-
-    public void setExpect(Double expect) {
-        this.expect = expect;
+    public void setApExpect(Double expect) {
+        this.apExpect = expect;
     }
 
     public String getMain() {
@@ -153,8 +148,8 @@ public class StageResultData {
         return itemType;
     }
 
-    public void setItemType(String type) {
-        this.itemType = type;
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 
     public String getSecondary() {
@@ -181,14 +176,6 @@ public class StageResultData {
         this.efficiency = efficiency;
     }
 
-    public Integer getIsSpecial() {
-        return isSpecial;
-    }
-
-    public void setIsSpecial(Integer isSpecial) {
-        this.isSpecial = isSpecial;
-    }
-
     public Integer getIsShow() {
         return isShow;
     }
@@ -197,36 +184,36 @@ public class StageResultData {
         this.isShow = isShow;
     }
 
-    public Integer getIsUseValue() {
-        return isUseValue;
+    public Integer getIsValue() {
+        return isValue;
     }
 
-    public void setIsUseValue(Integer isUseValue) {
-        this.isUseValue = isUseValue;
+    public void setIsValue(Integer isUseValue) {
+        this.isValue = isUseValue;
     }
 
-    public Integer getColor() {
-        return color;
+    public Integer getStageState() {
+        return stageState;
     }
 
-    public void setColor(Integer color) {
-        this.color = color;
+    public void setStageState(Integer isSpecial) {
+        this.stageState = isSpecial;
     }
 
-    public Double getPercentage() {
-        return percentage;
+    public Integer getStageColor() {
+        return stageColor;
     }
 
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
+    public void setStageColor(Integer color) {
+        this.stageColor = color;
     }
 
-    public String getUpdateDate() {
-        return updateDate;
+    public Double getStageEfficiency() {
+        return stageEfficiency;
     }
 
-    public void setUpdateDate(String updateDate) {
-        this.updateDate = updateDate;
+    public void setStageEfficiency(Double percentage) {
+        this.stageEfficiency = percentage;
     }
 
     public String getSpm() {
@@ -253,14 +240,44 @@ public class StageResultData {
         this.efficiencyEx = efficiencyEx;
     }
 
-
-
-    public Double getConfidence() {
-        return confidence;
+    public Double getSampleConfidence() {
+        return sampleConfidence;
     }
 
-    public void setConfidence(Double confidence) {
-        this.confidence = confidence;
+    public void setSampleConfidence(Double confidence) {
+        this.sampleConfidence = confidence;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateDate) {
+        this.updateTime = updateDate;
+    }
+
+    public Integer getMinClearTime() {
+        return minClearTime;
+    }
+
+    public void setMinClearTime(Integer minClearTime) {
+        this.minClearTime = minClearTime;
+    }
+
+    public Integer getPart() {
+        return part;
+    }
+
+    public void setPart(Integer part) {
+        this.part = part;
+    }
+
+    public Integer getPartNo() {
+        return partNo;
+    }
+
+    public void setPartNo(Integer partNo) {
+        this.partNo = partNo;
     }
 
     @Override
@@ -268,30 +285,34 @@ public class StageResultData {
         return "StageResultData{" +
                 "id=" + id +
                 ", stageId='" + stageId + '\'' +
-                ", chapterName='" + chapterName + '\'' +
+                ", chapterName='" + zoneId + '\'' +
                 ", code=" + code +
+                ", times=" + sampleSize +
                 ", itemId='" + itemId + '\'' +
-                ", stageName='" + stageName + '\'' +
-                ", stageEnName='" + stageEnName + '\'' +
-                ", times=" + times +
-                ", probability=" + probability +
-                ", request=" + request +
-                ", expect=" + expect +
+                ", itemName='" + itemName + '\'' +
+                ", stageName='" + stageCode + '\'' +
+
+                ", probability=" + knockRating +
+                ", result=" + result +
+                ", expect=" + apExpect +
                 ", main='" + main + '\'' +
-                ", type='" + itemType + '\'' +
+                ", mainLevel=" + mainLevel +
+                ", itemType='" + itemType + '\'' +
                 ", secondary='" + secondary + '\'' +
                 ", secondaryId='" + secondaryId + '\'' +
                 ", efficiency=" + efficiency +
-                ", color=" + color +
-                ", percentage=" + percentage +
-                ", updateDate='" + updateDate + '\'' +
-                ", spm='" + spm + '\'' +
-                ", isUseValue=" + isUseValue +
                 ", isShow=" + isShow +
+                ", isUseValue=" + isValue +
+                ", isSpecial=" + stageState +
+                ", color=" + stageColor +
+                ", percentage=" + stageEfficiency +
+                ", spm='" + spm + '\'' +
                 ", activityName='" + activityName + '\'' +
-
                 ", efficiencyEx=" + efficiencyEx +
-                ", confidence='" + confidence + '\'' +
+                ", confidence=" + sampleConfidence +
+                ", updateDate='" + updateTime + '\'' +
+                ", part=" + part +
+                ", partNo=" + partNo +
                 '}';
     }
 }
