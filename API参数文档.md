@@ -11,25 +11,27 @@ url:  /api/find/stage/t3/{times}/{efficiency}
  ```
  ```
  类型String    名称 stageId  // 关卡id
- 类型Integer   名称 times  // 样本次数
+ 类型Integer   名称 sampleSize  // 样本次数
  类型String    名称 itemId   //产物ID
  类型String    名称 itemName    //产物名称
- 类型String    名称 stageName   // 关卡名称
- 类型Double    名称 probability   // 主产物概率
- 类型Double    名称 expect // 期望理智
+ 类型String    名称 stageCode   // 关卡名称
+ 类型Double    名称 knockRating   // 主产物概率
+ 类型Double    名称 apExpect // 期望理智
  类型String    名称 main // 主产物
- 类型String    名称 itemType  //材料类型
+ 类型String    名称 itemSeries  //材料系别
  类型String    名称 secondary // 副产物
  类型String    名称 secondaryId // 副产物id
  类型Double    名称 efficiency  //绿票转化率
- 类型Integer   名称 color  // 关卡标注颜色 橙色:4 ,紫色:3 ,蓝色:2 ,绿色:1   红色:-1
- 类型Double    名称 percentage    //理智转化率
- 类型String    名称 updateDate  //更新时间
+ 类型Integer   名称 color  // 关卡标注颜色 橙色(双最优):4，紫色(综合效率最优):3，蓝色(普通关卡):2，绿色(期望最优):1，红色(活动):-1
+ 类型Double    名称 stageEfficiency    //理智转化率
+ 类型String    名称 updateTime  //更新时间
  类型String    名称 spm  //每分钟消耗理智
  类型String    名称 activityName //活动名称
  类型Double    名称 efficiencyEx  // 绿票转化率（ 理智小样
- 类型Double    名称 confidence  // 样本置信度
- ```
+ 类型Double    名称 sampleConfidence  // 样本置信度
+ 类型Double    名称 minClearTime  // 理论最速时间
+ 类型Double    名称 stageState  // 关卡状态 无、故事集、ss、理智小样
+ ``` 
 
 
 ### 获取绿材料最优图(JsonArray)
