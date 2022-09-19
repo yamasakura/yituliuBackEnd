@@ -44,7 +44,6 @@ public class MaaApiController {
         List<MaaTagData> maaTagDataList = maaApiService.selectDataLimit10();
         List<MaaTagDataVo> maaTagDataVoList = new ArrayList<>();
         for(MaaTagData maaTagData:maaTagDataList){
-            JSONArray jsonArray  = JSONArray.parseArray(maaTagData.getTagResult());
             MaaTagDataVo maaTagDataVO = new MaaTagDataVo();
             maaTagDataVO.setTag1(maaTagData.getTag1());
             maaTagDataVO.setTag2(maaTagData.getTag2());
@@ -52,8 +51,8 @@ public class MaaApiController {
             maaTagDataVO.setTag4(maaTagData.getTag4());
             maaTagDataVO.setTag5(maaTagData.getTag5());
             maaTagDataVO.setLevel(maaTagData.getLevel());
-            maaTagDataVO.setTagResult(jsonArray);
             maaTagDataVO.setServer(maaTagData.getServer());
+            maaTagDataVO.setUid(maaTagData.getUid());
             maaTagDataVO.setCreateTime(maaTagData.getCreateTime());
             maaTagDataVoList.add(maaTagDataVO);
         }

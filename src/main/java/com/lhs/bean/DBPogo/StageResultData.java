@@ -4,7 +4,7 @@ package com.lhs.bean.DBPogo;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "stage_result_data")  //关卡效率返回前端时用的实体类
+@Table(name = "stage_result_data")
 public class StageResultData {
 
     @Id
@@ -285,16 +285,15 @@ public class StageResultData {
         return "StageResultData{" +
                 "id=" + id +
                 ", stageId='" + stageId + '\'' +
-                ", chapterName='" + zoneId + '\'' +
+                ", zoneId='" + zoneId + '\'' +
                 ", code=" + code +
-                ", times=" + sampleSize +
+                ", sampleSize=" + sampleSize +
                 ", itemId='" + itemId + '\'' +
                 ", itemName='" + itemName + '\'' +
-                ", stageName='" + stageCode + '\'' +
-
-                ", probability=" + knockRating +
+                ", stageCode='" + stageCode + '\'' +
+                ", knockRating=" + knockRating +
                 ", result=" + result +
-                ", expect=" + apExpect +
+                ", apExpect=" + apExpect +
                 ", main='" + main + '\'' +
                 ", mainLevel=" + mainLevel +
                 ", itemType='" + itemType + '\'' +
@@ -302,15 +301,16 @@ public class StageResultData {
                 ", secondaryId='" + secondaryId + '\'' +
                 ", efficiency=" + efficiency +
                 ", isShow=" + isShow +
-                ", isUseValue=" + isValue +
-                ", isSpecial=" + stageState +
-                ", color=" + stageColor +
-                ", percentage=" + stageEfficiency +
+                ", isValue=" + isValue +
+                ", stageState=" + stageState +
+                ", stageColor=" + stageColor +
+                ", stageEfficiency=" + stageEfficiency +
                 ", spm='" + spm + '\'' +
                 ", activityName='" + activityName + '\'' +
                 ", efficiencyEx=" + efficiencyEx +
-                ", confidence=" + sampleConfidence +
-                ", updateDate='" + updateTime + '\'' +
+                ", sampleConfidence=" + sampleConfidence +
+                ", updateTime='" + updateTime + '\'' +
+                ", minClearTime=" + minClearTime +
                 ", part=" + part +
                 ", partNo=" + partNo +
                 '}';

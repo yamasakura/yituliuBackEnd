@@ -89,7 +89,6 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
                 }
             }
 
-
 //            log.info("当前标准是："+standard);
             //将绿票绝对效率转化为理智转化率100%
             for (StageResultData stageResultData : stageResultByTypeListCopy) {
@@ -101,7 +100,9 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             for (int i = stageColorIndex; i < stageResultByTypeListCopy.size(); i++) {
                 if (stageResultByTypeListCopy.get(stageColorIndex).getApExpect() > stageResultByTypeListCopy.get(i).getApExpect()) {
 //           //如果最高和次高的期望理智差距不到1,则不进行索引的更改
-                    stageColorIndex = i;
+//                    if (stageResultByTypeListCopy.get(stageColorIndex).getApExpect() - stageResultByTypeListCopy.get(i).getApExpect() > 1) {
+                        stageColorIndex = i;
+//                    }
                 }
             }
 
@@ -238,31 +239,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             List<StageResultData> stageResultList = allStageResultHashMap.get(itemName);
             stageResultList.sort(comparing(StageResultData::getEfficiency).reversed());  //按关卡效率倒序排序
 
-
-//            int min = 0;  // 期望理智最低的关卡的索引
-//       //通过判断期望理智给关卡赋予一个值,前端判断后渲染颜色   橙色:4 ,紫色:3 ,蓝色:2 ,绿色:1   红色:-1(这里不会用到)
-//
-//            for (int j = 0; j < stageResultList.size(); j++) {
-//                if (stageResultList.get(min).getApExpect() > stageResultList.get(j).getApExpect()) {
-//           //如果最高和次高的期望理智差距不到1,则不进行索引的更改
-//                    if (stageResultList.get(min).getApExpect() - stageResultList.get(j).getApExpect() > 1) {
-//                        min = j;
-//                    }
-//                }
-//            }
-//
-//           //  索引是0,该关卡效率第一 ,期望理智也是最底
-//            if (min == 0) {
-//                stageResultList.get(0).setStageColor(4);
-//                // 索引非0,该关卡效率第一 ,期望理智也是最底
-//            } else {
-//                stageResultList.get(0).setStageColor(3);
-//                stageResultList.get(min).setStageColor(1);
-//            }
-
-
-//   判断是否用于材料定价,是则加入集合中
-
+//   判断是否用于材料定价，取当前材料最高效率
             double maxEfficiency = 1.25;
             for (StageResultData stageResultData : stageResultList) {
                 if (stageResultData.getIsValue() == 1) {

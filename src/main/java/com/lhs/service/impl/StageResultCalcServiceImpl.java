@@ -142,7 +142,6 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                         sumEx = 0.0;
                         confidenceInterval = 0.0;
                         differentStageIdIndex = stageResultDataList.size();
-
                     }
                 }
 
@@ -181,14 +180,16 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
                 //计算样本置信度
 
+
                     if(!"1".equals(stageInfoList.get(stageInfoListIndex).getSecondary())&&itemList.get(itemListIndex).getItemName().equals(stageInfoList.get(stageInfoListIndex).getSecondary())){
                         confidenceInterval =stageResultSetInfoService.getConfidenceInterval
                                 (penguinDataTimes, stageInfoList.get(stageInfoListIndex), itemValueMap.get(stageInfoList.get(stageInfoListIndex).getSecondary()), probability, quantileTableList);
-                    }else if(!"0".equals(stageInfoList.get(stageInfoListIndex).getMain())&&itemList.get(itemListIndex).getItemName().equals(stageInfoList.get(stageInfoListIndex).getMain())){
-                        confidenceInterval =stageResultSetInfoService.getConfidenceInterval
-                                (penguinDataTimes, stageInfoList.get(stageInfoListIndex), itemValueMap.get(stageInfoList.get(stageInfoListIndex).getMain()), probability, quantileTableList);
+                    }else{
+                        if(!"0".equals(stageInfoList.get(stageInfoListIndex).getMain())&&itemList.get(itemListIndex).getItemName().equals(stageInfoList.get(stageInfoListIndex).getMain())){
+                            confidenceInterval =stageResultSetInfoService.getConfidenceInterval
+                                    (penguinDataTimes, stageInfoList.get(stageInfoListIndex), itemValueMap.get(stageInfoList.get(stageInfoListIndex).getMain()), probability, quantileTableList);
+                        }
                     }
-
 
 
                 //理智小样单独计算
@@ -259,6 +260,9 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 stageResultData.setActivityName(stageInfoList.get(stageInfoListIndex).getActivityName());
                 stageResultData.setPart(stageInfoList.get(stageInfoListIndex).getPart());
                 stageResultData.setPartNo(stageInfoList.get(stageInfoListIndex).getPartNo());
+                stageResultDataList.add(stageResultData);
+
+
                 for (int k = differentStageIdIndex; k < stageResultDataList.size(); k++) {
                     stageResultDataList.get(k).setEfficiency(efficiency);
                     stageResultDataList.get(k).setEfficiencyEx(efficiencyEx);
@@ -266,7 +270,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 }
 
 
-                stageResultDataList.add(stageResultData);
+
 //                System.out.println(stageResultData);
             }
 

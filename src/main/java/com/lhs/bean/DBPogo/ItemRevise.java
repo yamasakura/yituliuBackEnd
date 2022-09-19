@@ -17,8 +17,6 @@ public class ItemRevise {
 
     private String itemName; //物品名称
 
-    private String itemEnName;
-
     private Double itemValue; //物品价值
 
     private String type; //物品稀有度
@@ -48,16 +46,6 @@ public class ItemRevise {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
-    }
-
-
-    public String getItemEnName() {
-        return itemEnName;
-    }
-
-
-    public void setItemEnName(String itemEnName) {
-        this.itemEnName = itemEnName;
     }
 
 
@@ -94,7 +82,6 @@ public class ItemRevise {
                 "id=" + id +
                 ", itemId='" + itemId + '\'' +
                 ", itemName='" + itemName + '\'' +
-                ", itemEnName='" + itemEnName + '\'' +
                 ", itemValue=" + itemValue +
                 ", type='" + type + '\'' +
                 '}';

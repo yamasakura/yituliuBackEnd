@@ -13,9 +13,7 @@ public class Item {
 	private String itemId;  //物品id
 	
 	private String itemName; //物品名称
-	
-	private String itemEnName;
-	
+
 	private Double itemValue; //物品价值
 	
 	private String type; //物品稀有度
@@ -40,14 +38,6 @@ public class Item {
 		this.itemName = itemName;
 	}
 
-	public String getItemEnName() {
-		return itemEnName;
-	}
-
-	public void setItemEnName(String itemEnName) {
-		this.itemEnName = itemEnName;
-	}
-
 	public Double getItemValue() {
 		return itemValue;
 	}
@@ -64,29 +54,13 @@ public class Item {
 		this.type = type;
 	}
 
-
-
-
-
-
-	public Item(String itemId, String itemName, String itemEnName, Double itemValue, String type) {
-		super();
-		this.itemId = itemId;
-		this.itemName = itemName;
-		this.itemEnName = itemEnName;
-		this.itemValue = itemValue;
-		this.type = type;
-	}
-
-
-
 	@Override
 	public String toString() {
-		return "Item [itemId=" + itemId + ", itemName=" + itemName + ", itemEnName=" + itemEnName + ", itemValue="
-				+ itemValue + ", type=" + type + "]";
+		return "Item{" +
+				"itemId='" + itemId + '\'' +
+				", itemName='" + itemName + '\'' +
+				", itemValue=" + itemValue +
+				", type='" + type + '\'' +
+				'}';
 	}
-
-
-
-
 }

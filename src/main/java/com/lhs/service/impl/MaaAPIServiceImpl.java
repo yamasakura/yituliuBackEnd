@@ -45,6 +45,9 @@ public class MaaAPIServiceImpl implements MaaApiService {
         maaTagData.setTag5(tags.get(4));
         maaTagData.setLevel(level);
         maaTagData.setServer(maaTagRequestVo.getServer());
+        if(maaTagRequestVo.getUuid()!=null){
+            maaTagData.setUid(maaTagRequestVo.getUuid());
+        }
         Date date = new Date();
         Random random = new Random();
         String id = String.valueOf(date.getTime()) + random.nextInt(1000);

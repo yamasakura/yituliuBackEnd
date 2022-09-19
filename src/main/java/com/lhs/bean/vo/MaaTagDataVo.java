@@ -10,6 +10,7 @@ import java.util.Date;
 //maa返回前端用的实体类
 public class MaaTagDataVo {
 
+    private String uid;
     private String tag1;
     private String tag2;
     private String tag3;
@@ -19,9 +20,15 @@ public class MaaTagDataVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    private JSONArray tagResult;
     private String server;
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getTag1() {
         return tag1;
@@ -79,13 +86,6 @@ public class MaaTagDataVo {
         this.createTime = createTime;
     }
 
-    public JSONArray getTagResult() {
-        return tagResult;
-    }
-
-    public void setTagResult(JSONArray tagResult) {
-        this.tagResult = tagResult;
-    }
 
     public String getServer() {
         return server;
