@@ -38,3 +38,4 @@ build/
 /src/main/resources/backups/
 /src/main/resources/penguin/
 /src/main/resources/application.properties
+/src/main/resources/schedule/

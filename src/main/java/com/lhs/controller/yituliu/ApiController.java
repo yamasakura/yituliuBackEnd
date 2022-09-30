@@ -6,6 +6,7 @@ import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.RecResultVo;
+import com.lhs.bean.vo.StageOrundumVo;
 import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.common.util.Result;
 import com.lhs.service.*;
@@ -36,17 +37,16 @@ public class ApiController {
     private CharTagDataService charTagDataService;
 
     @Autowired
+    private StageResultSetInfoService stageResultSetInfoService;
+
+    @Autowired
     private ItemService itemService;
 
 
     @ApiOperation("获取蓝材料最优图")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500"),
-            @ApiImplicitParam(name = "efficiency", value = "效率最小值", required = true, paramType = "path", defaultValue = "1.0")})
-    @GetMapping("/find/stage/t3/{times}/{efficiency}")
-
-    public Result findByTypeAndEndsOrderByEfficiencyDesc(@PathVariable("times") Integer times,
-                                                         @PathVariable("efficiency") Double efficiency) {
+    @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500")
+    @GetMapping("/find/stage/t3/{times}")
+    public Result findByTypeAndEndsOrderByEfficiencyDesc(@PathVariable("times") Integer times) {
         String stageFileT3 = apiService.readStageFileT3();
         JSONArray jsonArray = JSONArray.parseArray(stageFileT3);
         return Result.success(jsonArray);
@@ -61,6 +61,15 @@ public class ApiController {
         return Result.success(jsonArray);
     }
 
+    @ApiOperation("获取搓玉最优图")
+    @GetMapping("/find/stage/orundum")
+    public Result findByStageCode() {
+        String stageFileOrundum = apiService.readStageFileOrundum();
+        JSONArray jsonArray = JSONArray.parseArray(stageFileOrundum);
+//        String[] stageCode  =new String[]{"main_01-07","act13side_06_rep","act13side_07_rep"};
+//        List<StageOrundumVo> list = stageResultSetInfoService.setOrundumEfficiency();
+        return Result.success(jsonArray);
+    }
 
 
 

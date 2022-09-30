@@ -4,6 +4,7 @@ package com.lhs.controller.yituliu;
 import com.alibaba.fastjson.JSON;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.StoreCostPer;
+import com.lhs.bean.vo.StageOrundumVo;
 import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.bean.vo.StageResultVo;
 import com.lhs.common.util.HttpRequestUtil;
@@ -89,7 +90,7 @@ public class SaveController {
         List<List<StageResultData>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(500, 1.0,stageState);
         List<List<StageResultData>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(100,50.0,stageState);
         List<List<StageResultData>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList,stageState);
-
+        List<StageOrundumVo> stageOrundumList = stageResultSetInfoService.setOrundumEfficiency();
 
         List<List<StageResultVo>> pageListT3Vo = getStageResultVo(pageListT3);
         String stageFileT3 = JSON.toJSONString(pageListT3Vo);
@@ -105,16 +106,23 @@ public class SaveController {
         SaveFile.save(frontEndFilePath, "closedStage.json", closedStage);
 
 
+        String stageOrundum = JSON.toJSONString(stageOrundumList);
+        SaveFile.save(frontEndFilePath, "stageOrundum.json", stageOrundum);
+
+
         HashMap<Object, Object> hashMap = new LinkedHashMap<>();
         File fileT3 = new File(frontEndFilePath + "closedStage.json");
         File fileT2 = new File(frontEndFilePath + "closedStage.json");
         File fileClosed = new File(frontEndFilePath + "closedStage.json");
+        File fileOrundum = new File(frontEndFilePath + "stageOrundum.json");
         hashMap.put("t3文件", fileT3.exists());
         hashMap.put("t3文件大小", fileT3.length());
         hashMap.put("t2文件", fileT2.exists());
         hashMap.put("t2文件大小", fileT2.length());
         hashMap.put("closed文件", fileClosed.exists());
         hashMap.put("closed文件大小", fileClosed.length());
+        hashMap.put("Orundum文件", fileOrundum.exists());
+        hashMap.put("Orundum文件大小", fileOrundum.length());
         return Result.success(hashMap);
     }
 
@@ -154,7 +162,6 @@ public class SaveController {
             }
             stageResultVo.add(stageResultList);
         }
-
         return stageResultVo;
     }
 }

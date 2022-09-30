@@ -8,13 +8,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface StageResultVoDao extends JpaRepository<StageResultData, Long> {
+public interface StageResultDataDao extends JpaRepository<StageResultData, Long> {
 
     //根据活动名称前缀如act12_side，效率降序
     List<StageResultData> findByZoneIdAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String chapterName, Integer mainLevel);
 
     //根据物品类别查询，效率降序
     List<StageResultData> findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(String itemType, Integer isShow, Double efficiency, Integer times);
+
+    //根据物品类别查询，效率降序
+    List<StageResultData> findByStageId(String stageId);
 
     //根据物品名称查询，期望理智升序
     List<StageResultData> findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(String type, Integer isShow, Double expect, Integer times);

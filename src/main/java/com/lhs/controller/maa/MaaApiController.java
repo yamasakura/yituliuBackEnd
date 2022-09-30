@@ -14,9 +14,12 @@ import com.lhs.service.MaaApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -28,6 +31,8 @@ public class MaaApiController {
     @Autowired
     private MaaApiService maaApiService;
 
+    @Value("${frontEnd.buildingSchedule}")
+    private String buildingSchedulePath;
 
 
     @ApiOperation("MAA公招记录")
@@ -81,6 +86,28 @@ public class MaaApiController {
 
         return Result.success(byName);
     }
+
+    @ApiOperation("生成基建排班协议文件")
+    @PostMapping("/building/schedule/save")
+    public Result MaaBuildingJsonSave( @RequestBody String scheduleJson) {
+
+        Long uid = maaApiService.saveScheduleJson(scheduleJson);
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("uid",uid);
+        hashMap.put("message","生成成功");
+        return Result.success(hashMap);
+    }
+
+
+    @ApiOperation("导出基建排班协议文件")
+    @GetMapping("/building/schedule/export")
+    public void MaaBuildingJsonExport(HttpServletResponse response,@RequestParam Long uid) {
+         System.out.println(uid);
+         maaApiService.exportScheduleJson(response,uid);
+
+    }
+
+
 
 
 }

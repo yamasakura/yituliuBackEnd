@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -31,7 +32,7 @@ public class ApiServiceImpl implements ApiService {
     private VisitsDao visitsDao;
 
     @Autowired
-    private StageResultVoDao stageResultVoDao;
+    private StageResultDataDao stageResultDataDao;
 
     @Autowired
     private StageResultVoApiDao stageResultVoApiDao;
@@ -47,7 +48,7 @@ public class ApiServiceImpl implements ApiService {
      */
     @Override
     public List<StageResultData> findByMainNotNull() {
-        List<StageResultData> list = stageResultVoDao.findByItemTypeNotNullAndEfficiencyLessThanOrderByEfficiencyDesc(1.9);
+        List<StageResultData> list = stageResultDataDao.findByItemTypeNotNullAndEfficiencyLessThanOrderByEfficiencyDesc(1.9);
           if(list==null){
               throw  new ServiceException(ResultCode.DATA_NONE);
           }
@@ -82,6 +83,19 @@ public class ApiServiceImpl implements ApiService {
     }
 
     /**
+     * 读取搓玉最优关卡文件
+     * @return
+     */
+    @Override
+    public String readStageFileOrundum() {
+        String jsonFile = ReadJsonUtil.readJson(frontEndFilePath+"stageOrundum.json");  //从保存文件读取
+        if(jsonFile==null){
+            throw new ServiceException(ResultCode.DATA_NONE);
+        }
+        return jsonFile;
+    }
+
+    /**
      * 读取已关闭活动的json
      * @return
      */
@@ -109,7 +123,7 @@ public class ApiServiceImpl implements ApiService {
     public Page<StageResultData> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
-            Page<StageResultData> page = stageResultVoDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
+            Page<StageResultData> page = stageResultDataDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
                     main, 1, efficiency,times, pageable);
             if (page != null) {
                 return page;
@@ -137,7 +151,7 @@ public class ApiServiceImpl implements ApiService {
         if (main != null && pageNum != null && pageSize != null) {
             Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-            Page<StageResultData> page = stageResultVoDao.findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
+            Page<StageResultData> page = stageResultDataDao.findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
                     main, 1,50.0, 100, pageable);
             if (page != null) {
                 return page;
@@ -222,6 +236,18 @@ public class ApiServiceImpl implements ApiService {
         return visitVo;
     }
 
+    @Override
+    public void itemCostPlan(HashMap<String, Integer> itemCostMap) {
+         for(String itemName : itemCostMap.keySet()){
+             Integer itemCost = itemCostMap.get(itemName);
+
+
+
+         }
+
+
+    }
+
     /**
      *  这个是给别人的api可以不用管
      */
@@ -269,10 +295,16 @@ public class ApiServiceImpl implements ApiService {
         } else {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
-
     }
 
+   private static String planCal(HashMap<String, Integer> itemT4,
+                                 HashMap<String, Integer> itemT3,
+                                StageResultData stageResultDataEfficient,
+                                StageResultData stageResultDataQuick){
 
+
+     return null;
+   }
 
 
 }

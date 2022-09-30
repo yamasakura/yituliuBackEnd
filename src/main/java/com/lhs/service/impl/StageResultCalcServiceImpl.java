@@ -12,7 +12,7 @@ import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.ReadJsonUtil;
 import com.lhs.common.util.ResultCode;
 import com.lhs.dao.QuantileTableDao;
-import com.lhs.dao.StageResultVoDao;
+import com.lhs.dao.StageResultDataDao;
 
 import com.lhs.service.ItemService;
 import com.lhs.service.StageResultSetInfoService;
@@ -34,7 +34,7 @@ import static java.util.Comparator.comparing;
 public class StageResultCalcServiceImpl implements StageResultCalcService {
 
     @Autowired
-    private StageResultVoDao stageResultVoDao;
+    private StageResultDataDao stageResultDataDao;
 
     @Autowired
     private StageService stageService;
@@ -55,7 +55,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
     @Override
     public void saveAll(List<StageResultData> stageResultData) {
         if (stageResultData != null) {
-            stageResultVoDao.saveAll(stageResultData);
+            stageResultDataDao.saveAll(stageResultData);
         } else {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
@@ -64,7 +64,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
     @Override
     public void deleteAllInBatch() {
-        stageResultVoDao.deleteAllInBatch();
+        stageResultDataDao.deleteAllInBatch();
     }
 
     /**

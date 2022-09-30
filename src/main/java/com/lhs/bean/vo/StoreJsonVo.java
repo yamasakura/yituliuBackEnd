@@ -8,6 +8,7 @@ public class StoreJsonVo {
     private Double itemPPR;
     private Integer itemStock;
     private Integer itemArea;
+    private String itemId;
 
     public String getItemName() {
         return itemName;
@@ -55,6 +56,14 @@ public class StoreJsonVo {
 
     public void setItemArea(Integer itemArea) {
         this.itemArea = itemArea;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -16,6 +17,9 @@ public interface ApiService {
 
     //读取T2材料关卡效率文件
     String readStageFileT2();
+
+    //搓玉计算
+    String readStageFileOrundum();
 
     //读取已结束活动材料关卡效率文件
     String readStageClosedFile();
@@ -44,5 +48,8 @@ public interface ApiService {
     void addVisits(String domainName);  //记录访问量
 
     List<Object> selectVisits(Date start, Date end); //查询访问量
+
+    void itemCostPlan (HashMap<String,Integer> itemCost);
+
 
 }

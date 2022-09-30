@@ -97,8 +97,10 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	public void updateByJsonAct(MultipartFile file) {
 		List<ItemRevise> allItem =itemService.findAllItemRevise();
 		HashMap<String, Double> itemValueMap = new HashMap<>();
+		HashMap<String, String> itemIdMap = new HashMap<>();
 		for(ItemRevise itemRevise:allItem){
 			itemValueMap.put(itemRevise.getItemName(),itemRevise.getItemValue());
+			itemIdMap.put(itemRevise.getItemName(),itemRevise.getItemId());
 		}
 
 		String fileStr  = ReadJsonUtil.readFile(file);
@@ -118,6 +120,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 				for(StoreJsonVo storeJsonVo:storeJsonVos){
 					if(storeJsonVo.getItemArea()==i){
 						storeJsonVo.setItemPPR(itemValueMap.get(storeJsonVo.getItemName())*storeJsonVo.getItemQuantity()/storeJsonVo.getItemPrice());
+						storeJsonVo.setItemId(itemIdMap.get(storeJsonVo.getItemName()));
 						storeJsonVoCopy.add(storeJsonVo);
 					}
 				}

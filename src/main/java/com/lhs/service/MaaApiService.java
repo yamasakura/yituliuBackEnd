@@ -3,6 +3,7 @@ package com.lhs.service;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.pojo.MaaTagRequestVo;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface MaaApiService {
@@ -19,4 +20,7 @@ public interface MaaApiService {
     //保存公招统计结果
     String saveStatistical();
 
+    Long saveScheduleJson(String scheduleJson);
+
+    void exportScheduleJson(HttpServletResponse response,Long uid);
 }
