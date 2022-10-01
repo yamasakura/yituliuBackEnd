@@ -5,9 +5,8 @@ API参数
 ### 获取蓝材料最优图(JsonArray)
 
  ```
-url:  /api/find/stage/t3/{times}/{efficiency}
-参数{times}//  样本量   (目前废弃
-参数{efficiency}//  最低效率  100%=1.25效率 (目前废弃
+url:  /api/find/stage/t3/{times}
+参数{times}//  样本量   (目前无用
  ```
  ```
 {

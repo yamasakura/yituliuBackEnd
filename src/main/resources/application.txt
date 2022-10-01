@@ -21,6 +21,7 @@ spring.jpa.properties.hibernate.order_updates =true
 
 
 #penguin.path = E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\penguin\\
-#frontEnd.path    = E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\fontEnd\\
+#frontEnd.path    = E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\frontEnd\\
 #frontEnd.backups = E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\backups\\
+#frontEnd.buildingSchedule = E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\schedule\\
 
