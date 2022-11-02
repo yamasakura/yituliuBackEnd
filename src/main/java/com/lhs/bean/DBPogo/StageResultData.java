@@ -25,16 +25,19 @@ public class StageResultData {
     private String secondary; // 副产物
     private String secondaryId;  // 副产物id
     private Double efficiency;  //绿票转化率
+    private Double apCost;
     private Integer isShow;   // 是否显示
     private Integer isValue;  //是否参与定价
     private Integer stageState;  //关卡类型 0-普通，1-ss，2—故事集，3-理智小样
     private Integer stageColor;  // 关卡标注颜色
     private Double stageEfficiency;    //理智转化率
+    private Double stageEfficiencyEx;    //理智转化率
     private String spm;  //每分钟消耗理智
     private String activityName; //活动名称
     private Double efficiencyEx;  // 绿票转化率（ 理智小样
     private Double sampleConfidence;  // 样本置信度
     private String updateTime;  //更新时间
+    private Double version;
     private Integer minClearTime;
     private Integer part;
     private Integer partNo;
@@ -59,8 +62,8 @@ public class StageResultData {
         return zoneId;
     }
 
-    public void setZoneId(String chapterName) {
-        this.zoneId = chapterName;
+    public void setZoneId(String zoneId) {
+        this.zoneId = zoneId;
     }
 
     public Integer getCode() {
@@ -75,8 +78,8 @@ public class StageResultData {
         return sampleSize;
     }
 
-    public void setSampleSize(Integer times) {
-        this.sampleSize = times;
+    public void setSampleSize(Integer sampleSize) {
+        this.sampleSize = sampleSize;
     }
 
     public String getItemId() {
@@ -99,17 +102,16 @@ public class StageResultData {
         return stageCode;
     }
 
-    public void setStageCode(String stageName) {
-        this.stageCode = stageName;
+    public void setStageCode(String stageCode) {
+        this.stageCode = stageCode;
     }
-
 
     public Double getKnockRating() {
         return knockRating;
     }
 
-    public void setKnockRating(Double probability) {
-        this.knockRating = probability;
+    public void setKnockRating(Double knockRating) {
+        this.knockRating = knockRating;
     }
 
     public Double getResult() {
@@ -124,8 +126,8 @@ public class StageResultData {
         return apExpect;
     }
 
-    public void setApExpect(Double expect) {
-        this.apExpect = expect;
+    public void setApExpect(Double apExpect) {
+        this.apExpect = apExpect;
     }
 
     public String getMain() {
@@ -176,6 +178,14 @@ public class StageResultData {
         this.efficiency = efficiency;
     }
 
+    public Double getApCost() {
+        return apCost;
+    }
+
+    public void setApCost(Double apCost) {
+        this.apCost = apCost;
+    }
+
     public Integer getIsShow() {
         return isShow;
     }
@@ -188,32 +198,40 @@ public class StageResultData {
         return isValue;
     }
 
-    public void setIsValue(Integer isUseValue) {
-        this.isValue = isUseValue;
+    public void setIsValue(Integer isValue) {
+        this.isValue = isValue;
     }
 
     public Integer getStageState() {
         return stageState;
     }
 
-    public void setStageState(Integer isSpecial) {
-        this.stageState = isSpecial;
+    public void setStageState(Integer stageState) {
+        this.stageState = stageState;
     }
 
     public Integer getStageColor() {
         return stageColor;
     }
 
-    public void setStageColor(Integer color) {
-        this.stageColor = color;
+    public void setStageColor(Integer stageColor) {
+        this.stageColor = stageColor;
     }
 
     public Double getStageEfficiency() {
         return stageEfficiency;
     }
 
-    public void setStageEfficiency(Double percentage) {
-        this.stageEfficiency = percentage;
+    public void setStageEfficiency(Double stageEfficiency) {
+        this.stageEfficiency = stageEfficiency;
+    }
+
+    public Double getStageEfficiencyEx() {
+        return stageEfficiencyEx;
+    }
+
+    public void setStageEfficiencyEx(Double stageEfficiencyEx) {
+        this.stageEfficiencyEx = stageEfficiencyEx;
     }
 
     public String getSpm() {
@@ -244,20 +262,28 @@ public class StageResultData {
         return sampleConfidence;
     }
 
-    public void setSampleConfidence(Double confidence) {
-        this.sampleConfidence = confidence;
+    public void setSampleConfidence(Double sampleConfidence) {
+        this.sampleConfidence = sampleConfidence;
     }
 
     public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateDate) {
-        this.updateTime = updateDate;
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Integer getMinClearTime() {
         return minClearTime;
+    }
+
+    public Double getVersion() {
+        return version;
+    }
+
+    public void setVersion(Double version) {
+        this.version = version;
     }
 
     public void setMinClearTime(Integer minClearTime) {
@@ -300,6 +326,7 @@ public class StageResultData {
                 ", secondary='" + secondary + '\'' +
                 ", secondaryId='" + secondaryId + '\'' +
                 ", efficiency=" + efficiency +
+                ", apCost=" + apCost +
                 ", isShow=" + isShow +
                 ", isValue=" + isValue +
                 ", stageState=" + stageState +
@@ -310,6 +337,7 @@ public class StageResultData {
                 ", efficiencyEx=" + efficiencyEx +
                 ", sampleConfidence=" + sampleConfidence +
                 ", updateTime='" + updateTime + '\'' +
+                ", version=" + version +
                 ", minClearTime=" + minClearTime +
                 ", part=" + part +
                 ", partNo=" + partNo +

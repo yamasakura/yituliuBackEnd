@@ -5,6 +5,8 @@ import com.lhs.bean.vo.RecResultVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface CharTagDataService {
@@ -12,6 +14,8 @@ public interface CharTagDataService {
     void importTagExcel(MultipartFile file);
 
     String OCRResult(List<String> list ,Integer rarityMin, Integer rarityMax);
+
+
 
     void exportTagExcel(HttpServletResponse response);
 

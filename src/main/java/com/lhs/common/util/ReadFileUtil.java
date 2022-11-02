@@ -4,9 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
-public class ReadJsonUtil {
+public class ReadFileUtil {
 
-    public static String readJson(String fileName) {
+    public static String readFile(String fileName) {
         String jsonStr = "";
         try {
             File jsonFile = new File(fileName);

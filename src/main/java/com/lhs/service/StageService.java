@@ -1,6 +1,7 @@
 package com.lhs.service;
 
 import com.lhs.bean.DBPogo.Stage;
+import com.lhs.bean.pojo.PenguinDataVo;
 import com.lhs.bean.vo.StageVo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,5 +21,7 @@ public interface StageService {
     void exportStageData(HttpServletResponse response);
     //更新关卡信息
     void updateStageInfo(Integer isShow,String stageId);
+
+    List<PenguinDataVo> penguinDataMerge(List<PenguinDataVo> penguinDataList);
 
 }

@@ -8,7 +8,7 @@ import com.lhs.bean.vo.StoreJson;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.StoreJsonVo;
 import com.lhs.common.exception.ServiceException;
-import com.lhs.common.util.ReadJsonUtil;
+import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.ResultCode;
 import com.lhs.common.util.SaveFile;
 import com.lhs.dao.StoreCostPerDao;
@@ -60,7 +60,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	@Override
 	public void updateByJsonPerm() {
 		List<ItemRevise> allItem =itemService.findAllItemRevise();
-		String str = ReadJsonUtil.readJson(frontEndFilePath+"//permStoreData.json");
+		String str = ReadFileUtil.readFile(frontEndFilePath+"//permStoreData.json");
 		List<StoreJson> storeJsons = JSONArray.parseArray(str, StoreJson.class);
 
 		DecimalFormat dfbfb = new DecimalFormat("0.00");
@@ -103,7 +103,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 			itemIdMap.put(itemRevise.getItemName(),itemRevise.getItemId());
 		}
 
-		String fileStr  = ReadJsonUtil.readFile(file);
+		String fileStr  = ReadFileUtil.readFile(file);
 		JSONArray jsonArray = JSONArray.parseArray(fileStr);
 		List<Object>   jsonList  = new ArrayList<>();
 		if(jsonArray!=null)
@@ -143,12 +143,12 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public String readActStoreJson() {
-		return ReadJsonUtil.readJson(frontEndFilePath+"//storeAct.json");
+		return ReadFileUtil.readFile(frontEndFilePath+"//storeAct.json");
 	}
 
 	@Override
 	public String readPermStoreJson() {
-		return ReadJsonUtil.readJson(frontEndFilePath+"//storePerm.json");
+		return ReadFileUtil.readFile(frontEndFilePath+"//storePerm.json");
 	}
 
 

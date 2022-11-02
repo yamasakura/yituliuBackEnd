@@ -1,13 +1,12 @@
 package com.lhs.controller.maa;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.vo.MaaTagDataVo;
 import com.lhs.bean.pojo.MaaTagRequestVo;
 import com.lhs.common.exception.ServiceException;
-import com.lhs.common.util.ReadJsonUtil;
+import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.Result;
 import com.lhs.common.util.ResultCode;
 import com.lhs.service.MaaApiService;
@@ -77,7 +76,7 @@ public class MaaApiController {
     @GetMapping("/itemCost/{name}")
     public Result MaaTagResultStatistical(@PathVariable("name") String name) {
 
-        String json = ReadJsonUtil.readJson("//springboot1//bot//itemCost.json");
+        String json = ReadFileUtil.readFile("//springboot1//bot//itemCost.json");
         JSONObject jsonObject = JSONObject.parseObject(json);
         if(jsonObject.get(name)==null){
             throw new ServiceException(ResultCode.DATA_NONE);
@@ -89,11 +88,11 @@ public class MaaApiController {
 
     @ApiOperation("生成基建排班协议文件")
     @PostMapping("/building/schedule/save")
-    public Result MaaBuildingJsonSave( @RequestBody String scheduleJson) {
+    public Result MaaBuildingJsonSave( @RequestBody String scheduleJson,@RequestParam Long id) {
 
-        Long uid = maaApiService.saveScheduleJson(scheduleJson);
+        maaApiService.saveScheduleJson(scheduleJson,id);
         HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("uid",uid);
+        hashMap.put("uid",id);
         hashMap.put("message","生成成功");
         return Result.success(hashMap);
     }
@@ -102,12 +101,22 @@ public class MaaApiController {
     @ApiOperation("导出基建排班协议文件")
     @GetMapping("/building/schedule/export")
     public void MaaBuildingJsonExport(HttpServletResponse response,@RequestParam Long uid) {
-         System.out.println(uid);
-         maaApiService.exportScheduleJson(response,uid);
+
+         maaApiService.exportScheduleFile(response,uid);
 
     }
 
+    @ApiOperation("找回基建排班协议文件")
+    @GetMapping("/building/schedule/retrieve/{id}")
+    public Result MaaBuildingJsonExport(@PathVariable("id") Long id) {
 
+        String str = maaApiService.exportScheduleJson(id);
+        JSONObject jsonObject = JSONObject.parseObject(str);
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("schedule",jsonObject);
+        hashMap.put("message","导入成功");
+        return Result.success(hashMap);
+    }
 
 
 }

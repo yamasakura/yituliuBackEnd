@@ -64,7 +64,6 @@ public class Swagger2Config {
 			@Override
 			public void addViewControllers(ViewControllerRegistry registry) {
 
-
 			}
 		};
 	}

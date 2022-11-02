@@ -5,8 +5,9 @@ API参数
 ### 获取蓝材料最优图(JsonArray)
 
  ```
-url:  /api/find/stage/t3/{times}
+url:  /api/find/stage/t3/{times}/{version}
 参数{times}//  样本量   (目前无用
+{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本 
  ```
  ```
 {
@@ -38,8 +39,8 @@ url:  /api/find/stage/t3/{times}
 
 ### 获取绿材料最优图(JsonArray)
  ```
-url:  /api/find/stage/t2
-无参数
+url:  /api/find/stage/t2/{version}
+参数{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本 
  ```
  ```
 {
@@ -125,8 +126,9 @@ url:  /api/find/item/value
 
 ### 获取历史活动最优图(JsonArray)
  ```
-url:  /api/find/stage/activity/closed
-无参数
+url:  /api/find/stage/activity/closed/{version}
+参数{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本 
+
  ```
  ```
 {

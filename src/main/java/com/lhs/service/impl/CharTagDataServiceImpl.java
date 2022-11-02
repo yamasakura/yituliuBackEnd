@@ -104,12 +104,14 @@ public class CharTagDataServiceImpl implements CharTagDataService {
                     continue;
                 }
                 if (!resultMap.containsKey(tagOne)) {
-                    resultMap.put(tagOne, new ArrayList<>(Collections.singleton(charTagData.getRoleName())));
+                    resultMap.put(tagOne, new ArrayList<>(Collections.singleton(charTagData.getCharName())));
                 } else {
                     List<String> roleNames = new ArrayList<>(resultMap.get(tagOne));
-                    roleNames.add(charTagData.getRoleName());
+                    roleNames.add(charTagData.getCharName());
                     resultMap.put(tagOne, roleNames);
                 }
+
+
                 resultRarityMap.put(tagOne, charTagData.getRarity());
 
                 for (int j = i + 1; j < tagList.size(); j++) {
@@ -118,32 +120,31 @@ public class CharTagDataServiceImpl implements CharTagDataService {
                     }
                     String tagTwo = tagList.get(i) + "+" + tagList.get(j);
                     if (!resultMap.containsKey(tagTwo)) {
-                        resultMap.put(tagTwo, new ArrayList<>(Collections.singleton(charTagData.getRoleName())));
+                        resultMap.put(tagTwo, new ArrayList<>(Collections.singleton(charTagData.getCharName())));
                     } else {
                         List<String> roleNames = new ArrayList<>(resultMap.get(tagTwo));
-                        roleNames.add(charTagData.getRoleName());
+                        roleNames.add(charTagData.getCharName());
                         resultMap.put(tagTwo, roleNames);
                     }
 
                     resultRarityMap.put(tagTwo, charTagData.getRarity());
+
                     for (int k = j + 1; k < tagList.size(); k++) {
                         if ((!"高级资深干员".equals(tagList.get(i))) && charTagData.getRarity() == 6) {
                             continue;
                         }
                         String tagThree = tagList.get(i) + "+" + tagList.get(j) + "+" + tagList.get(k);
                         if (!resultMap.containsKey(tagThree)) {
-                            resultMap.put(tagThree, new ArrayList<>(Collections.singleton(charTagData.getRoleName())));
+                            resultMap.put(tagThree, new ArrayList<>(Collections.singleton(charTagData.getCharName())));
                         } else {
                             List<String> roleNames = new ArrayList<>(resultMap.get(tagThree));
-                            roleNames.add(charTagData.getRoleName());
+                            roleNames.add(charTagData.getCharName());
                             resultMap.put(tagThree, roleNames);
                         }
-
-                        resultRarityMap.put(tagThree, charTagData.getRarity());
+                    resultRarityMap.put(tagThree, charTagData.getRarity());
                     }
                 }
             }
-
         }
 
         List<RecResultVo> resultList = new ArrayList<>();
@@ -168,14 +169,7 @@ public class CharTagDataServiceImpl implements CharTagDataService {
             resultMaxRarity = Integer.parseInt(resultList.get(0).getLessRarity());
         }
 
-//        MaaTagRequestVo maaTagRequestVo = new MaaTagRequestVo();
-//        maaTagRequestVo.setLevel(resultMaxRarity);
-//        maaTagRequestVo.setServer("CN");
-//        maaTagRequestVo.setTags(orcTagList);
-//        maaTagRequestVo.setVersion("DEBUG VERSION");
-//        maaTagRequestVo.setServer("Bot");
-
-        ArrayList<HashMap> voResult = new ArrayList<>();
+        System.out.println("结果长度："+resultList.size());
         for (int i = 0; i < resultList.size(); i++) {
             if (Integer.parseInt(resultList.get(i).getLessRarity()) > 3) {
                 if (Integer.parseInt(resultList.get(i).getLessRarity()) < resultMaxRarity) break;
@@ -192,23 +186,6 @@ public class CharTagDataServiceImpl implements CharTagDataService {
                 if(repeatFlag) continue ;
 
 
-                HashMap<Object, Object> botResult = new HashMap<>();
-                String[] tagSplit = resultList.get(i).getTags().split("[+]");
-                botResult.put("tags",tagSplit);
-                botResult.put("level",resultMaxRarity);
-                ArrayList<HashMap> charList = new ArrayList<>();
-                List<Object> charResultList = resultList.get(i).getResult();
-                for(Object object: charResultList){
-                    HashMap<Object, Object> charMap = new HashMap<>();
-                    charMap.put("name",object);
-                    charMap.put("level",resultMaxRarity);
-                    charList.add(charMap);
-                }
-                botResult.put("opers",charList);
-                voResult.add(botResult);
-
-
-
                 if ("资深干员".equals(resultList.get(i).getTags())) {
                     result.append("【").append(resultList.get(i).getTags()).append("】:\n").append("当前版本可招募的五星").append("\n");
                 } else if ("高级资深干员".equals(resultList.get(i).getTags())) {
@@ -218,13 +195,6 @@ public class CharTagDataServiceImpl implements CharTagDataService {
                 }
             }
         }
-
-//        try {
-//            maaTagRequestVo.setResult(JSONArray.parseArray(JSONObject.toJSONString(voResult)));
-//            maaApiService.maaTagResultSave(maaTagRequestVo);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
 
         if (result.length() < 5) {
@@ -243,6 +213,7 @@ public class CharTagDataServiceImpl implements CharTagDataService {
 
         return string;
     }
+
 
 
     @Override
@@ -300,10 +271,10 @@ public class CharTagDataServiceImpl implements CharTagDataService {
                     continue;
                 }
                 if (hashMap.get(tagOne) == null) {
-                    hashMap.put(tagOne, new ArrayList<>(Collections.singleton(allRole.getRarity() + "_" + allRole.getRoleName())));
+                    hashMap.put(tagOne, new ArrayList<>(Collections.singleton(allRole.getRarity() + "_" + allRole.getCharName())));
                 } else {
                     List<String> roleNames = new ArrayList<>(hashMap.get(tagOne));
-                    roleNames.add(allRole.getRarity() + "_" + allRole.getRoleName());
+                    roleNames.add(allRole.getRarity() + "_" + allRole.getCharName());
                     hashMap.put(tagOne, roleNames);
                 }
 
@@ -319,10 +290,10 @@ public class CharTagDataServiceImpl implements CharTagDataService {
 
 
                     if (hashMap.get(tagTwo) == null) {
-                        hashMap.put(tagTwo, new ArrayList<>(Collections.singleton(allRole.getRarity() + "_" + allRole.getRoleName())));
+                        hashMap.put(tagTwo, new ArrayList<>(Collections.singleton(allRole.getRarity() + "_" + allRole.getCharName())));
                     } else {
                         List<String> roleNames = new ArrayList<>(hashMap.get(tagTwo));
-                        roleNames.add(allRole.getRarity() + "_" + allRole.getRoleName());
+                        roleNames.add(allRole.getRarity() + "_" + allRole.getCharName());
                         hashMap.put(tagTwo, roleNames);
                     }
 
@@ -336,10 +307,10 @@ public class CharTagDataServiceImpl implements CharTagDataService {
                             continue;
                         }
                         if (hashMap.get(tagThree) == null) {
-                            hashMap.put(tagThree, new ArrayList<>(Collections.singleton(allRole.getRarity() + "_" + allRole.getRoleName())));
+                            hashMap.put(tagThree, new ArrayList<>(Collections.singleton(allRole.getRarity() + "_" + allRole.getCharName())));
                         } else {
                             List<String> roleNames = new ArrayList<>(hashMap.get(tagThree));
-                            roleNames.add(allRole.getRarity() + "_" + allRole.getRoleName());
+                            roleNames.add(allRole.getRarity() + "_" + allRole.getCharName());
                             hashMap.put(tagThree, roleNames);
                         }
 

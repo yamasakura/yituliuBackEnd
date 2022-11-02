@@ -23,6 +23,8 @@ public class ItemRevise {
 
     private String cardNum;  //前端排序的用索引
 
+    private String version;
+
     public Long getId() {
         return id;
     }

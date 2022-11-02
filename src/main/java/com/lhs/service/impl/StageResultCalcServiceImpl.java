@@ -5,11 +5,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.Item;
-import com.lhs.bean.pojo.PenguinClass;
+import com.lhs.bean.pojo.PenguinDataVo;
 import com.lhs.bean.DBPogo.QuantileTable;
 import com.lhs.bean.vo.StageVo;
 import com.lhs.common.exception.ServiceException;
-import com.lhs.common.util.ReadJsonUtil;
+import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.ResultCode;
 import com.lhs.dao.QuantileTableDao;
 import com.lhs.dao.StageResultDataDao;
@@ -74,7 +74,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
      * @return
      */
     @Override
-    public List<StageResultData> stageResult(Integer indexNum, Integer countNum) {
+    public List<StageResultData> stageResult(Integer indexNum, Integer countNum,Integer times,Double version) {
         SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.0");
         SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
@@ -82,12 +82,14 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         Random random = new Random();
         String updateTime = simpleDateFormat_ss.format(new Date());
         log.info("更新时间是————" + updateTime);
+        log.info("版本是"+version);
+
 
         String saveTime = simpleDateFormat_dd.format(new Date());
 
 //读取企鹅物流数据
         JSONObject matrixJson = null;
-        String jsonFile = ReadJsonUtil.readJson(penguinFilePath+"matrix"+saveTime+".json");  //从保存文件读取
+        String jsonFile = ReadFileUtil.readFile(penguinFilePath+"matrix"+saveTime+".json");  //从保存文件读取
         matrixJson =  JSONObject.parseObject(jsonFile); //json化
 
 
@@ -102,14 +104,16 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             List<StageVo> stageInfoList = stageService.findAllVo();  //所有关卡信息
             List<Item> itemList = itemService.findAll();    //临时材料价值
             HashMap<String, Double> itemValueMap = new HashMap<>();
+
             for(Item item :itemList){
                 itemValueMap.put(item.getItemName(),item.getItemValue());
             }
 
             List<QuantileTable> quantileTableList = quantileTableDao.findAll(); //置信度分位表
 
-            List<PenguinClass> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinClass.class);  //转为集合
+            List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
 
+        penguinDatalist = stageService.penguinDataMerge(penguinDatalist);
 
             stageResultDataList = new ArrayList<>();
 
@@ -119,6 +123,12 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             int differentStageIdIndex = 0;  //如果上一关与下一关不同，记录当前索引
 
             double confidenceInterval = 0.0;  //置信度
+            long id = 0L;
+            if(version ==0.0)    id = 10000L;
+            if(version ==0.76)   id = 20000L;
+            if(version ==1.0)    id = 30000L;
+            if(version ==0.625)  id = 40000L;
+
 
             for (int i = 0; i < penguinDatalist.size(); i++) {
                 int stageInfoListIndex = 0;  //匹配关卡id后记录关卡信息集合的索引
@@ -146,8 +156,8 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 }
 
 
-                int penguinDataTimes = Integer.parseInt(penguinDatalist.get(i).getTimes());  //企鹅物流数据的样本数
-                int penguinDataQuantity = Integer.parseInt(penguinDatalist.get(i).getQuantity());  //企鹅物流数据的掉落材料数
+                int penguinDataTimes = penguinDatalist.get(i).getTimes();  //企鹅物流数据的样本数
+                int penguinDataQuantity = penguinDatalist.get(i).getQuantity();  //企鹅物流数据的掉落材料数
                 String penguinDataItemId = penguinDatalist.get(i).getItemId();  //企鹅物流数据的材料id
                 String penguinDataStageId = penguinDatalist.get(i).getStageId();//企鹅物流数据的关卡id
 
@@ -156,7 +166,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
                 if (penguinDataQuantity < 1) { continue; }   // 材料掉落次数太少跳出
 
-                if (penguinDataTimes < 50) { continue; }  // 材料样本量太少跳出
+                if (penguinDataTimes < 200) { continue; }  // 材料样本量太少跳出
 
                 // 拿到当前企鹅物流数据对应的关卡信息
                 for (int j = 0; j < stageInfoList.size(); j++) {
@@ -196,11 +206,13 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 if ("ap_supply_lt_010".equals(itemList.get(itemListIndex).getItemId())) {
                     //关卡消耗理智减去小样的理智
                     stageInfoList.get(stageInfoListIndex).setApCostEx(stageInfoList.get(stageInfoListIndex).getApCost() - probability * 10);
+
                 }
 
-                if ("randomMaterial_6".equals(itemList.get(itemListIndex).getItemId())) {
+                if ("randomMaterial_7".equals(itemList.get(itemListIndex).getItemId())) {
                     //物资箱的额外结果
                     resultEx = itemList.get(itemListIndex).getItemValue() * probability;//材料单项期望产出理智结果
+
                 }
 
 
@@ -226,7 +238,10 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
                 //存储原始数据
                 StageResultData stageResultData = new StageResultData();
-                stageResultData.setId((long)i);
+
+
+                id++;
+                stageResultData.setId(id);
                 stageResultData.setStageId(stageInfoList.get(stageInfoListIndex).getStageId());
                 stageResultData.setStageCode(stageInfoList.get(stageInfoListIndex).getStageCode());
                 stageResultData.setCode(stageInfoList.get(stageInfoListIndex).getCode());
@@ -247,6 +262,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 }
                 stageResultData.setSecondary(stageInfoList.get(stageInfoListIndex).getSecondary());
                 stageResultData.setSecondaryId(stageInfoList.get(stageInfoListIndex).getSecondaryId());
+                stageResultData.setApCost(stageInfoList.get(stageInfoListIndex).getApCost());
 //                System.out.println(stageInfoList.get(stageInfoListIndex).getSecondaryId());
                 stageResultData.setStageColor(2);
                 stageResultData.setUpdateTime(updateTime);
@@ -258,9 +274,11 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                 stageResultData.setEfficiencyEx(efficiencyEx);
                 stageResultData.setMainLevel(stageInfoList.get(stageInfoListIndex).getMainLevel());
                 stageResultData.setActivityName(stageInfoList.get(stageInfoListIndex).getActivityName());
+                stageResultData.setVersion(version);
                 stageResultData.setPart(stageInfoList.get(stageInfoListIndex).getPart());
                 stageResultData.setPartNo(stageInfoList.get(stageInfoListIndex).getPartNo());
                 stageResultDataList.add(stageResultData);
+
 
 
                 for (int k = differentStageIdIndex; k < stageResultDataList.size(); k++) {
@@ -278,8 +296,8 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             try {
                 //这里是将多索雷斯的关卡转化为通用关卡存储格式
                 for (int i = 0; i < stageResultDataList.size(); i++) {
-                    if ("双日城大乐透".equals(stageResultDataList.get(i).getItemType()) && stageResultDataList.get(i).getSampleSize() > 100) {
-                        List<StageResultData> dataList = stageResultSetInfoService.setSpecialActivityStage(stageResultDataList.get(i));
+                    if ("双日城大乐透".equals(stageResultDataList.get(i).getItemType()) && stageResultDataList.get(i).getSampleSize() > times) {
+                        List<StageResultData> dataList = stageResultSetInfoService.setSpecialActivityStage(stageResultDataList.get(i),version);
                         stageResultDataList.addAll(dataList);
                     }
                 }
@@ -298,10 +316,12 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
                    //
                 for (StageResultData rawData : stageResultDataList) {
                     //筛选条件  1.主产物不为空，2.该关卡是要显示的关卡，3.该关卡的主产物等级是T3，4.样本量大于500
-                    if (rawData.getMain() != null && rawData.getIsShow() == 1 &&rawData.getMainLevel()>2&&rawData.getSampleSize()>500) {
+                    if (rawData.getMain() != null && rawData.getIsShow() == 1 &&rawData.getMainLevel() > 2 && rawData.getSampleSize() > times) {
+
                         if (allStageResultHashMap.get(rawData.getItemType()) == null) {
                             List<StageResultData> rawDataListValue = Collections.singletonList(rawData);
                             allStageResultHashMap.put(rawData.getItemType(), rawDataListValue);
+
                         } else {
                             List<StageResultData> rawDataListValue = new ArrayList<>(allStageResultHashMap.get(rawData.getItemType()));
                             rawDataListValue.add(rawData);
@@ -316,7 +336,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 //          当循环次数=结束次数不再计算材料等效价值
             if (indexNum !=(countNum-1)) {
                 //这里是进行材料等效价值的计算
-                itemService.itemRevise(iterationItemValue);
+                itemService.itemRevise(iterationItemValue,version);
             }
 
 

@@ -45,26 +45,26 @@ public class ApiController {
 
     @ApiOperation("获取蓝材料最优图")
     @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500")
-    @GetMapping("/find/stage/t3/{times}")
-    public Result findByTypeAndEndsOrderByEfficiencyDesc(@PathVariable("times") Integer times) {
-        String stageFileT3 = apiService.readStageFileT3();
+    @GetMapping("/find/stage/t3/{times}/{version}")
+    public Result findByTypeAndEndsOrderByEfficiencyDesc(@PathVariable("times") Integer times,@PathVariable("version") String version) {
+        String stageFileT3 = apiService.readStageFileT3(version);
         JSONArray jsonArray = JSONArray.parseArray(stageFileT3);
         return Result.success(jsonArray);
     }
 
 
     @ApiOperation("获取绿材料最优图")
-    @GetMapping("/find/stage/t2")
-    public Result findByMainOrderByExpectAsc() {
-        String stageFileT2 = apiService.readStageFileT2();
+    @GetMapping("/find/stage/t2/{version}")
+    public Result findByMainOrderByExpectAsc(@PathVariable("version") String version) {
+        String stageFileT2 = apiService.readStageFileT2(version);
         JSONArray jsonArray = JSONArray.parseArray(stageFileT2);
         return Result.success(jsonArray);
     }
 
     @ApiOperation("获取搓玉最优图")
-    @GetMapping("/find/stage/orundum")
-    public Result findByStageCode() {
-        String stageFileOrundum = apiService.readStageFileOrundum();
+    @GetMapping("/find/stage/orundum/{version}")
+    public Result findByStageCode(@PathVariable("version") String version) {
+        String stageFileOrundum = apiService.readStageFileOrundum(version);
         JSONArray jsonArray = JSONArray.parseArray(stageFileOrundum);
 //        String[] stageCode  =new String[]{"main_01-07","act13side_06_rep","act13side_07_rep"};
 //        List<StageOrundumVo> list = stageResultSetInfoService.setOrundumEfficiency();
@@ -84,7 +84,7 @@ public class ApiController {
 
     @ApiOperation("获取常驻商店性价比")
     @GetMapping("/find/store/perm")
-    public Result findAll() {
+    public Result findStoreByPerm() {
 
         String storeFile = storeCostPerService.readPermStoreJson();
         JSONArray jsonArray = JSONArray.parseArray(storeFile);
@@ -102,16 +102,16 @@ public class ApiController {
 
     @ApiOperation("获取全部关卡效率")
     @GetMapping("/find/stage/all")
-    public Result findAllStageEff() {
+    public Result findStageDataAll() {
         List<StageResultData> all = apiService.findByMainNotNull();
         return Result.success(all);
     }
 
 
     @ApiOperation("获取往期活动地图效率")
-    @GetMapping("/find/stage/activity/closed")
-    public Result findAllByStageId() {
-        String StageClosedFile = apiService.readStageClosedFile();
+    @GetMapping("/find/stage/activity/closed/{version}")
+    public Result findStageDataByStageId(@PathVariable("version") String version) {
+        String StageClosedFile = apiService.readStageClosedFile(version);
         JSONArray jsonArray = JSONArray.parseArray(StageClosedFile);
         return Result.success(jsonArray);
     }

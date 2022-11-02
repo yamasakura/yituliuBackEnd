@@ -13,6 +13,7 @@ public class StageResultVo {//返回前端的结果
     private String secondary; // 副产物
     private Double knockRating;   // 概率
     private Double stageEfficiency;    //理智转化率
+    private Double stageEfficiencyEx;    //理智转化率
     private Integer sampleSize;  // 样本次数
     private Integer stageColor;  // 关卡标注颜色
     private String spm;  //每分钟消耗理智
@@ -85,6 +86,14 @@ public class StageResultVo {//返回前端的结果
 
     public void setStageEfficiency(Double stageEfficiency) {
         this.stageEfficiency = stageEfficiency;
+    }
+
+    public Double getStageEfficiencyEx() {
+        return stageEfficiencyEx;
+    }
+
+    public void setStageEfficiencyEx(Double stageEfficiencyEx) {
+        this.stageEfficiencyEx = stageEfficiencyEx;
     }
 
     public Integer getSampleSize() {

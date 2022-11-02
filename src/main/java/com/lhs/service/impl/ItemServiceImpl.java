@@ -1,15 +1,20 @@
 package com.lhs.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.DBPogo.Item;
 
 import com.lhs.bean.vo.ItemValueVo;
+import com.lhs.common.util.CreateJsonFile;
 import com.lhs.dao.ItemDao;
 import com.lhs.dao.ItemReviseDao;
 import com.lhs.service.ItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,12 +35,16 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemReviseDao itemReviseDao;
 
+    @Value("${frontEnd.path}")
+    private String frontEndFilePath;
+
+
     /**
      * 重置临时价值表，仅效率计算开始时重置一次
      */
-    public void resetItemShopValue() {
+    public void resetItemShopValue(Double version) {
         //拿到物品表的初始信息
-        String[][] itemRaw = getItemInfo();
+        String[][] itemRaw = getItemInfo(version);
         //保存材料的价值和名称，<名称，价值>
         HashMap<String, Double> itemShopValue = new HashMap<>();
          //加工站平均产出t1
@@ -67,6 +76,7 @@ public class ItemServiceImpl implements ItemService {
         itemShopValue.put("晶体元件", 30.0);
         itemShopValue.put("半自然溶剂", 40.0);
         itemShopValue.put("化合切削液", 40.0);
+        itemShopValue.put("转质盐组", 40.0);
 
         itemShopValue.put("固源岩", (itemShopValue.get("固源岩组") + workShopValue_t2) / 5);
         itemShopValue.put("糖", (itemShopValue.get("糖组") + workShopValue_t2) / 4);
@@ -97,11 +107,13 @@ public class ItemServiceImpl implements ItemService {
         itemShopValue.put("精炼溶剂", itemShopValue.get("半自然溶剂") * 1 + itemShopValue.get("化合切削液") + itemShopValue.get("凝胶") - workShopValue_t3);
         itemShopValue.put("切削原液", itemShopValue.get("化合切削液") * 1 + itemShopValue.get("晶体元件") + itemShopValue.get("凝胶") - workShopValue_t3);
         itemShopValue.put("提纯源岩", itemShopValue.get("固源岩组") * 4 - workShopValue_t3);
+        itemShopValue.put("转质盐聚块", itemShopValue.get("半自然溶剂") * 1 + itemShopValue.get("糖组") + itemShopValue.get("转质盐组") - workShopValue_t3);
 
         itemShopValue.put("D32钢", itemShopValue.get("三水锰矿") * 2 + itemShopValue.get("五水研磨石") + itemShopValue.get("RMA70-24") - workShopValue_t4);
         itemShopValue.put("双极纳米片", itemShopValue.get("白马醇") * 1 + itemShopValue.get("白马醇") + itemShopValue.get("改量装置") - workShopValue_t4);
         itemShopValue.put("聚合剂", itemShopValue.get("提纯源岩") * 1 + itemShopValue.get("异铁块") + itemShopValue.get("酮阵列") - workShopValue_t4);
         itemShopValue.put("晶体电子单元", itemShopValue.get("聚合凝胶") * 2 + itemShopValue.get("炽合金块") + itemShopValue.get("晶体电路") - workShopValue_t4);
+        itemShopValue.put("烧结核凝晶", itemShopValue.get("转质盐聚块") * 2 + itemShopValue.get("精炼溶剂") + itemShopValue.get("切削原液") - workShopValue_t4);
 
         List<Item> itemShopList = new ArrayList<>();
 
@@ -135,8 +147,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemRevise> findAllItemRevise() {
-        return itemReviseDao.findAll();
+        List<ItemRevise> all = itemReviseDao.findAll();
+        List<ItemRevise> result = new ArrayList<>();
+        for(ItemRevise itemRevise:all){
+//            if("31063".equals(itemRevise.getItemId())||"31064".equals(itemRevise.getItemId())||"30155".equals(itemRevise.getItemId())){
+//                continue;
+//            }
+            result.add(itemRevise);
+        }
+
+        return result;
     }
+
 
     /**
      * 用于计算等效理智价值
@@ -144,7 +166,7 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
     @Override
-    public List<ItemRevise> itemRevise(HashMap<String, Double> hashMap) {
+    public List<ItemRevise> itemRevise(HashMap<String, Double> hashMap,Double version) {
 //        for (Map.Entry<String, Double> entry : hashMap.entrySet()) {
 //            log.info(entry.getKey() + ": " + entry.getValue());
 //        }
@@ -157,7 +179,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         //拿到物品表的初始信息
-        String[][] itemRaw = getItemInfo();
+        String[][] itemRaw = getItemInfo(version);
 
         //加工站的期望产出值近乎无波动，目前用固定值替代，（大概可能也许没准有空改）
         double workShopValue_t1 = 0.513182485 - 0.45;
@@ -166,10 +188,11 @@ public class ItemServiceImpl implements ItemService {
         double workShopValue_t4 = 23.4191630 - 1.8;
 
         String[] item_t3List = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
-                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
+                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液","转质盐组"};
 
 
         HashMap<String, Double> itemValue = new HashMap<>();
+
 
         for (String item_t3 : item_t3List) {
             //  材料上次迭代价值*1.25/关卡效率
@@ -207,12 +230,13 @@ public class ItemServiceImpl implements ItemService {
         itemValue.put("精炼溶剂", itemValue.get("半自然溶剂") * 1 + itemValue.get("化合切削液") + itemValue.get("凝胶") - workShopValue_t3);
         itemValue.put("切削原液", itemValue.get("化合切削液") * 1 + itemValue.get("晶体元件") + itemValue.get("凝胶") - workShopValue_t3);
         itemValue.put("提纯源岩", itemValue.get("固源岩组") * 4 - workShopValue_t3);
+        itemValue.put("转质盐聚块", itemValue.get("半自然溶剂") * 1 + itemValue.get("糖组") + itemValue.get("转质盐组") - workShopValue_t3);
 
         itemValue.put("D32钢", itemValue.get("三水锰矿") + itemValue.get("五水研磨石") + itemValue.get("RMA70-24") - workShopValue_t4);
         itemValue.put("双极纳米片", itemValue.get("白马醇") + itemValue.get("白马醇") + itemValue.get("改量装置") - workShopValue_t4);
         itemValue.put("聚合剂", itemValue.get("提纯源岩") * 1 + itemValue.get("异铁块") + itemValue.get("酮阵列") - workShopValue_t4);
         itemValue.put("晶体电子单元", itemValue.get("聚合凝胶") * 2 + itemValue.get("炽合金块") + itemValue.get("晶体电路") - workShopValue_t4);
-
+        itemValue.put("烧结核凝晶", itemValue.get("转质盐聚块")  + itemValue.get("精炼溶剂")*2 + itemValue.get("切削原液") - workShopValue_t4);
 
 //        保存入最终材料等效价值表的材料等效价值集合
         List<ItemRevise> itemReviseList = new ArrayList<>();
@@ -259,6 +283,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemDao.deleteAll();  //清空表
         itemDao.saveAll(itemTemporaryList); //存入临时表
+
         itemReviseDao.deleteAll(); //清空表
         itemReviseDao.saveAll(itemReviseList);  //存入最终表
 
@@ -273,7 +298,7 @@ public class ItemServiceImpl implements ItemService {
      * @param response
      */
     @Override
-    public void exportItemData(HttpServletResponse response) {
+    public void exportItemDataToExcel(HttpServletResponse response) {
         try {
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding("utf-8");
@@ -286,6 +311,9 @@ public class ItemServiceImpl implements ItemService {
 
             ArrayList<ItemValueVo> valueVoArrayList = new ArrayList<>();
             for (ItemRevise itemRevise : list) {
+//                if("31063".equals(itemRevise.getItemId())||"31064".equals(itemRevise.getItemId())||"30155".equals(itemRevise.getItemId())){
+//                    continue;
+//                }
                 ItemValueVo itemValueVo = new ItemValueVo();
                 itemValueVo.setItemName(itemRevise.getItemName());
                 itemValueVo.setItemValueReason(Double.valueOf(DF3.format(itemRevise.getItemValue() / 1.25)));
@@ -298,18 +326,52 @@ public class ItemServiceImpl implements ItemService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
+    @Override
+    public void exportItemDataToJson(HttpServletResponse response) {
+        List<ItemRevise> list = itemReviseDao.findAll();
+        DecimalFormat DF3 = new DecimalFormat("0.0000");
+
+        ArrayList<ItemValueVo> valueVoArrayList = new ArrayList<>();
+        for (ItemRevise itemRevise : list) {
+//            if("31063".equals(itemRevise.getItemId())||"31064".equals(itemRevise.getItemId())||"30155".equals(itemRevise.getItemId())){
+//                continue;
+//            }
+            ItemValueVo itemValueVo = new ItemValueVo();
+            itemValueVo.setItemName(itemRevise.getItemName());
+            itemValueVo.setItemValueReason(Double.valueOf(DF3.format(itemRevise.getItemValue() / 1.25)));
+            itemValueVo.setItemValueGreen(itemRevise.getItemValue());
+            itemValueVo.setItemId(itemRevise.getItemId());
+            itemValueVo.setItemType(itemRevise.getType());
+            valueVoArrayList.add(itemValueVo);
+        }
+
+
+
+        String jsonForMat = JSON.toJSONString(valueVoArrayList, SerializerFeature.PrettyFormat,
+                SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullListAsEmpty);
+
+        CreateJsonFile.createJsonFile(response,frontEndFilePath,"itemValue",jsonForMat);
+
+
+    }
     /**
      * 物品表的初始信息，理论上可以用json，但是我懒得改了
      *
      * @return
      */
-    private static String[][] getItemInfo() {
+    private static String[][] getItemInfo(Double version) {
+                   String  exp1 = String.valueOf(0.9*version);
+                   String  exp2 = String.valueOf(1.8*version);
+                   String  exp3 = String.valueOf(4.5*version);
+                   String  exp4 = String.valueOf(9*version);
+
         return new String[][]{
                 {"30135", "D32钢", "", "orange", "1"}, {"30125", "双极纳米片", "", "orange", "1"},
                 {"30115", "聚合剂", "", "orange", "1"}, {"30145", "晶体电子单元", "", "orange", "1"},
+                {"30155", "烧结核凝晶", "", "orange", "1"},
 
                 {"30064", "改量装置", "", "purple", "2"}, {"30044", "异铁块", "", "purple", "2"},
                 {"30084", "三水锰矿", "", "purple", "2"}, {"31014", "聚合凝胶", "", "purple", "2"},
@@ -318,16 +380,17 @@ public class ItemServiceImpl implements ItemService {
                 {"30094", "五水研磨石", "", "purple", "2"}, {"30024", "糖聚块", "", "purple", "2"},
                 {"30034", "聚酸酯块", "", "purple", "2"}, {"31034", "晶体电路", "", "purple", "2"},
                 {"30014", "提纯源岩", "", "purple", "2"}, {"31044", "精炼溶剂", "", "purple", "2"},
-                {"31054", "切削原液", "", "purple", "2"},
+                {"31054", "切削原液", "", "purple", "2"},{"31064", "转质盐聚块", "", "purple", "2"},
 
-                {"30063", "全新装置", "", "blue", "3"},
-                {"30043", "异铁组", "", "blue", "3"}, {"30083", "轻锰矿", "", "blue", "3"},
-                {"31013", "凝胶", "", "blue", "3"}, {"30073", "扭转醇", "", "blue", "3"},
-                {"30053", "酮凝集组", "", "blue", "3"}, {"30103", "RMA70-12", "", "blue", "3"},
-                {"31023", "炽合金", "", "blue", "3"}, {"30093", "研磨石", "", "blue", "3"},
-                {"30023", "糖组", "", "blue", "3"}, {"30033", "聚酸酯组", "", "blue", "3"},
-                {"31033", "晶体元件", "", "blue", "3"}, {"30013", "固源岩组", "", "blue", "3"},
-                {"31043", "半自然溶剂", "", "blue", "3"}, {"31053", "化合切削液", "", "blue", "3"},
+                {"30063", "全新装置", "", "blue", "3"}, {"30043", "异铁组", "", "blue", "3"},
+                {"30083", "轻锰矿", "", "blue", "3"}, {"31013", "凝胶", "", "blue", "3"},
+                {"30073", "扭转醇", "", "blue", "3"}, {"30053", "酮凝集组", "", "blue", "3"},
+                {"30103", "RMA70-12", "", "blue", "3"}, {"31023", "炽合金", "", "blue", "3"},
+                {"30093", "研磨石", "", "blue", "3"}, {"30023", "糖组", "", "blue", "3"},
+                {"30033", "聚酸酯组", "", "blue", "3"}, {"31033", "晶体元件", "", "blue", "3"},
+                {"30013", "固源岩组", "", "blue", "3"}, {"31043", "半自然溶剂", "", "blue", "3"},
+                {"31053", "化合切削液", "", "blue", "3"}, {"31063", "转质盐组", "", "blue", "3"},
+
 
                 {"30012", "固源岩", "", "green", "4"}, {"30022", "糖", "", "green", "4"},
                 {"30032", "聚酸酯", "", "green", "4"}, {"30042", "异铁", "", "green", "4"},
@@ -338,9 +401,9 @@ public class ItemServiceImpl implements ItemService {
 
 
                 {"3301", "技巧概要·卷1", "2.111", "purple", "6"}, {"3302", "技巧概要·卷2", "5.278", "blue", "6"},
-                {"3303", "技巧概要·卷3", "13.196", "green", "6"}, {"2004", "高级作战记录", "5.625", "orange", "6"},
-                {"2003", "中级作战记录", "2.8125", "purple", "6"}, {"2002", "初级作战记录", "1.125", "blue", "6"},
-                {"2001", "基础作战记录", "0.5625", "green", "6"}, {"4001", "龙门币", "0.0045", "purple", "6"},
+                {"3303", "技巧概要·卷3", "13.196", "green", "6"}, {"2004", "高级作战记录", exp4, "orange", "6"},
+                {"2003", "中级作战记录", exp3, "purple", "6"}, {"2002", "初级作战记录", exp2, "blue", "6"},
+                {"2001", "基础作战记录", exp1, "green", "6"}, {"4001", "龙门币", "0.0045", "purple", "6"},
 
                 {"3261", "医疗芯片", "17.8425", "blue", "7"}, {"3271", "辅助芯片", "21.42", "blue", "7"},
                 {"3211", "先锋芯片", "21.42", "blue", "7"}, {"3281", "特种芯片", "17.8425", "blue", "7"},
@@ -358,7 +421,7 @@ public class ItemServiceImpl implements ItemService {
                 {"trap_oxygen_3", "沙兹专业镀膜装置", "45", "orange", "9"},
 
                 {"ap_supply_lt_010", "应急理智小样",  "0.000001", "purple", "9"},
-                {"randomMaterial_6", "罗德岛物资补给Ⅲ",  "14", "green", "9"},
+                {"randomMaterial_7", "罗德岛物资补给Ⅳ",  "14", "green", "9"},
         };
     }
 }

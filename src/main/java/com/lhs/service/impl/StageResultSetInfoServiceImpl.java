@@ -5,7 +5,6 @@ import com.lhs.bean.DBPogo.StageResultData;
 
 import com.lhs.bean.vo.StageOrundumVo;
 import com.lhs.bean.vo.StageVo;
-import com.lhs.dao.StageDao;
 import com.lhs.dao.StageResultDataDao;
 import com.lhs.service.StageResultSetInfoService;
 import com.lhs.service.StageService;
@@ -32,16 +31,15 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
     private StageService stageService;
     /**
      * 设置关卡的理智转化率
-     *
      * @param times      样本数
      * @param efficiency 最低效率  理智转化率100%=绿票绝对效率1.25
      * @return
      */
     @Override
-    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState) {
+    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double version) {
         Random random = new Random();
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
-                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
+                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液", "转质盐组"};
 
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListT3 = new ArrayList<>();
@@ -49,29 +47,32 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for (String main : mainName) {
 //            根据材料类型查出关卡,是否可查出取决于isShow属性,1为可显示
-            List<StageResultData> stageResultByTypeList =
-                    stageResultDataDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc
-                            (main, 1, efficiency, times);
+            List<StageResultData> stageResultByTypeList = new ArrayList<>();
+                stageResultByTypeList =stageResultDataDao.findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc
+                        (main, 1,version, efficiency, times);
+
 //            复制一个集合 ,对数据库查出的集合直接进行set操作会改变session缓存中的数据，数据库的值也会更新,虽然好像也没啥事,但是还是复制了一下
             List<StageResultData> stageResultByTypeListCopy = new ArrayList<>();
             for (int i = 0; i < stageResultByTypeList.size(); i++) {
                 stageResultByTypeListCopy.add(stageResultByTypeList.get(i));
-                if(i>5) break;
+                if(i>5) {
+                    break;
+                }
             }
-
 
             double standard = 1.25;    //绿票绝对效率的上限  等同于理智转化率100%
 //      实际效率可能会比这个浮动0.几,下面会找出来每个材料排在第一的关卡效率作为标准,但是需要他是作为定价本使用的,判断isUseValue是1
             for (StageResultData stageResultData : stageResultByTypeList) {
                 if (stageResultData.getIsValue() == 1) {
                     standard = stageResultData.getEfficiency();
-//                    log.info("当前标准是"+stageResultData.getStageName()+"——"+standard);
+//                   log.info("当前标准是"+stageResultData.getStageCode()+"——"+standard);
                     break;
                 }
             }
 
-         if(stageState==2) standard = standard-0.045;
-         if(stageState==3) standard = 1.25;
+         if(stageState>0) {
+             standard = 1.25;
+         }
 
                int stageColorIndex = 0;
                 boolean ssFlag = true;
@@ -86,9 +87,15 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
                     stageResultData.setSecondary("龙门币");
                     stageResultData.setSecondaryId("4001");
                     stageResultData.setStageColor(-1);  //设置颜色为-1,前端会判断为红色
-                    stageResultByTypeListCopy.add(0, stageResultData);  //塞入复制后的集合中
+
+                    if(stageResultData.getEfficiency()/1.25<1.0){
+                        stageResultByTypeListCopy.add(1, stageResultData);  //塞入复制后的集合中
+                    }else {
+                        stageResultByTypeListCopy.add(0, stageResultData);  //塞入复制后的集合中
+                        stageColorIndex++;
+                    }
+
                     k++;
-                    stageColorIndex++;
                     ssFlag = false;
                 }
             }
@@ -99,16 +106,17 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 //                log.info( stageResultData.getStageCode() +" = "+stageResultData.getEfficiency() +" / "+ standard +" = "+
 //                        Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
                 stageResultData.setStageEfficiency(Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
+                stageResultData.setStageEfficiencyEx(Double.valueOf(decimalFormat.format(stageResultData.getEfficiencyEx() / standard * 100)));
             }
 
             for (int i = stageColorIndex; i < stageResultByTypeListCopy.size(); i++) {
+
                 if (stageResultByTypeListCopy.get(stageColorIndex).getApExpect() > stageResultByTypeListCopy.get(i).getApExpect()) {
-//           //如果最高和次高的期望理智差距不到1,则不进行索引的更改
-//                    if (stageResultByTypeListCopy.get(stageColorIndex).getApExpect() - stageResultByTypeListCopy.get(i).getApExpect() > 1) {
-                        stageColorIndex = i;
-//                    }
+                              stageColorIndex = i;
                 }
             }
+
+
 
            //  索引是0,该关卡效率第一 ,期望理智也是最底
           if(ssFlag){
@@ -120,12 +128,22 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
                 stageResultByTypeListCopy.get(stageColorIndex).setStageColor(1);
             }
           }else {
+              if(version>0.7){
+                  if (stageColorIndex == 0) {
+                      stageResultByTypeListCopy.get(0).setStageColor(4);
+                      // 索引非0,该关卡效率第一 ,期望理智也是最底
+                  } else {
+                      stageResultByTypeListCopy.get(0).setStageColor(3);
+                      stageResultByTypeListCopy.get(stageColorIndex).setStageColor(1);
+                  }
+              }else {
               if (stageColorIndex == 1) {
                   stageResultByTypeListCopy.get(1).setStageColor(4);
-                  // 索引非0,该关卡效率第一 ,期望理智也是最底
+                  // 索引非0,该关卡效率第一 ,期望理智也是最低
               } else {
                   stageResultByTypeListCopy.get(1).setStageColor(3);
                   stageResultByTypeListCopy.get(stageColorIndex).setStageColor(1);
+              }
               }
           }
 
@@ -138,8 +156,17 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
     }
 
+
+    /**
+     *
+     * @param times  样本量
+     * @param expect  期望理智
+     * @param stageState  关卡类型
+     * @param version  效率版本（区别为经验书的价值系数）
+     * @return
+     */
     @Override
-    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState) {
+    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double version) {
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListT2 = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -150,26 +177,12 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for (int i = 0; i < mainName.length; i++) {
             //  根据材料名称查出关卡,是否可查出取决于isShow属性,1为可显示
-            List<StageResultData> stageResultByExpect = stageResultDataDao.findByItemNameAndIsShowAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
-                    mainName[i], 1, 50.0, 100);
+            List<StageResultData> stageResultByExpect = stageResultDataDao.findByItemNameAndIsShowAndVersionAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
+                    mainName[i], 1,version, 50.0, 100);
             List<StageResultData> page = new ArrayList<>(stageResultByExpect);
             // 根据材料类型(这里查的是t2材料的上位t3材料)查出关卡,是否可查出取决于isShow属性,1为可显示
-
-            List<StageResultData> stageResultByTypeList_t3 =
-                    stageResultDataDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc
-                            (typeName[i], 1, 1.0, 500);
-
             double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
-            //      实际效率可能会比这个浮动0.几,下面会找出来每个材料排在第一的关卡效率作为标准,但是需要他是作为定价本使用的,判断isUseValue是1
-            for (StageResultData resultVo : stageResultByTypeList_t3) {
-                if (resultVo.getIsValue() == 1) {
-                    standard = resultVo.getEfficiency();
-//                    log.info("当前标准是"+resultVo.getStageName()+"——"+standard);
-                    break;
-                }
-            }
 
-            if(stageState>0)standard = 1.25;
 
 
             //将绿票绝对效率转化为理智转化率100%
@@ -186,33 +199,27 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         return stageResultListT2;
     }
 
-
+    /**
+     *
+     * @param actNameList  活动名称集合
+     * @param stageState  关卡类型
+     * @param version  效率版本（区别为经验书的价值系数）
+     * @return
+     */
     @Override
-    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState) {
+    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double version) {
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListClosed = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
-        int pageNum = 0;
-        int pageSize = 4;
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
+
 
         for (String actName : actNameList) {
             //查出循环中当前活动名称的关卡
-            List<StageResultData> list = stageResultDataDao.findByZoneIdAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName, 2);
-
+       List<StageResultData> list = stageResultDataDao.findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName,version, 2);
+            if(list.size() < 1) continue;
             for (StageResultData stageResultData : list) {
-                // 根据材料类型查出关卡,是否可查出取决于isShow属性,1为可显示
-//                Page<StageResultData> permStageList = stageResultDataDao.findByItemTypeAndIsShowAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
-//                        stageResultData.getItemType(), 1, 1.0, 50, pageable);
                 double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
-                //      实际效率可能会比这个浮动0.几,下面会找出来每个材料排在第一的关卡效率作为标准,但是需要他是作为定价本使用的,判断isUseValue是1
-//                for (int k = 0; k < permStageList.getContent().size(); k++) {
-//                    if (permStageList.getContent().get(k).getIsValue() == 1) {
-//                        standard = permStageList.getContent().get(k).getEfficiency();
-//                        break;
-//                    }
-//                }
                 //将绿票绝对效率转化为理智转化率100%
                 stageResultData.setStageEfficiency(Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
             }
@@ -223,6 +230,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         return stageResultListClosed;
     }
 
+
     @Override
     public List<StageOrundumVo> setOrundumEfficiency() {
         DecimalFormat decimalFormat_2 = new DecimalFormat("0.00");
@@ -230,7 +238,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         List<StageOrundumVo> list = new ArrayList<>();
 
         List<StageVo> allVo = stageService.findAllVo();
-        List<StageResultData> stageResultDataStandard = stageResultDataDao.findByStageId("main_01-07");
+        List<StageResultData> stageResultDataStandard = stageResultDataDao.findByStageIdAndIsShow("main_01-07",1);
         HashMap<String, Double> standardHashMap= orundumPerApCal(stageResultDataStandard);
         double  standard = standardHashMap.get("orundumPerAp");
 
@@ -246,7 +254,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for(StageVo stageVo:allVo){
             if(stageVo.getIsShow()==0||"main_01-07".equals(stageVo.getStageId()))   continue;
-            List<StageResultData> byStageCode = stageResultDataDao.findByStageId(stageVo.getStageId());
+            List<StageResultData> byStageCode = stageResultDataDao.findByStageIdAndIsShow(stageVo.getStageId(),1);
             if(byStageCode.size()<1) continue;
             HashMap<String, Double> hashMap = orundumPerApCal(byStageCode);
             Double orundumPerAp = hashMap.get("orundumPerAp");
@@ -281,9 +289,12 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         HashMap<String, Double> mianValueNum = new HashMap<>();
 
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
-                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
+                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液", "转质盐组"};
         for (String itemName : mainName) {
+
+
             List<StageResultData> stageResultList = allStageResultHashMap.get(itemName);
+
             stageResultList.sort(comparing(StageResultData::getEfficiency).reversed());  //按关卡效率倒序排序
 
 //   判断是否用于材料定价，取当前材料最高效率
@@ -303,22 +314,34 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         return mianValueNum;
     }
 
+    /**
+     *
+     * @param stageResultData  关卡对象
+     * @param version  效率版本（区别为经验书的价值系数）
+     * @return
+     */
     @Override
-    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData) {
+    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double version) {
         double number = stageResultData.getEfficiency() - 0.054;
         DecimalFormat decimalFormat2 = new DecimalFormat("0.00");
         List<StageResultData> list = new ArrayList<>();
-        Random random = new Random();
+
         String[] item = new String[]{"异铁组", "轻锰矿", "固源岩组", "固源岩", "糖", "聚酸酯", "异铁", "酮凝集", "装置"};
-        String[] itemid = new String[]{"30043", "30083", "30013", "30012", "30022", "30032", "30042", "30052", "30062"};
+        String[] itemId = new String[]{"30043", "30083", "30013", "30012", "30022", "30032", "30042", "30052", "30062"};
         Double[] value = new Double[]{34.504, 34.755, 22.262, 4.58, 7.3593, 7.2534, 8.7857, 8.7911, 11.6551,};
         Double[] cost = new Double[]{50.0, 50.0, 35.0, 8.0, 13.0, 13.0, 16.0, 16.0, 22.0,};
         int[] itemLevel = new int[]{3, 3, 3, 2, 2, 2, 2, 2, 2,};
         double reason = 18.0;
 
+        long id = 0L;
+        if(version ==0.0)    id = 100000L;
+        if(version ==0.76)   id = 200000L;
+        if(version ==1.0)    id = 300000L;
+        if(version ==0.625)  id = 400000L;
+
         for (int i = 0; i < item.length; i++) {
             StageResultData stageData = new StageResultData();
-            stageData.setId(stageResultData.getId() + random.nextInt(100000));
+            stageData.setId(id+stageResultData.getId()+i);
             stageData.setStageCode(stageResultData.getStageCode());
             stageData.setIsValue(0);
             stageData.setIsShow(stageResultData.getIsShow());
@@ -333,13 +356,14 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             stageData.setMain(item[i]);
             stageData.setStageState(stageResultData.getStageState());
             stageData.setItemType(item[i]);
-            stageData.setItemId(itemid[i]);
+            stageData.setItemId(itemId[i]);
             stageData.setKnockRating((reason * number) / cost[i]);
             stageData.setActivityName(stageResultData.getActivityName());
             stageData.setMainLevel(itemLevel[i]);
             stageData.setApExpect(Double.valueOf(decimalFormat2.format(cost[i] / number)));
             stageData.setEfficiency(Double.valueOf(decimalFormat2.format(
                     (((reason * number) / cost[i]) * value[i] + reason * 0.06) / reason)));
+            stageData.setVersion(version);
 //            System.out.println(stageData);
             list.add(stageData);
         }
@@ -380,16 +404,16 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for(StageResultData stageResultData:stageResultDataList){
             if("30011".equals( stageResultData.getItemId())){
-                item_30011 = stageResultData.getKnockRating()/stageResultData.getApExpect()/stageResultData.getKnockRating();
+                item_30011 = stageResultData.getKnockRating()/stageResultData.getApCost();
             }
             if("30012".equals( stageResultData.getItemId())){
-                item_30012 = stageResultData.getKnockRating()/stageResultData.getApExpect()/stageResultData.getKnockRating();
+                item_30012 = stageResultData.getKnockRating()/stageResultData.getApCost();
             }
             if("30061".equals( stageResultData.getItemId())){
-                item_30061 = stageResultData.getKnockRating()/stageResultData.getApExpect()/stageResultData.getKnockRating();
+                item_30061 = stageResultData.getKnockRating()/stageResultData.getApCost();
             }
             if("30062".equals( stageResultData.getItemId())){
-                item_30062 = stageResultData.getKnockRating()/stageResultData.getApExpect()/stageResultData.getKnockRating();
+                item_30062 = stageResultData.getKnockRating()/stageResultData.getApCost();
             }
         }
 

@@ -13,16 +13,16 @@ import java.util.List;
 public interface ApiService {
 
     //读取T3材料关卡效率文件
-    String readStageFileT3();
+    String readStageFileT3(String version);
 
     //读取T2材料关卡效率文件
-    String readStageFileT2();
+    String readStageFileT2(String version);
 
     //搓玉计算
-    String readStageFileOrundum();
+    String readStageFileOrundum(String version);
 
     //读取已结束活动材料关卡效率文件
-    String readStageClosedFile();
+    String readStageClosedFile(String version);
 
 
     //根据掉落物品类型和样本数查询关卡  按效率倒序 数据库查询用

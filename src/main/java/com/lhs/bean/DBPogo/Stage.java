@@ -29,12 +29,10 @@ public class Stage {
 	private String secondary;
 	@ExcelProperty("副产物Id")
 	private String secondaryId;
-	@ExcelProperty("apm")
+	@ExcelProperty("spm")
 	private Double spm;
 	@ExcelProperty("掉落大类")
 	private String itemType;
-	@ExcelProperty("是否开放")
-	private Integer isOpen;
 	@ExcelProperty("是否特殊掉落")
 	private Integer stageState;
 	@ExcelProperty("是否用于定价")
@@ -140,13 +138,6 @@ public class Stage {
 		this.itemType = itemType;
 	}
 
-	public Integer getIsOpen() {
-		return isOpen;
-	}
-
-	public void setIsOpen(Integer isOpen) {
-		this.isOpen = isOpen;
-	}
 
 	public Integer getStageState() {
 		return stageState;
@@ -224,9 +215,8 @@ public class Stage {
 				", mainLevel=" + mainLevel +
 				", secondary='" + secondary + '\'' +
 				", secondaryId='" + secondaryId + '\'' +
-				", apm=" + spm +
+				", spm=" + spm +
 				", itemType='" + itemType + '\'' +
-				", isOpen=" + isOpen +
 				", stageState=" + stageState +
 				", isValue=" + isValue +
 				", isShow=" + isShow +
@@ -234,6 +224,7 @@ public class Stage {
 				", activityName='" + activityName + '\'' +
 				", part=" + part +
 				", partNo=" + partNo +
+				", minClearTime=" + minClearTime +
 				'}';
 	}
 }

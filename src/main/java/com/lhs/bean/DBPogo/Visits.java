@@ -20,6 +20,10 @@ public class Visits {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date visitsDay;
     private Integer visits;
+    private Integer visitsBot;
+    private Integer visitsBuilding;
+    private Integer visitsIndex;
+    private Integer visitsGacha;
 
     public Date getVisitsDay() {
         return visitsDay;
@@ -37,11 +41,47 @@ public class Visits {
         this.visits = visits;
     }
 
+    public Integer getVisitsBot() {
+        return visitsBot;
+    }
+
+    public void setVisitsBot(Integer visitsBot) {
+        this.visitsBot = visitsBot;
+    }
+
+    public Integer getVisitsBuilding() {
+        return visitsBuilding;
+    }
+
+    public void setVisitsBuilding(Integer visitsBuilding) {
+        this.visitsBuilding = visitsBuilding;
+    }
+
+    public Integer getVisitsIndex() {
+        return visitsIndex;
+    }
+
+    public void setVisitsIndex(Integer visitsIndex) {
+        this.visitsIndex = visitsIndex;
+    }
+
+    public Integer getVisitsGacha() {
+        return visitsGacha;
+    }
+
+    public void setVisitsGacha(Integer visitsGacha) {
+        this.visitsGacha = visitsGacha;
+    }
+
     @Override
     public String toString() {
         return "Visits{" +
                 "visitsDay=" + visitsDay +
                 ", visits=" + visits +
+                ", visitsBot=" + visitsBot +
+                ", visitsBuilding=" + visitsBuilding +
+                ", visitsIndex=" + visitsIndex +
+                ", visitsGacha=" + visitsGacha +
                 '}';
     }
 }

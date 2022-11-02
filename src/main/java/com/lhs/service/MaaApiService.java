@@ -20,7 +20,9 @@ public interface MaaApiService {
     //保存公招统计结果
     String saveStatistical();
 
-    Long saveScheduleJson(String scheduleJson);
+    void saveScheduleJson(String scheduleJson, Long uid);
 
-    void exportScheduleJson(HttpServletResponse response,Long uid);
+    void exportScheduleFile(HttpServletResponse response, Long uid);
+
+    String exportScheduleJson(Long id);
 }

@@ -1,16 +1,16 @@
 package com.lhs.service.impl;
 
-import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.BuildingSchedule;
-import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.DBPogo.MaaTagDataStatistical;
 import com.lhs.bean.pojo.MaaTagRequestVo;
-import com.lhs.bean.vo.ItemValueVo;
-import com.lhs.common.util.ReadJsonUtil;
+import com.lhs.common.exception.ServiceException;
+import com.lhs.common.util.CreateJsonFile;
+import com.lhs.common.util.ReadFileUtil;
+import com.lhs.common.util.ResultCode;
 import com.lhs.common.util.SaveFile;
 import com.lhs.dao.MaaTagDataStatisticalDao;
 import com.lhs.dao.MaaTagResultDao;
@@ -22,9 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -221,7 +218,7 @@ public class MaaAPIServiceImpl implements MaaApiService {
 
     @Override
     public String getMaaTagDataStatistical() {
-        return ReadJsonUtil.readJson(frontEndFilePath + "maaStatistical.json");
+        return ReadFileUtil.readFile(frontEndFilePath + "maaStatistical.json");
     }
 
     @Override
@@ -253,75 +250,81 @@ public class MaaAPIServiceImpl implements MaaApiService {
     }
 
     @Override
-    public Long saveScheduleJson( String scheduleJson) {
+    public void saveScheduleJson(String scheduleJson, Long id) {
 
         Date date = new Date();
-        Random random = new Random();
-        String timestampId = String.valueOf(date.getTime()) + random.nextInt(1000);
-        long uid = Long.parseLong(timestampId);
+
 
         BuildingSchedule buildingSchedule = new BuildingSchedule();
-        buildingSchedule.setUid(uid);
+        buildingSchedule.setUid(id);
         buildingSchedule.setCreateTime(date);
         scheduleDao.save(buildingSchedule);
 
-        SaveFile.save(buildingSchedulePath,uid+".json",scheduleJson);
+        SaveFile.save(buildingSchedulePath,id+".json",scheduleJson);
 
-        return  uid;
     }
 
 
 
     @Override
-    public void exportScheduleJson(HttpServletResponse response, Long uid) {
+    public void exportScheduleFile(HttpServletResponse response, Long id) {
         String str = null;
 
-        str =  ReadJsonUtil.readJson(buildingSchedulePath+uid+".json");
+        str =  ReadFileUtil.readFile(buildingSchedulePath+id+".json");
         String jsonForMat = JSON.toJSONString(JSONObject.parseObject(str), SerializerFeature.PrettyFormat,
                 SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteMapNullValue,
                 SerializerFeature.WriteNullListAsEmpty);
+         String idStr = String.valueOf(id);
+         CreateJsonFile.createJsonFile(response,buildingSchedulePath,idStr,jsonForMat);
 
-        try {
+//        try {
+//            // 拼接文件完整路径
+//            String fullPath = buildingSchedulePath + id + ".json";
+//
+//            // 保证创建一个新文件
+//            File file = new File(fullPath);
+//            if (!file.getParentFile().exists()) { // 如果父目录不存在，创建父目录
+//                file.getParentFile().mkdirs();
+//            }
+//            if (file.exists()) { // 如果已存在,删除旧文件
+//                file.delete();
+//            }
+//            file.createNewFile();
+//
+//            // 格式化json字符串
+//            FileInputStream fileInputStream = new FileInputStream(file);
+//            // 将格式化后的字符串写入文件
+//            Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+//            write.write(jsonForMat);
+//            write.flush();
+//            write.close();
+//
+//            response.setContentType("application/force-download");
+//            response.setCharacterEncoding("utf-8");
+//            response.setHeader("Content-disposition", "attachment;filename=" + id + ".json");
+//            OutputStream outputStream = response.getOutputStream();
+//            byte[] buf = new byte[1024];
+//            int len = 0;
+//            while ((len = fileInputStream.read(buf)) != -1) {
+//                outputStream.write(buf, 0, len);
+//            }
+//            fileInputStream.close();
+//            outputStream.close();
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//        }
+    }
 
-            // 拼接文件完整路径
-            String fullPath = buildingSchedulePath + uid + ".json";
-
-            // 生成json格式文件
-
-            // 保证创建一个新文件
-            File file = new File(fullPath);
-            if (!file.getParentFile().exists()) { // 如果父目录不存在，创建父目录
-                file.getParentFile().mkdirs();
-            }
-            if (file.exists()) { // 如果已存在,删除旧文件
-                file.delete();
-            }
-            file.createNewFile();
-
-            // 格式化json字符串
-            FileInputStream fileInputStream = new FileInputStream(file);
-            // 将格式化后的字符串写入文件
-            Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
-            write.write(jsonForMat);
-            write.flush();
-            write.close();
-
-            response.setContentType("application/force-download");
-            response.setCharacterEncoding("utf-8");
-            response.setHeader("Content-disposition", "attachment;filename=" + uid + ".json");
-            OutputStream outputStream = response.getOutputStream();
-            byte[] buf = new byte[1024];
-            int len = 0;
-            while ((len = fileInputStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            fileInputStream.close();
-            outputStream.close();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
+    @Override
+    public String exportScheduleJson(Long id) {
+        String filePath = buildingSchedulePath + id + ".json";
+        String str = ReadFileUtil.readFile(filePath);
+        if(str==null){
+            throw new ServiceException(ResultCode.DATA_NONE);
         }
+        return  str;
     }
 
 

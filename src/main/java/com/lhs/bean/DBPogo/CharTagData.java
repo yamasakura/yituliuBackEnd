@@ -5,17 +5,18 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 @Entity
-@Table(name = "char_tag_data")//干员tag库
+@Table(name = "char_tag_data221101")//干员tag库
 public class CharTagData  {
 
     @Id
     @ExcelProperty("序号")
     private Integer id;
     @ExcelProperty("干员")
-    private String roleName;
+    private String charName;
+    @ExcelProperty("干员代号")
+    private String charId;
     @ExcelProperty("可否招募")
     private Integer type;
     @ExcelProperty("星级")
@@ -44,12 +45,20 @@ public class CharTagData  {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getCharName() {
+        return charName;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setCharName(String roleName) {
+        this.charName = roleName;
+    }
+
+    public String getCharId() {
+        return charId;
+    }
+
+    public void setCharId(String charId) {
+        this.charId = charId;
     }
 
     public Integer getType() {
@@ -128,7 +137,7 @@ public class CharTagData  {
     public String toString() {
         return "CharTagData{" +
                 "id=" + id +
-                ", roleName='" + roleName + '\'' +
+                ", roleName='" + charName + '\'' +
                 ", type=" + type +
                 ", rarity=" + rarity +
                 ", grade='" + grade + '\'' +
