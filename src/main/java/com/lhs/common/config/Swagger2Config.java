@@ -58,6 +58,7 @@ public class Swagger2Config {
 
 
 
+
 	@Bean
 	public WebMvcConfigurer webMvcConfigurer() {
 		return new WebMvcConfigurer() {
