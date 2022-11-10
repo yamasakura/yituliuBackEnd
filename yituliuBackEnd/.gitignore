@@ -1,0 +1,41 @@
+HELP.md
+target/
+
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+
+### VS Code ###
+.vscode/
+
+
+/src/main/java/com/lhs/bot/
+/src/main/java/com/lhs/controller/update/
+/src/main/resources/backups/
+/src/main/resources/penguin/
+/src/main/resources/application.properties
+/src/main/resources/schedule/
