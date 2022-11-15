@@ -39,9 +39,9 @@ public class Swagger2Config {
 	}
 
 	@Bean
-	public Docket YituliuApiConfig() {
+	public Docket WebApiConfig() {
 		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("YituliuApi")
+				.groupName("WebApi")
 				//设置基本信息
 				.apiInfo(apiInfo())
 				//初始化并返回一个API选择构造器
@@ -55,7 +55,21 @@ public class Swagger2Config {
 	}
 
 
-
+	@Bean
+	public Docket UpdateApiConfig() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.groupName("UpdateApi")
+				//设置基本信息
+				.apiInfo(apiInfo())
+				//初始化并返回一个API选择构造器
+				.select()
+				//指定扫描的Controller包结构
+				.apis(RequestHandlerSelectors.basePackage("com.lhs.controller.update"))
+				//设置路径筛选
+				.paths(PathSelectors.any())
+				//构建
+				.build();
+	}
 
 
 

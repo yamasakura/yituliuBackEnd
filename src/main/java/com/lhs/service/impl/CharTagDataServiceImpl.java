@@ -169,7 +169,7 @@ public class CharTagDataServiceImpl implements CharTagDataService {
             resultMaxRarity = Integer.parseInt(resultList.get(0).getLessRarity());
         }
 
-        System.out.println("结果长度："+resultList.size());
+
         for (int i = 0; i < resultList.size(); i++) {
             if (Integer.parseInt(resultList.get(i).getLessRarity()) > 3) {
                 if (Integer.parseInt(resultList.get(i).getLessRarity()) < resultMaxRarity) break;

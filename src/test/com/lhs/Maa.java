@@ -26,7 +26,6 @@ public class Maa {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long createTime = new Date().getTime();
-        
 
         List<MaaTagData> list = maaTagResultDao.findByCreateTimeIsLessThan(new Date(1662220800000L));
 //        List<MaaTagData> list = maaTagResultDao.findAll();
@@ -35,7 +34,6 @@ public class Maa {
 //        for(MaaTagData maaTagData:list){
 //            System.out.println(maaTagData.getCreateTime());
 //        }
-
 
     }
 

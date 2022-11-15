@@ -33,7 +33,7 @@ build/
 .vscode/
 
 
-/src/main/java/com/lhs/bot/
+#/src/main/java/com/lhs/bot/
 /src/main/java/com/lhs/controller/update/
 /src/main/resources/backups/
 /src/main/resources/penguin/

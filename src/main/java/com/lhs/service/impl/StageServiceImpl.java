@@ -57,7 +57,7 @@ public class StageServiceImpl implements StageService {
                 public void invoke(Stage stage, AnalysisContext analysisContext) {
                     if("1-7".equals(stage.getStageCode()))  stage.setMainLevel(3);
                     if(stage.getMinClearTime()>1000) stage.setSpm(stage.getApCost()/stage.getMinClearTime()*60000);
-                    System.out.print(stage.getZoneId()+"——————");
+
                     if(stage.getZoneId().startsWith("act")){
                         stage.setStageState(0);
                         stage.setIsValue(0);
@@ -65,7 +65,7 @@ public class StageServiceImpl implements StageService {
                         if(stage.getZoneId().endsWith("perm")){
                             stage.setIsShow(1);
                             stage.setIsValue(1);
-                            System.out.print("常驻活动关");
+
                         }
                     }else {
                         stage.setIsValue(1);

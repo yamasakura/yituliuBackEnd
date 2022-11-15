@@ -158,57 +158,63 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 		double  standard_ap = 3.5;
 
 		List<Object>  packList = new ArrayList<>();
-		for(Object object:jsonArray){
-			System.out.println(object);
-			Map storePackMap = JSONObject.parseObject(object.toString());
-			double apValueToOriginium = 0.0;  //材料理智折合源石
+		if(jsonArray!=null) {
+			for (Object object : jsonArray) {
 
-			double packOriginium = 0.0; // 礼包折合源石
-			double packDraw = 0.0; // 共计多少抽
-			double packRmbPerDraw = 0.0; // 每抽价格
-			double packRmbPerOriginium = 0.0; // 每石价格
-			double packPPRDraw = 0.0; // 每抽性价比，相比648
-			double packPPROriginium = 0.0; // 每石性价比，相比648
+				Map storePackMap = JSONObject.parseObject(object.toString());
+				double apValueToOriginium = 0.0;  //材料理智折合源石
 
-
-			int gachaOrundum = Integer.parseInt(storePackMap.get("gachaOrundum").toString()); // 合成玉
-			int gachaOriginium = Integer.parseInt(storePackMap.get("gachaOriginium").toString());; // 源石
-			int gachaPermit = Integer.parseInt(storePackMap.get("gachaPermit").toString());; // 单抽
-			int gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());; // 十连
-			int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());; // 十连
+				double packOriginium = 0.0; // 礼包折合源石
+				double packDraw = 0.0; // 共计多少抽
+				double packRmbPerDraw = 0.0; // 每抽价格
+				double packRmbPerOriginium = 0.0; // 每石价格
+				double packPPRDraw = 0.0; // 每抽性价比，相比648
+				double packPPROriginium = 0.0; // 每石性价比，相比648
 
 
+				int gachaOrundum = Integer.parseInt(storePackMap.get("gachaOrundum").toString()); // 合成玉
+				int gachaOriginium = Integer.parseInt(storePackMap.get("gachaOriginium").toString());
+				; // 源石
+				int gachaPermit = Integer.parseInt(storePackMap.get("gachaPermit").toString());
+				; // 单抽
+				int gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());
+				; // 十连
+				int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());
+				; // 十连
 
 
-			//计算该理智的材料总理智折合源石
-			if(storePackMap.get("packContent")!=null){
-				JSONArray jsonArrayItem = JSONArray.parseArray(storePackMap.get("packContent").toString());
-				for(Object objectItem:jsonArrayItem){
-					Map itemMap = JSONObject.parseObject(objectItem.toString());
-					Object itemName = itemMap.get("itemName");	System.out.print(itemName);
-					int itemQuantity = Integer.parseInt(itemMap.get("itemQuantity").toString());	System.out.println(itemQuantity);
-					apValueToOriginium = apValueToOriginium+itemValueMap.get(itemName.toString())*itemQuantity;
+				//计算该理智的材料总理智折合源石
+				if (storePackMap.get("packContent") != null) {
+					JSONArray jsonArrayItem = JSONArray.parseArray(storePackMap.get("packContent").toString());
+					for (Object objectItem : jsonArrayItem) {
+						Map itemMap = JSONObject.parseObject(objectItem.toString());
+						Object itemName = itemMap.get("itemName");
+
+						int itemQuantity = Integer.parseInt(itemMap.get("itemQuantity").toString());
+
+						apValueToOriginium = apValueToOriginium + itemValueMap.get(itemName.toString()) * itemQuantity;
+					}
 				}
+				if (apValueToOriginium > 0.0) {
+					apValueToOriginium = apValueToOriginium / 135;
+				}
+
+
+				packDraw = gachaOrundum / 600.0 + gachaOriginium * 0.3 + gachaPermit + gachaPermit10;
+				packRmbPerDraw = packPrice / packDraw;
+				packOriginium = gachaOrundum / 180.0 + gachaOriginium + gachaPermit * 600 / 180.0 + gachaPermit10 * 600 / 180.0 + apValueToOriginium;
+				packRmbPerOriginium = packPrice / packOriginium;
+				packPPRDraw = standard_gacha / packRmbPerDraw;
+				packPPROriginium = standard_ap / packRmbPerOriginium;
+
+				storePackMap.put("packDraw", packDraw);
+				storePackMap.put("packRmbPerDraw", packRmbPerDraw);
+				storePackMap.put("packOriginium", packOriginium);
+				storePackMap.put("packRmbPerOriginium", packRmbPerOriginium);
+				storePackMap.put("packPPRDraw", packPPRDraw);
+				storePackMap.put("packPPROriginium", packPPROriginium);
+				packList.add(storePackMap);
 			}
-			if(apValueToOriginium>0.0){
-				apValueToOriginium = apValueToOriginium/135;
-			}
-
-
-			packDraw = gachaOrundum/600.0+gachaOriginium*0.3+gachaPermit+gachaPermit10;
-			packRmbPerDraw = packPrice/packDraw;
-			packOriginium = gachaOrundum/180.0+gachaOriginium+gachaPermit*600/180.0+gachaPermit10*600/180.0+apValueToOriginium;
-			packRmbPerOriginium = packPrice/packOriginium;
-			packPPRDraw = standard_gacha/packRmbPerDraw;
-			packPPROriginium = standard_ap/packRmbPerOriginium;
-
-			storePackMap.put("packDraw",packDraw);
-			storePackMap.put("packRmbPerDraw",packRmbPerDraw);
-			storePackMap.put("packOriginium",packOriginium);
-			storePackMap.put("packRmbPerOriginium",packRmbPerOriginium);
-			storePackMap.put("packPPRDraw",packPPRDraw);
-			storePackMap.put("packPPROriginium",packPPROriginium);
-            packList.add(storePackMap);
 		}
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
