@@ -37,5 +37,6 @@ build/
 /src/main/java/com/lhs/controller/update/
 /src/main/resources/backups/
 /src/main/resources/penguin/
+/src/main/resources/frontEnd/
 /src/main/resources/application.properties
 /src/main/resources/schedule/

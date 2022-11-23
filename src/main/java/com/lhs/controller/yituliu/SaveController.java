@@ -67,17 +67,23 @@ public class SaveController {
     }
 
     @ApiOperation("保存企鹅物流数据")
-    @GetMapping("/save/PenguinsData")
-    public Result savePenguinsData() {
-        String url = "https://penguin-stats.io/PenguinStats/api/v2/result/matrix?show_closed_zones=true";
+    @GetMapping("/save/PenguinsData/{dateType}")
+    @ApiImplicitParam(name="dateType",value = "数据源",dataType = "String",paramType = "path",defaultValue="all",required = false)
+    public Result savePenguinsData(@PathVariable("dateType") String dateType) {
+        String url = "";
+        if("auto".equals(dateType)){
+            url = "https://penguin-stats.io/PenguinStats/api/v2/_private/result/matrix/CN/global/automated";
+        }else {
+            url = "https://penguin-stats.io/PenguinStats/api/v2/result/matrix?show_closed_zones=true";
+        }
         String con = HttpRequestUtil.doGet(url);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
         String saveTime = simpleDateFormat.format(new Date());
-        SaveFile.save(penguinFilePath,"matrix"+saveTime+".json",con);
-        File file = new File(penguinFilePath+"matrix"+saveTime+".json");
+        SaveFile.save(penguinFilePath, "matrix_"+dateType + saveTime + ".json", con);
+        File file = new File(penguinFilePath + "matrix_"+dateType + saveTime + ".json");
         HashMap<Object, Object> hashMap = new LinkedHashMap<>();
-        hashMap.put("企鹅文件",file.exists());
-        hashMap.put("文件大小",file.length());
+        hashMap.put("企鹅文件", file.exists());
+        hashMap.put("文件大小", file.length());
         return Result.success();
     }
 
@@ -90,54 +96,62 @@ public class SaveController {
     public Result saveStageData(@PathVariable("stageState") Integer stageState,@PathVariable("times") Integer times) {
 
         Double[] versionList = new Double[]{1.0,0.76,0.0,0.625};
+        String[] dataTypeList = new String[]{"all", "auto"};
         HashMap<Object, Object> hashMap = new LinkedHashMap<>();
-        for (int v = 0; v < versionList.length; v++) {
-            String[] actNameList = new String[]{
-                    "act_side20", "act_side19",
-                    "act_side18", "act_side17", "act_side16", "act_side15", "act_side14", "act_side13",
-                    "act_side12_rep_", "act_side11", "act_side10", "act_side9", "act_side8",
-                    "act_side7", "act_side6", "act_side5", "act_side4", "act_side3", "act_side0"
-            };
+        for (int dt = 0; dt < dataTypeList.length; dt++) {
+            for (int v = 0; v < versionList.length; v++) {
+                String[] actNameList = new String[]{
+                        "act_side20", "act_side19",
+                        "act_side18", "act_side17", "act_side16", "act_side15", "act_side14", "act_side13",
+                        "act_side12_rep_", "act_side11", "act_side10", "act_side9", "act_side8",
+                        "act_side7", "act_side6", "act_side5", "act_side4", "act_side3", "act_side0"
+                };
+                double version = versionList[v];
+                String versionCode = "000";
 
-            double version = versionList[v];
-            String versionCode = "000";
-
-            if(version ==0.76)    versionCode = "076";
-            if(version ==1.0)     versionCode = "100";
-            if(version ==0.625)   versionCode = "062";
-
-            List<List<StageResultData>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(times, 1.0, stageState, version);
-            List<List<StageResultData>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(times, 50.0, stageState, version);
-            List<List<StageResultData>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList, stageState, version);
-            List<StageOrundumVo> stageOrundumList = stageResultSetInfoService.setOrundumEfficiency();
-
-            List<List<StageResultVo>> pageListT3Vo = getStageResultVo(pageListT3);
-            String stageFileT3 = JSON.toJSONString(pageListT3Vo);
-            SaveFile.save(frontEndFilePath, "stageT3"+versionCode+".json", stageFileT3);
-
-            List<List<StageResultVo>> pageListT2Vo = getStageResultVo(pageListT2);
-            String stageFileT2 = JSON.toJSONString(pageListT2Vo);
-            SaveFile.save(frontEndFilePath, "stageT2"+versionCode+".json", stageFileT2);
+                if (version == 0.76) versionCode = "076";
+                if (version == 1.0) versionCode = "100";
+                if (version == 0.625) versionCode = "062";
 
 
-            List<List<StageResultVo>> closedStageListVo = getStageResultVo(closedStageList);
-            String closedStage = JSON.toJSONString(closedStageListVo);
-            SaveFile.save(frontEndFilePath, "closedStage"+versionCode+".json", closedStage);
+                List<List<StageResultData>> pageListT3 = stageResultSetInfoService.setStageResultPercentageT3(times, 1.0, stageState, version, dataTypeList[dt]);
+
+                List<List<StageResultData>> pageListT2 = stageResultSetInfoService.setStageResultPercentageT2(times, 50.0, stageState, version, dataTypeList[dt]);
+
+                List<List<StageResultData>> closedStageList = stageResultSetInfoService.setClosedActivityStagePercentage(actNameList, stageState, version, dataTypeList[dt]);
+
+                List<StageOrundumVo> stageOrundumList = stageResultSetInfoService.setOrundumEfficiency(version, dataTypeList[dt]);
 
 
-            String stageOrundum = JSON.toJSONString(stageOrundumList);
-            SaveFile.save(frontEndFilePath, "stageOrundum"+versionCode+".json", stageOrundum);
+                List<List<StageResultVo>> pageListT3Vo = getStageResultVo(pageListT3);
+                String stageFileT3 = JSON.toJSONString(pageListT3Vo);
+                SaveFile.save(frontEndFilePath, "stageT3" + dataTypeList[dt] + versionCode + ".json", stageFileT3);
+
+                List<List<StageResultVo>> pageListT2Vo = getStageResultVo(pageListT2);
+                String stageFileT2 = JSON.toJSONString(pageListT2Vo);
+                SaveFile.save(frontEndFilePath, "stageT2" + dataTypeList[dt] + versionCode + ".json", stageFileT2);
 
 
-            File fileT3 = new File(frontEndFilePath + "closedStage"+versionCode+".json");
-            File fileT2 = new File(frontEndFilePath + "closedStage"+versionCode+".json");
-            File fileClosed = new File(frontEndFilePath + "closedStage"+versionCode+".json");
-            File fileOrundum = new File(frontEndFilePath + "stageOrundum"+versionCode+".json");
-            hashMap.put("t3文件版本："+versionCode, fileT3.exists()+"文件大小："+fileT3.length());
-            hashMap.put("t2文件版本："+versionCode, fileT2.exists()+"文件大小："+fileT2.length());
-            hashMap.put("活动关卡文件版本："+versionCode, fileClosed.exists()+"文件大小："+fileClosed.length());
-            hashMap.put("搓玉文件版本："+versionCode, fileOrundum.exists()+"文件大小："+fileOrundum.length());
+                List<List<StageResultVo>> closedStageListVo = getStageResultVo(closedStageList);
+                String closedStage = JSON.toJSONString(closedStageListVo);
+                SaveFile.save(frontEndFilePath, "closedStage" + dataTypeList[dt] + versionCode + ".json", closedStage);
+
+
+                String stageOrundum = JSON.toJSONString(stageOrundumList);
+                SaveFile.save(frontEndFilePath, "stageOrundum" + dataTypeList[dt] + versionCode + ".json", stageOrundum);
+
+
+                File fileT3 = new File(frontEndFilePath + "closedStage" + dataTypeList[dt] + versionCode + ".json");
+                File fileT2 = new File(frontEndFilePath + "closedStage" + dataTypeList[dt] + versionCode + ".json");
+                File fileClosed = new File(frontEndFilePath + "closedStage" + dataTypeList[dt] + versionCode + ".json");
+                File fileOrundum = new File(frontEndFilePath + "stageOrundum" + dataTypeList[dt] + versionCode + ".json");
+                hashMap.put("t3文件版本：" + versionCode, fileT3.exists() + "文件大小：" + fileT3.length());
+                hashMap.put("t2文件版本：" + versionCode, fileT2.exists() + "文件大小：" + fileT2.length());
+                hashMap.put("活动关卡文件版本：" + versionCode, fileClosed.exists() + "文件大小：" + fileClosed.length());
+                hashMap.put("搓玉文件版本：" + versionCode, fileOrundum.exists() + "文件大小：" + fileOrundum.length());
+            }
         }
+
 
         return Result.success(hashMap);
     }

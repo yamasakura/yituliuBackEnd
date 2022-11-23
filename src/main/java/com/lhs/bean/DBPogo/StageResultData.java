@@ -37,7 +37,7 @@ public class StageResultData {
     private Double efficiencyEx;  // 绿票转化率（ 理智小样
     private Double sampleConfidence;  // 样本置信度
     private String updateTime;  //更新时间
-    private Double version;
+    private String version;
     private Integer minClearTime;
     private Integer part;
     private Integer partNo;
@@ -278,11 +278,11 @@ public class StageResultData {
         return minClearTime;
     }
 
-    public Double getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(Double version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 

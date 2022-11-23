@@ -136,7 +136,13 @@ public class ItemServiceImpl implements ItemService {
         }
 
         itemDao.deleteAll();
+
         itemDao.saveAll(itemShopList);
+    }
+
+    @Override
+    public void resetItemReviseTable() {
+        itemReviseDao.deleteAll(); //清空表
     }
 
 
@@ -146,17 +152,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemRevise> findAllItemRevise() {
-        List<ItemRevise> all = itemReviseDao.findAll();
-        List<ItemRevise> result = new ArrayList<>();
-        for(ItemRevise itemRevise:all){
-//            if("31063".equals(itemRevise.getItemId())||"31064".equals(itemRevise.getItemId())||"30155".equals(itemRevise.getItemId())){
-//                continue;
-//            }
-            result.add(itemRevise);
-        }
+    public List<ItemRevise> findAllItemRevise(String version) {
+        List<ItemRevise> all = itemReviseDao.findByVersion(version);
 
-        return result;
+        return all;
     }
 
 
@@ -166,7 +165,7 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
     @Override
-    public List<ItemRevise> itemRevise(HashMap<String, Double> hashMap,Double version) {
+    public List<ItemRevise> itemRevise(HashMap<String, Double> hashMap,Double version,String dataType,Integer index) {
 //        for (Map.Entry<String, Double> entry : hashMap.entrySet()) {
 //            log.info(entry.getKey() + ": " + entry.getValue());
 //        }
@@ -186,6 +185,7 @@ public class ItemServiceImpl implements ItemService {
         double workShopValue_t2 = 1.538558598 - 0.9;
         double workShopValue_t3 = 6.937 - 1.35;
         double workShopValue_t4 = 23.4191630 - 1.8;
+
 
         String[] item_t3List = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
                 "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液","转质盐组"};
@@ -243,7 +243,16 @@ public class ItemServiceImpl implements ItemService {
 //        保存入临时材料等效价值表的材料等效价值集合
         List<Item> itemTemporaryList = new ArrayList<>();
 
+
         Long id = 0L;
+
+        if(version ==0.0)    id = 1000L;
+        if(version ==0.76)   id = 2000L;
+        if(version ==1.0)    id = 3000L;
+        if(version ==0.625)  id = 4000L;
+
+        if("auto".equals(dataType)) id = id*10;
+
 //        将上面计算后的价值存入俩个集合
         for (String[] str : itemRaw) {
             if (itemValue.get(str[1]) != null) {
@@ -254,6 +263,7 @@ public class ItemServiceImpl implements ItemService {
                 itemResult.setItemValue(itemValue.get(str[1]));
                 itemResult.setType(str[3]);
                 itemResult.setCardNum(str[4]);
+                itemResult.setVersion(dataType+version);
                 itemReviseList.add(itemResult);
 
                 Item item = new Item();
@@ -269,6 +279,7 @@ public class ItemServiceImpl implements ItemService {
                 itemResult.setItemValue(Double.valueOf(str[2]));
                 itemResult.setType(str[3]);
                 itemResult.setCardNum(str[4]);
+                itemResult.setVersion(dataType+version);
                 itemReviseList.add(itemResult);
 
                 Item item = new Item();
@@ -284,8 +295,8 @@ public class ItemServiceImpl implements ItemService {
         itemDao.deleteAll();  //清空表
         itemDao.saveAll(itemTemporaryList); //存入临时表
 
-        itemReviseDao.deleteAll(); //清空表
-        itemReviseDao.saveAll(itemReviseList);  //存入最终表
+
+        if(index==0) itemReviseDao.saveAll(itemReviseList);  //存入最终表
 
 
         return itemReviseList;
@@ -320,6 +331,7 @@ public class ItemServiceImpl implements ItemService {
                 itemValueVo.setItemValueGreen(itemRevise.getItemValue());
                 itemValueVo.setItemId(itemRevise.getItemId());
                 itemValueVo.setItemType(itemRevise.getType());
+                itemValueVo.setVersion(itemRevise.getVersion());
                 valueVoArrayList.add(itemValueVo);
             }
             EasyExcel.write(response.getOutputStream(), ItemValueVo.class).sheet("Sheet1").doWrite(valueVoArrayList);
@@ -344,6 +356,7 @@ public class ItemServiceImpl implements ItemService {
             itemValueVo.setItemValueGreen(itemRevise.getItemValue());
             itemValueVo.setItemId(itemRevise.getItemId());
             itemValueVo.setItemType(itemRevise.getType());
+            itemValueVo.setVersion(itemRevise.getVersion());
             valueVoArrayList.add(itemValueVo);
         }
 
@@ -410,29 +423,26 @@ public class ItemServiceImpl implements ItemService {
                 {"3221", "近卫芯片", "24.99625", "blue", "7"}, {"3231", "重装芯片", "24.99625", "blue", "7"},
                 {"3241", "狙击芯片", "21.42", "blue", "7"}, {"3251", "术师芯片", "21.42", "blue", "7"},
 
-                {"3261", "医疗芯片", "17.8425", "blue", "7"}, {"3271", "辅助芯片", "21.42", "blue", "7"},
-                {"3211", "先锋芯片", "21.42", "blue", "7"}, {"3281", "特种芯片", "17.8425", "blue", "7"},
-                {"3221", "近卫芯片", "24.99625", "blue", "7"}, {"3231", "重装芯片", "24.99625", "blue", "7"},
-                {"3241", "狙击芯片", "21.42", "blue", "7"}, {"3251", "术师芯片", "21.42", "blue", "7"},
+                {"3262", "医疗芯片组", "35.685", "blue", "7"}, {"3272", "辅助芯片组", "42.84", "blue", "7"},
+                {"3212", "先锋芯片组", "42.84", "blue", "7"}, {"3282", "特种芯片组", "35.685", "blue", "7"},
+                {"3222", "近卫芯片组", "49.9925", "blue", "7"}, {"3232", "重装芯片组", "49.9925", "blue", "7"},
+                {"3242", "狙击芯片组", "42.84", "blue", "7"}, {"3252", "术师芯片组", "42.84", "blue", "7"},
 
                 {"4003", "合成玉", "0.9375", "orange", "8"}, {"7001", "招聘许可", "30.085", "purple", "8"},
                 {"4006", "采购凭证", "1.7", "blue", "8"}, {"7003", "寻访凭证", "562.5", "orange", "8"},
                 {"32001", "芯片助剂", "152.99", "purple", "8"}, {"3003", "赤金", "1.25", "purple", "8"},
-                {"4002", "至纯源石", "1.25", "purple", "8"},
-                {"mod_unlock_token", "模组数据块", "204", "orange", "8"}, {"STORY_REVIEW_COIN", "事相碎片", "34", "orange", "8"},
+                {"4002", "至纯源石", "1.25", "purple", "8"}, {"STORY_REVIEW_COIN", "事相碎片", "34", "orange", "8"},
+                {"mod_unlock_token", "模组数据块", "204", "orange", "8"},{"base_ap", "无人机", "0.046875", "purple", "8"},
 
-                {"3262", "医疗芯片组", "35.685", "blue", "9"}, {"3272", "辅助芯片组", "42.84", "blue", "9"},
-                {"3212", "先锋芯片组", "42.84", "blue", "9"}, {"3282", "特种芯片组", "35.685", "blue", "9"},
-                {"3222", "近卫芯片组", "49.9925", "blue", "9"}, {"3232", "重装芯片组", "49.9925", "blue", "9"},
-                {"3242", "狙击芯片组", "42.84", "blue", "9"}, {"3252", "术师芯片组", "42.84", "blue", "9"},
 
-                {"charm_coin_1", "黄金筹码", "9", "grey", "10"}, {"charm_coin_2", "错版硬币", "12", "blue", "10"},
-                {"charm_coin_3", "双日城大乐透", "18", "purple", "10"}, {"charm_coin_4", "翡翠庭院至臻", "100", "orange", "10"},
-                {"charm_r1", "标志物 - 20代金券", "15", "grey", "10"}, {"charm_r2", "标志物 - 40代金券", "30", "blue", "10"},
-                {"trap_oxygen_3", "沙兹专业镀膜装置", "45", "orange", "10"},
 
-                {"ap_supply_lt_010", "应急理智小样",  "0.000001", "purple", "10"},
-                {"randomMaterial_7", "罗德岛物资补给Ⅳ",  "14", "green", "10"},
+                {"charm_coin_1", "黄金筹码", "9", "grey", "16"}, {"charm_coin_2", "错版硬币", "12", "blue", "16"},
+                {"charm_coin_3", "双日城大乐透", "18", "purple", "16"}, {"charm_coin_4", "翡翠庭院至臻", "100", "orange", "16"},
+                {"charm_r1", "标志物 - 20代金券", "15", "grey", "16"}, {"charm_r2", "标志物 - 40代金券", "30", "blue", "16"},
+                {"trap_oxygen_3", "沙兹专业镀膜装置", "45", "orange", "16"},
+
+                {"ap_supply_lt_010", "应急理智小样",  "0.000001", "purple", "16"},
+                {"randomMaterial_7", "罗德岛物资补给Ⅳ",  "14", "green", "16"},
         };
     }
 }

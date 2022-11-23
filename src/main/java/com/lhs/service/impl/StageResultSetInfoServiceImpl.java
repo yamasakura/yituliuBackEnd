@@ -36,7 +36,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @return
      */
     @Override
-    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double version) {
+    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double version,String dataType) {
         Random random = new Random();
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
                 "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液", "转质盐组"};
@@ -49,7 +49,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 //            根据材料类型查出关卡,是否可查出取决于isShow属性,1为可显示
             List<StageResultData> stageResultByTypeList = new ArrayList<>();
                 stageResultByTypeList =stageResultDataDao.findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc
-                        (main, 1,version, efficiency, times);
+                        (main, 1,dataType+version, efficiency, times);
 
 //            复制一个集合 ,对数据库查出的集合直接进行set操作会改变session缓存中的数据，数据库的值也会更新,虽然好像也没啥事,但是还是复制了一下
             List<StageResultData> stageResultByTypeListCopy = new ArrayList<>();
@@ -166,7 +166,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @return
      */
     @Override
-    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double version) {
+    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double version,String dataType) {
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListT2 = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -178,7 +178,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         for (int i = 0; i < mainName.length; i++) {
             //  根据材料名称查出关卡,是否可查出取决于isShow属性,1为可显示
             List<StageResultData> stageResultByExpect = stageResultDataDao.findByItemNameAndIsShowAndVersionAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
-                    mainName[i], 1,version, 50.0, 100);
+                    mainName[i], 1,dataType+version, 50.0, 100);
             List<StageResultData> page = new ArrayList<>(stageResultByExpect);
             // 根据材料类型(这里查的是t2材料的上位t3材料)查出关卡,是否可查出取决于isShow属性,1为可显示
             double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
@@ -207,7 +207,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @return
      */
     @Override
-    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double version) {
+    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double version,String dataType) {
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListClosed = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -216,12 +216,12 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for (String actName : actNameList) {
             //查出循环中当前活动名称的关卡
-       List<StageResultData> list = stageResultDataDao.findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName,version, 2);
+       List<StageResultData> list = stageResultDataDao.findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName,dataType+version, 2);
             if(list.size() < 1) continue;
             for (StageResultData stageResultData : list) {
                 double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
                 //将绿票绝对效率转化为理智转化率100%
-                stageResultData.setStageEfficiency(Double.valueOf(decimalFormat.format(stageResultData.getEfficiency() / standard * 100)));
+                stageResultData.setStageEfficiency(Double.valueOf(decimalFormat.format((stageResultData.getEfficiency()+ 0.09) / standard * 100)));
 
             }
 
@@ -233,7 +233,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
 
     @Override
-    public List<StageOrundumVo> setOrundumEfficiency() {
+    public List<StageOrundumVo> setOrundumEfficiency(Double version,String dataType) {
         DecimalFormat decimalFormat_2 = new DecimalFormat("0.00");
         DecimalFormat decimalFormat_0 = new DecimalFormat("0");
         List<StageOrundumVo> list = new ArrayList<>();
@@ -322,7 +322,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @return
      */
     @Override
-    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double version) {
+    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double version,String dataType) {
         double number = stageResultData.getEfficiency() - 0.054;
         DecimalFormat decimalFormat2 = new DecimalFormat("0.00");
         List<StageResultData> list = new ArrayList<>();
@@ -335,10 +335,12 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         double reason = 18.0;
 
         long id = 0L;
-        if(version ==0.0)    id = 100000L;
-        if(version ==0.76)   id = 200000L;
-        if(version ==1.0)    id = 300000L;
-        if(version ==0.625)  id = 400000L;
+        if(version ==0.0)    id = 1000000L;
+        if(version ==0.76)   id = 2000000L;
+        if(version ==1.0)    id = 3000000L;
+        if(version ==0.625)  id = 4000000L;
+
+        if("auto".equals(dataType)) id = id*10;
 
         for (int i = 0; i < item.length; i++) {
             StageResultData stageData = new StageResultData();
@@ -364,7 +366,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             stageData.setApExpect(Double.valueOf(decimalFormat2.format(cost[i] / number)));
             stageData.setEfficiency(Double.valueOf(decimalFormat2.format(
                     (((reason * number) / cost[i]) * value[i] + reason * 0.06) / reason)));
-            stageData.setVersion(version);
+            stageData.setVersion(dataType+version);
 //            System.out.println(stageData);
             list.add(stageData);
         }

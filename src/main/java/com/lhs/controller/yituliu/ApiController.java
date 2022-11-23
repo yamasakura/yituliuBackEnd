@@ -101,9 +101,9 @@ public class ApiController {
     }
 
     @ApiOperation("获取物品价值")
-    @GetMapping("/find/item/value")
-    public Result findAllItem() {
-        List<ItemRevise> all = itemService.findAllItemRevise();
+    @GetMapping("/find/item/value/{version}")
+    public Result findAllItem(@PathVariable("version") String version) {
+        List<ItemRevise> all = itemService.findAllItemRevise(version);
         return Result.success(all);
     }
 

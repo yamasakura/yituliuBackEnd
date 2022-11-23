@@ -59,7 +59,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public void updateByJsonPerm() {
-		List<ItemRevise> allItem =itemService.findAllItemRevise();
+		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
 		String str = ReadFileUtil.readFile(frontEndFilePath+"//permStoreData.json");
 		List<StoreJson> storeJsons = JSONArray.parseArray(str, StoreJson.class);
 
@@ -95,7 +95,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public void updateByJsonAct(MultipartFile file) {
-		List<ItemRevise> allItem =itemService.findAllItemRevise();
+		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
 		HashMap<String, Double> itemValueMap = new HashMap<>();
 		HashMap<String, String> itemIdMap = new HashMap<>();
 		for(ItemRevise itemRevise:allItem){
@@ -143,7 +143,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public void updateByJsonPack(MultipartFile file) {
-		List<ItemRevise> allItem =itemService.findAllItemRevise();
+		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
 		HashMap<String, Double> itemValueMap = new HashMap<>();
 		HashMap<String, String> itemIdMap = new HashMap<>();
 		for(ItemRevise itemRevise:allItem){

@@ -14,6 +14,8 @@ public class ItemValueVo {
     private Double itemValueGreen;
     @ExcelProperty("物品稀有度")
     private String itemType;
+    @ExcelProperty("价值版本：auto为自动收集，all为全平台数据，数字代表经验书价值比例")
+    private String version;
 
 
     public String getItemId() {
@@ -56,14 +58,23 @@ public class ItemValueVo {
         this.itemValueReason = itemValueReason;
     }
 
+    public String getVersion() {
+        return version;
+    }
 
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     @Override
     public String toString() {
         return "ItemValueVo{" +
-                "itemName='" + itemName + '\'' +
-                ", itemValueGreen=" + itemValueGreen +
+                "itemId='" + itemId + '\'' +
+                ", itemName='" + itemName + '\'' +
                 ", itemValueReason=" + itemValueReason +
+                ", itemValueGreen=" + itemValueGreen +
+                ", itemType='" + itemType + '\'' +
+                ", version='" + version + '\'' +
                 '}';
     }
 }

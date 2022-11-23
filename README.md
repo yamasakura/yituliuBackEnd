@@ -11,4 +11,7 @@
 ## 运行环境
 - 下载后将application.txt修改为application.properties
 - 放开注释application.properties中的penguin.path、frontEnd.path、frontEnd.backups并修改到resources层级下，用来存放json文件
- - 数据库文件在resources下的EasyExcel.zip
+- 数据库文件在resources下的EasyExcel.zip
+ 
+
+ 

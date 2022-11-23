@@ -7,7 +7,9 @@ API参数
  ```
 url:  /api/find/stage/t3/{times}/{version}
 参数{times}//  样本量   (目前无用
-{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本 
+{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本。
+分为自动auto和全平台all，有000，076，062，100四个版本。
+api示例：/api/find/stage/t3/300/auto062
  ```
  ```
 {
@@ -113,8 +115,11 @@ url:  /api/find/store/act
 
 ### 获取所有物品价值(JsonArray)
  ```
-url:  /api/find/item/value
-无参数
+url:  /api/find/item/value/{version}
+api示例：/api/find/stage/t3/300/auto062
+{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本。
+分为自动auto和全平台all，有0.0，0.76，0.625，1.0四个版本。
+api示例：/api/find/stage/t3/300/auto0.625
  ```
  ```
 类型String    名称itemId;  //物品id

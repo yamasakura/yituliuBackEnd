@@ -11,18 +11,18 @@ import java.util.List;
 public interface StageResultDataDao extends JpaRepository<StageResultData, Long> {
 
     //根据活动名称前缀如act12_side，效率降序
-    List<StageResultData> findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String chapterName,Double version, Integer mainLevel);
+    List<StageResultData> findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String zoneId, String version, Integer mainLevel);
 
     //根据物品类别查询，效率降序
     List<StageResultData> findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyExDesc(
-            String itemType, Integer isShow,Double version, Double efficiency, Integer times);
+            String itemType, Integer isShow, String version, Double efficiency, Integer sampleSize);
     //根据物品类别查询，效率降序
     List<StageResultData> findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
-            String itemType, Integer isShow,Double version, Double efficiency, Integer times);
+            String itemType, Integer isShow,String version, Double efficiency, Integer times);
 
     //根据物品名称查询，期望理智升序
     List<StageResultData> findByItemNameAndIsShowAndVersionAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
-            String type, Integer isShow,Double version, Double expect, Integer times);
+            String itemName, Integer isShow, String version, Double apExpect, Integer sampleSize);
 
     //根据关卡id查询，效率降序
     List<StageResultData> findByStageIdAndIsShow(String stageId, Integer isShow);

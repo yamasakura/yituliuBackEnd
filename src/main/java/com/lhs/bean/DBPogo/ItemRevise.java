@@ -78,6 +78,14 @@ public class ItemRevise {
         this.cardNum = cardNum;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     @Override
     public String toString() {
         return "ItemRevise{" +
@@ -86,6 +94,8 @@ public class ItemRevise {
                 ", itemName='" + itemName + '\'' +
                 ", itemValue=" + itemValue +
                 ", type='" + type + '\'' +
+                ", cardNum='" + cardNum + '\'' +
+                ", version='" + version + '\'' +
                 '}';
     }
 }

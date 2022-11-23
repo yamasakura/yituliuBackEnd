@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
@@ -272,22 +273,65 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public void itemCostPlan(HashMap<String, Integer> itemCost) {
-        itemCost.put("提纯源岩", itemCost.get("提纯源岩") + itemCost.get("聚合剂"));
-        itemCost.put("异铁块", itemCost.get("异铁块") + itemCost.get("聚合剂"));
-        itemCost.put("酮阵列", itemCost.get("酮阵列") + itemCost.get("聚合剂"));
-        itemCost.put("改量装置", itemCost.get("改量装置") + itemCost.get("双极纳米片"));
-        itemCost.put("白马醇", itemCost.get("白马醇") + itemCost.get("双极纳米片")*2);
-        itemCost.put("三水锰矿", itemCost.get("三水锰矿") + itemCost.get("D32钢"));
-        itemCost.put("五水研磨石", itemCost.get("五水研磨石") + itemCost.get("D32钢"));
-        itemCost.put("RMA70-24", itemCost.get("RMA70-24") + itemCost.get("D32钢"));
-        itemCost.put("聚合凝胶", itemCost.get("聚合凝胶") + itemCost.get("晶体电子单元")*2);
-        itemCost.put("炽合金块", itemCost.get("炽合金块") + itemCost.get("晶体电子单元"));
-        itemCost.put("晶体电路", itemCost.get("晶体电路") + itemCost.get("晶体电子单元"));
-         if(itemCost.get("固源岩组")!=null){
-             Integer count = itemCost.get("固源岩组");
+        HashMap<String, Integer> itemCostCopy = new HashMap<>();
+        Set<String> set = itemCost.keySet();
+        for (String o : set) {
+            itemCostCopy.put(o,itemCost.get(o));
+        }
 
-         }
+        String[][] itemTable = getItemTable("table");
 
+
+        for (int i = 0; i < itemTable.length; i++) {
+            if(itemCostCopy.get(itemTable[i][0])!=null){
+                itemCostCopy.put(itemTable[i][1],itemCostCopy.get(itemTable[i][1])+itemCostCopy.get(itemTable[i][0])*Integer.parseInt(itemTable[i][1]));
+            }
+        }
+
+        String[][] itemSeries = getItemTable("series");
+        for (int i = 0; i < itemSeries.length; i++) {
+            int item_t4 = itemCost.get(itemSeries[i][0]);
+            int item_t3 = itemCost.get(itemSeries[i][1]);
+            int item_t3_decompose = itemCostCopy.get(itemSeries[i][0]);
+//            planCal(item_t4,item_t3,item_t3_decompose,itemSeries[i][1]);
+        }
+
+
+
+
+    }
+
+
+
+    public static void main(String[] args) {
+        HashMap<String, Integer> itemCost = new HashMap<>();
+        itemCost.put("聚合剂",10);
+        itemCost.put("双极纳米片",10);
+        itemCost.put("D32钢",10);
+        itemCost.put("晶体电子单元",10);
+        itemCost.put("烧结核凝晶",4);
+        itemCost.put("提纯源岩",10);
+        itemCost.put("炽合金块",10);
+        itemCost.put("精炼溶剂",10);
+        itemCost.put("白马醇",10);
+        itemCost.put("聚合凝胶",10);
+
+        HashMap<String, Integer> itemCostCopy = new HashMap<>();
+        Set<String> set = itemCost.keySet();
+        for (String o : set) {
+            itemCostCopy.put(o,itemCost.get(o));
+        }
+
+        String[][] itemTable = getItemTable("table");
+        for (int i = 0; i < itemTable.length; i++) {
+            if(itemCost.get(itemTable[i][0])!=null&&itemCost.get(itemTable[i][1])!=null){
+                itemCost.put(itemTable[i][1],itemCost.get(itemTable[i][1])+itemCost.get(itemTable[i][0])*Integer.parseInt(itemTable[i][2]));
+//                System.out.println(itemTable[i][1]+"："+itemCost.get(itemTable[i][1]));
+            }
+        }
+
+        System.out.println(itemCost.get("提纯源岩"));
+        System.out.println(itemCostCopy.get("提纯源岩"));
     }
 
     /**
@@ -380,5 +424,44 @@ public class ApiServiceImpl implements ApiService {
        return stageResultEfficientT3.getStageCode();
    }
 
+
+    private static String[][] getItemTable(String type){
+
+        String[][] itemTable = new String[][]{
+                {"聚合剂","提纯源岩","1"},{"聚合剂","异铁块","1"},{"聚合剂","酮阵列","1"},
+                {"双极纳米片","改量装置","1"},{"双极纳米片","白马醇","2"},
+                {"D32钢","三水锰矿","1"},{"D32钢","五水研磨石","1"},{"D32钢","RMA70-24","1"},
+                {"晶体电子单元","聚合凝胶","2"},{"晶体电子单元","炽合金块","1"},{"晶体电子单元","晶体电路","1"},
+                {"烧结核凝晶","转质盐聚块","1"},{"烧结核凝晶","切削原液","1"},{"烧结核凝晶","精炼溶剂","1"},
+                {"提纯源岩","固源岩组","4"},
+                {"糖聚块","糖组","2"},{"糖聚块","异铁组","1"},{"糖聚块","轻锰矿","1"},
+                {"聚酸酯块","聚酸酯组","2"},{"聚酸酯块","酮凝集组","1"},{"聚酸酯块","扭转醇","1"},
+                {"异铁块","异铁组","2"},{"异铁块","全新装置","1"},{"异铁块","聚酸酯组","1"},
+                {"酮阵列","酮凝集组","2"},{"酮阵列","糖组","1"},{"酮阵列","轻锰矿","1"},
+                {"改量装置","全新装置","1"},{"改量装置","固源岩组","2"},{"改量装置","研磨石","1"},
+                {"白马醇","扭转醇","1"},{"白马醇","糖组","1"},{"白马醇","RMA70-12","1"},
+                {"三水锰矿","轻锰矿","2"},{"三水锰矿","聚酸酯组","1"},{"三水锰矿","扭转醇","1"},
+                {"五水研磨石","研磨石","1"},{"五水研磨石","异铁组","1"},{"五水研磨石","全新装置","1"},
+                {"RMA70-24","RMA70-12","1"},{"RMA70-24","固源岩组","2"},{"RMA70-24","酮凝集组","1"},
+                {"聚合凝胶","凝胶","1"},{"聚合凝胶","异铁组","1"},{"聚合凝胶","炽合金","1"},
+                {"炽合金块","全新装置","1"},{"炽合金块","研磨石","1"},{"炽合金块","炽合金","1"},
+                {"晶体电路","晶体元件","2"},{"晶体电路","凝胶","1"},{"晶体电路","炽合金","1"},
+                {"精炼溶剂","半自然溶剂","1"},{"精炼溶剂","化合切削液","1"},{"精炼溶剂","凝胶","1"},
+                {"切削原液","化合切削液","1"},{"切削原液","晶体元件","1"},{"切削原液","RMA70-12","1"},
+                {"转质盐聚块","转质盐组","1"},{"转质盐聚块","半自然溶剂","1"},{"转质盐聚块","糖组","1"},
+        };
+
+        String[][] itemSeries = new String[][]{
+                {"提纯源岩","固源岩组"},{"糖聚块","糖组"},{"聚酸酯块","聚酸酯组"},{"异铁块","异铁组"},{"酮阵列","酮凝集组"},{"改量装置","全新装置"},
+                {"白马醇","扭转醇"},{"三水锰矿","轻锰矿"},{"五水研磨石","研磨石"},{"RMA70-24","RMA70-12"},{"聚合凝胶","凝胶"},
+                {"炽合金块","炽合金"},{"晶体电路","晶体元件"},{"精炼溶剂","半自然溶剂"},{"切削原液","化合切削液"},{"转质盐聚块","转质盐组"},
+        };
+
+        if("table".equals(type)){
+            return  itemTable;
+        }else {
+            return itemSeries;
+        }
+    }
 
 }

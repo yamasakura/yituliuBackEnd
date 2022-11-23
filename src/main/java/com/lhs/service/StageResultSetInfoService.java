@@ -21,7 +21,7 @@ public interface StageResultSetInfoService {
      * @param version  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double version);
+    List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double version,String dataType);
 
     /**
      * 添加T2类材料的理智转化率
@@ -31,7 +31,7 @@ public interface StageResultSetInfoService {
      * @param version  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double version);
+    List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double version,String dataType);
 
     /**
      * //添加已关闭活动副本的理智转化率
@@ -40,7 +40,7 @@ public interface StageResultSetInfoService {
      * @param version  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double version);
+    List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double version,String dataType);
 
     /**
      * //添加部分特殊关卡的效率（多索雷斯）
@@ -48,12 +48,12 @@ public interface StageResultSetInfoService {
      * @param version  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double version);
+    List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double version,String dataType);
 
     /**
      * 计算关卡搓玉的效率
      */
-    List<StageOrundumVo> setOrundumEfficiency();
+    List<StageOrundumVo> setOrundumEfficiency(Double version,String dataType);
 
     /**
      *  拿到用于迭代的材料名称和常驻最优关卡效率
