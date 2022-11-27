@@ -88,8 +88,10 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
 //读取企鹅物流数据
         JSONObject matrixJson = null;
-        String jsonFile = ReadFileUtil.readFile(penguinFilePath+"matrix_"+dataType+saveTime+".json");  //从保存文件读取
+        String jsonFile = ReadFileUtil.readFile(penguinFilePath+"matrix"+ saveTime + dataType +".json");  //从保存文件读取
         matrixJson =  JSONObject.parseObject(jsonFile); //json化
+        List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
+
 
 
 //        企鹅物流的api，但是链接不稳定，目前采用本地读取
@@ -110,7 +112,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
 
             List<QuantileTable> quantileTableList = quantileTableDao.findAll(); //置信度分位表
 
-            List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
+
 
         penguinDatalist = stageService.penguinDataMerge(penguinDatalist);
 

@@ -26,7 +26,7 @@ public class HttpUtil {
 		CloseableHttpClient client = builder.build();
 
 		HttpGet request = new HttpGet(url);
-		System.out.println(request);
+
 		
 		String content = null;
 		
