@@ -87,13 +87,24 @@ public class WebSocketConfig {
                             apiService.addVisits("bot");
                         }
                         if(raw_message.startsWith("材料一图流")||raw_message.startsWith("材料掉率")){
-                            robotService.sendItemImg(group_id);
+                            robotService.sendItemImg("",group_id);
+                            log.info("查询材料---"+roleName);
+                            apiService.addVisits("bot");
+                        }
+                        if(raw_message.startsWith("活动材料")||raw_message.startsWith("活动材料掉率")){
+                            robotService.sendItemImg("act",group_id);
+                            log.info("查询材料---"+roleName);
+                            apiService.addVisits("bot");
+                        }
+                        if(raw_message.startsWith("商店性价比")){
+                            robotService.sendItemImg("store",group_id);
                             log.info("查询材料---"+roleName);
                             apiService.addVisits("bot");
                         }
 
                         if(raw_message.startsWith("help")){
-                            String helpMessage  =  "可用命令格式：\n干员名模组\n干员名技能\n干员名专精\n查看材料掉率：材料掉率、材料一图流\n直接发送游戏截图查询公招组合";
+                            String helpMessage  =  "可用命令格式：\n干员名模组\n干员名技能\n干员名专精\n查看材料掉率：材料掉率、材料一图流、活动材料掉率" +
+                                    "\n直接发送游戏截图查询公招组合";
                             robotService.sendMessage(group_id,helpMessage);
                             log.info("命令---"+roleName);
                         }

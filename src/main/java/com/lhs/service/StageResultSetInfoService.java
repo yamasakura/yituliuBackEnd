@@ -53,7 +53,7 @@ public interface StageResultSetInfoService {
     /**
      * 计算关卡搓玉的效率
      */
-    List<StageOrundumVo> setOrundumEfficiency(Double version,String dataType);
+    List<StageOrundumVo> setOrundumEfficiency();
 
     /**
      *  拿到用于迭代的材料名称和常驻最优关卡效率

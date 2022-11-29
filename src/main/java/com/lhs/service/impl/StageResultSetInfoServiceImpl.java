@@ -233,7 +233,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
 
     @Override
-    public List<StageOrundumVo> setOrundumEfficiency(Double version,String dataType) {
+    public List<StageOrundumVo> setOrundumEfficiency() {
         DecimalFormat decimalFormat_2 = new DecimalFormat("0.00");
         DecimalFormat decimalFormat_0 = new DecimalFormat("0");
         List<StageOrundumVo> list = new ArrayList<>();

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface QqRobotService {
     void QqRobotEvenHandle(HttpServletRequest request);
-    void sendItemImg(long group_id);
+    void sendItemImg(String type,long group_id);
     void sendModImg(long group_id,String roleName);
     void sendMessage(long group_id,String message);
 

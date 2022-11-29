@@ -342,8 +342,9 @@ public class ApiServiceImpl implements ApiService {
 
         long time = new Date().getTime();
 
-        SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
-        String saveTime = simpleDateFormat_dd.format(new Date(time-3600000));
+        SimpleDateFormat simpleDateFormat_save = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
+        SimpleDateFormat simpleDateFormat_HH = new SimpleDateFormat("HH");// 设置日期格式
+        String saveTime = simpleDateFormat_save.format(new Date(time-3600000*4));
         DecimalFormat decimalFormat_3 = new DecimalFormat("0.000");
 
         String jsonFile = ReadFileUtil.readFile(penguinFilePath+"matrix"  + saveTime + "auto.json");  //从保存文件读取
@@ -384,15 +385,16 @@ public class ApiServiceImpl implements ApiService {
                         "%——>"+decimalFormat_3.format(knockRating*100)+"%，变化幅度"+decimalFormat_3.format(threshold*100)+
                         "%，链接：penguin-stats.cn/result/stage/"+stageNameMap.get(stageId+"zoneId")+"/"+stageId+"\n";
             }
-            if("3".equals(itemNameMap.get(itemId+"rank")) && knockRating>0.2 && threshold>0.05){
+            if("3".equals(itemNameMap.get(itemId+"rank")) && knockRating>0.2 && threshold>0.04){
                 message = message + stageNameMap.get(stageId+"code")+"的"+itemNameMap.get(itemId)+"掉率："+decimalFormat_3.format(knockRating_backup*100)+
                         "%——>"+decimalFormat_3.format(knockRating*100)+"%，变化幅度"+decimalFormat_3.format(threshold*100)+
                         "%，链接：penguin-stats.cn/result/stage/"+stageNameMap.get(stageId+"zoneId")+"/"+stageId+"\n";
             }
         }
 
+
         if(message.length()<30){
-            robotService.sendMessage(938710832,message+"本次检验未发现问题");
+            robotService.sendMessage(562528726,message+"本次检验未发现问题");
             return true;
         }else if(message.length()<3000){
             robotService.sendMessage(938710832,message);

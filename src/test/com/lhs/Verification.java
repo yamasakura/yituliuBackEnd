@@ -4,8 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.pojo.PenguinDataVo;
+import com.lhs.bot.QqRobotService;
 import com.lhs.common.util.HttpUtil;
 import com.lhs.common.util.ReadFileUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -13,9 +20,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@RunWith(SpringRunner.class)   //这两个注解是为了让测试类能拥有同等的spring boot上下文环境
+@SpringBootTest
 public class Verification {
-    public static void main(String[] args) {
 
+    @Autowired
+    private QqRobotService robotService;
+
+    @Value("${penguin.path}")
+    private String penguinFilePath;
+
+    @Test
+    public void verificationPenguinsData() {
         JSONObject matrixJson ;
         String url = "https://penguin-stats.io/PenguinStats/api/v2/_private/result/matrix/CN/global/automated";   //API读取
         matrixJson =  JSONObject.parseObject(HttpUtil.GetBody(url));
@@ -43,11 +59,12 @@ public class Verification {
 
         long time = new Date().getTime();
 
-        SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
-        String saveTime = simpleDateFormat_dd.format(new Date(time-3600000));
+        SimpleDateFormat simpleDateFormat_save = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
+        SimpleDateFormat simpleDateFormat_HH = new SimpleDateFormat("HH");// 设置日期格式
+        String saveTime = simpleDateFormat_save.format(new Date(time-3600000));
         DecimalFormat decimalFormat_3 = new DecimalFormat("0.000");
 
-        String jsonFile = ReadFileUtil.readFile("E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\penguin\\matrix"  + saveTime + "auto.json");  //从保存文件读取
+        String jsonFile = ReadFileUtil.readFile(penguinFilePath+"matrix"  + saveTime + "auto.json");  //从保存文件读取
         matrixJson = JSONObject.parseObject(jsonFile); //json化
         List<PenguinDataVo> penguinBackupDataList = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
         HashMap<String, Double> backupDataHashMap = new HashMap<>();
@@ -61,7 +78,8 @@ public class Verification {
             backupDataHashMap.put(stageId+itemId, knockRating);
         }
 
-        String  message = "";
+        String  message = "检验样本截止时间"+saveTime+"\n";
+
         for (PenguinDataVo penguinDataVo : penguinDatalist) {
             String stageId = penguinDataVo.getStageId();
             String itemId = penguinDataVo.getItemId();
@@ -79,21 +97,40 @@ public class Verification {
             if(itemNameMap.get(itemId)==null||stageNameMap.get(stageId+"code")==null) continue;
 
 
-
             if("4".equals(itemNameMap.get(itemId+"rank")) && threshold>0.1){
                 message = message + stageNameMap.get(stageId+"code")+"的"+itemNameMap.get(itemId)+"掉率："+decimalFormat_3.format(knockRating_backup*100)+
                         "%——>"+decimalFormat_3.format(knockRating*100)+"%，变化幅度"+decimalFormat_3.format(threshold*100)+
-                        "%，链接：https://penguin-stats.cn/result/stage/"+stageNameMap.get(stageId+"zoneId")+"/"+stageId+"\n";
+                        "%，链接：penguin-stats.cn/result/stage/"+stageNameMap.get(stageId+"zoneId")+"/"+stageId+"\n";
             }
-            if("3".equals(itemNameMap.get(itemId+"rank")) && knockRating>0.2 && threshold>0.2){
+            if("3".equals(itemNameMap.get(itemId+"rank")) && knockRating>0.2 && threshold>0.04){
                 message = message + stageNameMap.get(stageId+"code")+"的"+itemNameMap.get(itemId)+"掉率："+decimalFormat_3.format(knockRating_backup*100)+
                         "%——>"+decimalFormat_3.format(knockRating*100)+"%，变化幅度"+decimalFormat_3.format(threshold*100)+
-                        "%，链接：https://penguin-stats.cn/result/stage/"+stageNameMap.get(stageId+"zoneId")+"/"+stageId+"\n";
+                        "%，链接：penguin-stats.cn/result/stage/"+stageNameMap.get(stageId+"zoneId")+"/"+stageId+"\n";
             }
         }
-        System.out.println(message);
+
+        String nowDate = simpleDateFormat_HH.format(time);
 
 
+        if(message.length()<30){
+            Integer nowDate_HH = Integer.parseInt(nowDate);
+
+            robotService.sendMessage(938710832,message+"本次检验未发现问题");
+
+        }else if(message.length()<3000){
+            robotService.sendMessage(938710832,message);
+
+        }else if(message.length()>3000){
+            robotService.sendMessage(938710832,"样本被大量污染了");
+
+        }
+
+    }
+
+    @Test
+    public void IntTest(){
+        String dateStr = "08";
+        System.out.println(Integer.parseInt(dateStr));
     }
 
     private static String[][] getItemInfo() {

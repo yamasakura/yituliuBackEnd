@@ -110,13 +110,13 @@ public class QqRobotServiceImpl implements QqRobotService {
 //189844877
 //562528726
     @Override
-    public void sendItemImg(long group_id) {
+    public void sendItemImg(String type,long group_id) {
         // user_id 为QQ好友QQ号
         String pathStr = ReadFileUtil.readFile(botFilePath+"Path.json");
         JSONObject path = JSONObject.parseObject(pathStr);
         Object itemPath = path.get("itemPath");
         String url = "http://"+idAddress+":5700/send_group_msg?group_id=" + group_id + "&message=" +
-                "[CQ:image,file=" + itemPath + ".png,subType=0,url=https://yituliu.site/bot/item/" + itemPath  + ".png,cache=0]";
+                "[CQ:image,file=" + itemPath + ".png,subType=0,url=https://yituliu.site/bot/item/" +type+ itemPath  + ".png,cache=0]";
         String result = HttpRequestUtil.doGet(url);
         log.info("发送成功:==>{}", result);
     }
