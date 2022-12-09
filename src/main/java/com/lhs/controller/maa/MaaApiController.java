@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @Api(tags = "MAA接口")
@@ -89,6 +87,11 @@ public class MaaApiController {
     @ApiOperation("生成基建排班协议文件")
     @PostMapping("/building/schedule/save")
     public Result MaaBuildingJsonSave( @RequestBody String scheduleJson,@RequestParam Long id) {
+        long time = new Date().getTime();
+        Random random = new Random();
+        int random_id = random.nextInt(999)%(900)+100;
+        String id_str = ""+time+random_id;
+        id = Long.valueOf(id_str);
 
         maaApiService.saveScheduleJson(scheduleJson,id);
         HashMap<Object, Object> hashMap = new HashMap<>();

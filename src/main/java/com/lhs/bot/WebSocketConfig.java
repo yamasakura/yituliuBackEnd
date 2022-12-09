@@ -49,20 +49,7 @@ public class WebSocketConfig {
                 @Override
                 public void onMessage(String message) {
 
-
                     JSONObject qqMessage = JSONObject.parseObject(message);
-//                System.out.println(qqMessage);
-//                    if(qqMessage.get("sub_type")!=null&&qqMessage.get("group_id")!=null){
-//                        Object sub_type = qqMessage.get("sub_type");
-//                            long group_id = Long.parseLong(qqMessage.get("group_id").toString());
-//                            if (group_id == 572030857L ) {
-//                                if ("approve".equals(sub_type)) {
-//                                    String welcomeMessage = "欢迎来到方舟最大博朗台聚集地";
-//                                    robotService.sendMessage(group_id, welcomeMessage);
-//                                }
-//                            }
-//                    }
-
 
                     if(qqMessage.get("raw_message")!=null){
                         String raw_message = qqMessage.get("raw_message").toString().trim();
@@ -118,7 +105,6 @@ public class WebSocketConfig {
                             }
                         }
                     }
-
                 }
 
                 @Override

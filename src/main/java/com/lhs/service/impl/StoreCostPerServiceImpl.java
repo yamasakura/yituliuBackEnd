@@ -173,14 +173,10 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 
 				int gachaOrundum = Integer.parseInt(storePackMap.get("gachaOrundum").toString()); // 合成玉
-				int gachaOriginium = Integer.parseInt(storePackMap.get("gachaOriginium").toString());
-				; // 源石
-				int gachaPermit = Integer.parseInt(storePackMap.get("gachaPermit").toString());
-				; // 单抽
-				int gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());
-				; // 十连
-				int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());
-				; // 十连
+				int gachaOriginium = Integer.parseInt(storePackMap.get("gachaOriginium").toString());// 源石
+				int gachaPermit = Integer.parseInt(storePackMap.get("gachaPermit").toString());// 单抽
+				int gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());// 十连
+				int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());// 十连
 
 
 				//计算该理智的材料总理智折合源石
