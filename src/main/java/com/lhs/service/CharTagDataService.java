@@ -15,8 +15,6 @@ public interface CharTagDataService {
 
     String OCRResult(List<String> list ,Integer rarityMin, Integer rarityMax);
 
-
-
     void exportTagExcel(HttpServletResponse response);
 
     List<RecResultVo> findAllByTypeAndRarityNew(Integer type, String[] tags,Integer rarityMax);

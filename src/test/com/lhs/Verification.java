@@ -115,13 +115,13 @@ public class Verification {
         if(message.length()<30){
             Integer nowDate_HH = Integer.parseInt(nowDate);
 
-            robotService.sendMessage(938710832,message+"本次检验未发现问题");
+            robotService.sendMessage(938710832,message+"本次检验未发现问题",true);
 
         }else if(message.length()<3000){
-            robotService.sendMessage(938710832,message);
+            robotService.sendMessage(938710832,message,true);
 
         }else if(message.length()>3000){
-            robotService.sendMessage(938710832,"样本被大量污染了");
+            robotService.sendMessage(938710832,"样本被大量污染了",true);
 
         }
 

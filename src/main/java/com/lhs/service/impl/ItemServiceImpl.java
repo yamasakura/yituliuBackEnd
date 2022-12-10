@@ -431,7 +431,7 @@ public class ItemServiceImpl implements ItemService {
                 {"4003", "合成玉", "0.9375", "orange", "8"}, {"7001", "招聘许可", "30.085", "purple", "8"},
                 {"4006", "采购凭证", "1.7", "blue", "8"}, {"7003", "寻访凭证", "562.5", "orange", "8"},
                 {"32001", "芯片助剂", "152.99", "purple", "8"}, {"3003", "赤金", "1.25", "purple", "8"},
-                {"4002", "至纯源石", "1.25", "purple", "8"}, {"STORY_REVIEW_COIN", "事相碎片", "34", "orange", "8"},
+                {"4002", "至纯源石", "168.75", "purple", "8"}, {"STORY_REVIEW_COIN", "事相碎片", "34", "orange", "8"},
                 {"mod_unlock_token", "模组数据块", "204", "orange", "8"},{"base_ap", "无人机", "0.046875", "purple", "8"},
 
 

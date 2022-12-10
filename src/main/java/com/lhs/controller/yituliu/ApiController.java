@@ -81,9 +81,12 @@ public class ApiController {
 
 
     @ApiOperation("获取动态")
-    @GetMapping("/get/space/bili/{group_id}")
-    public Result getBiliSpace(@PathVariable("group_id") Long group_id) {
-        robotService.spaceSend(group_id);
+    @GetMapping("/get/space/bili/{group_ids}")
+    public Result getBiliSpace(@PathVariable("group_ids") Long[] group_ids) {
+        for(Long group_id:group_ids){
+            System.out.println(group_id);
+        }
+        robotService.spaceSend(group_ids);
 
      return Result.success("发送成功");
     }

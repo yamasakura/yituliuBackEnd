@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface QqRobotService {
     void QqRobotEvenHandle(HttpServletRequest request);
+
     void sendItemImg(String type,long group_id);
 
     void sendModImg(long group_id,String roleName);
@@ -17,9 +18,13 @@ public interface QqRobotService {
 
     boolean imageOcr(String messageId,long group_id);
 
-    void sendMessage(long group_id,String message);
+    void sendMessage(long group_id,String message,boolean toUTF8);
 
     Boolean verificationPenguinsData();
 
-    void spaceSend(long group_id);
+    void spaceSend(Long[] group_ids);
+
+    void sendGroupMessage(long group_id,String message);
+
+    void deleteMessage(Integer message_id);
 }

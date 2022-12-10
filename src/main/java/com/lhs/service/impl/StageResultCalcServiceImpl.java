@@ -75,7 +75,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
      */
     @Override
     public List<StageResultData> stageResult(Integer indexNum, Integer countNum,Integer times,Double version,String dataType) {
-        SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+        SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.0");
         SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
 //        DecimalFormat DecimalFormat_3 = new DecimalFormat("0.000");

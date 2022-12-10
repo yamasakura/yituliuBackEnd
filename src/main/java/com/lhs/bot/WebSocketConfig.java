@@ -1,5 +1,6 @@
 package com.lhs.bot;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bot.QqRobotService;
 import com.lhs.service.ApiService;
@@ -17,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.acl.LastOwnerException;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -55,7 +54,10 @@ public class WebSocketConfig {
                         String raw_message = qqMessage.get("raw_message").toString().trim();
 
                         String roleName = "默认";
-                        int group_id = Integer.parseInt( qqMessage.get("group_id").toString());
+                        long group_id = Long.parseLong( qqMessage.get("group_id").toString());
+//                        group_id = 562528726;
+
+                        int message_id = Integer.parseInt( qqMessage.get("message_id").toString());
 
                          if(raw_message.endsWith("专精")||raw_message.endsWith("材料")||raw_message.endsWith("精二")){
                             roleName = raw_message.substring(0,raw_message.length()-2);
@@ -92,18 +94,34 @@ public class WebSocketConfig {
                         if(raw_message.startsWith("help")){
                             String helpMessage  =  "可用命令格式：\n干员名模组\n干员名技能\n干员名专精\n查看材料掉率：材料掉率、材料一图流、活动材料掉率" +
                                     "\n直接发送游戏截图查询公招组合";
-                            robotService.sendMessage(group_id,helpMessage);
+                            robotService.sendMessage(group_id,helpMessage,true);
                             log.info("命令---"+roleName);
                         }
 
                         if (raw_message.startsWith("[CQ:image")) {
                             String substring = raw_message.substring(raw_message.indexOf("=")+1, raw_message.indexOf(",subType"));
                             boolean flag = robotService.imageOcr(substring, group_id);
-                            log.info("查询公招---"+substring);
+
                             if(flag){
                                 apiService.addVisits("bot");
                             }
                         }
+
+
+
+//                        if (raw_message.contains("测试转发")) {
+//                            List<HashMap<Object,Object>> groupMessage = new ArrayList<>();
+//                            HashMap<Object, Object> messageMap = new HashMap<>();
+//                            HashMap<Object, Object> content = new HashMap<>();
+//                            content.put("name","桜");
+//                            content.put("uin","1820702789");
+//                            content.put("content","[CQ:image,file=明日方舟.png,subType=0,url=https://i0.hdslb.com/bfs/new_dyn/154ab2df3628728991940d62c01da3f61517060220.png,cache=0]"+"测试消息");
+//                            messageMap.put("type","node");
+//                            messageMap.put("data",content);
+//                            groupMessage.add(messageMap);
+//                            robotService.sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
+//                        }
+
                     }
                 }
 

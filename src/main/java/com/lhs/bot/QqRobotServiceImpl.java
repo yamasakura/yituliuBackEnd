@@ -90,23 +90,25 @@ public class QqRobotServiceImpl implements QqRobotService {
                 }
             }
 
+            List<HashMap<Object,Object>> groupMessage = new ArrayList<>();
+
             if (list.size() == 5) {
 
                 String message = charTagDataService.OCRResult(list, rarityMin, rarityMax);
-                String urlMessage = "http://" + idAddress + ":5700/send_group_msg?group_id=" + group_id + "&message=" +
-                        message;
-                String resultMessage = HttpRequestUtil.doGet(urlMessage);
-                log.info("发送成功:==>{}", resultMessage);
+                HashMap<Object, Object> messageMap = getMessageMap(message,false);
+                groupMessage.add(messageMap);
+                sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
+
+//                String message = charTagDataService.OCRResult(list, rarityMin, rarityMax);
+//                sendMessage(group_id,message,true);
+                log.info("发送成功:==>{}", 200);
 
                 return true;
             }
 
             if(list.size()>2&&list.size()<5){
 
-                String urlMessage = "http://" + idAddress + ":5700/send_group_msg?group_id=" + group_id + "&message=" +
-                        "图片清晰度低或图片过大识别失败，只识别到了"+list.size()+"个TAG，请发送原图或只剪裁TAG部分";
-                String resultMessage = HttpRequestUtil.doGet(urlMessage);
-                log.info("发送成功:==>{}", resultMessage);
+                sendMessage(group_id,"图片识别失败，只识别到了"+list.size()+"个TAG，请发送尽量清晰或者只截取TAG部分的图片",true);
                 return true;
             }
 
@@ -172,7 +174,7 @@ public class QqRobotServiceImpl implements QqRobotService {
         JSONObject path = JSONObject.parseObject(pathStr);
         JSONObject charNameJson = JSONObject.parseObject(charNameJsonStr);
         Object modPath = path.get("modPath");
-        Object charName = charNameJson.get(roleName);
+        String charName = charNameJson.get(roleName).toString();
 //                System.out.println("拿到的干员名称"+charName);
         if (equipSum.get(charName) != null) {
             int sum = Integer.parseInt(String.valueOf(equipSum.get(charName)));
@@ -188,7 +190,7 @@ public class QqRobotServiceImpl implements QqRobotService {
     }
 
     @Override
-    public void sendMessage(long group_id,String message) {
+    public void sendMessage(long group_id,String message,boolean toUTF8) {
         String str = null;
 
         try {
@@ -201,6 +203,7 @@ public class QqRobotServiceImpl implements QqRobotService {
         String result = HttpRequestUtil.doGet(url);
         log.info("发送成功:==>{}", result);
     }
+
 
 
 
@@ -285,13 +288,13 @@ public class QqRobotServiceImpl implements QqRobotService {
 
 
         if(message.length()<30){
-            sendMessage(562528726,message+"本次检验未发现问题");
+            sendMessage(562528726,message+"本次检验未发现问题",true);
             return true;
         }else if(message.length()<3000){
-            sendMessage(938710832,message);
+            sendMessage(938710832,message,true);
             return false;
         }else if(message.length()>3000){
-            sendMessage(938710832,"样本被大量污染了");
+            sendMessage(938710832,"样本被大量污染了",true);
             return false;
         }
 
@@ -300,7 +303,7 @@ public class QqRobotServiceImpl implements QqRobotService {
     }
 
     @Override
-    public void spaceSend(long group_id){
+    public void spaceSend(Long[] group_ids){
         String url = "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset=&host_mid=161775300";
         String con = HttpRequestUtil.doGet(url);
         String cakeInfo = ReadFileUtil.readFile(botFilePath+"cake.json");
@@ -345,8 +348,17 @@ public class QqRobotServiceImpl implements QqRobotService {
                     break;
                 }
             }
+            String spaceDesc = "";
 
-            String spaceDesc = JSONObject.parseObject(module_dynamic.get("desc").toString()).get("text").toString();
+            if(module_dynamic.get("desc")!=null){
+                spaceDesc = JSONObject.parseObject(module_dynamic.get("desc").toString()).get("text").toString();
+            }
+
+
+
+            List<HashMap<Object,Object>> groupMessage = new ArrayList<>();
+
+
 
             if ("DYNAMIC_TYPE_DRAW".equals(spaceType)) {
                 JSONObject module_dynamic_major = JSONObject.parseObject(module_dynamic.get("major").toString());
@@ -355,20 +367,39 @@ public class QqRobotServiceImpl implements QqRobotService {
                 message = "明日方舟更新了动态\n";
                 for(Object draw_item:draw_items){
                     Object src = JSONObject.parseObject(draw_item.toString()).get("src");
-                    message=message+ "[CQ:image,file=明日方舟.png,subType=0,url="+src+",cache=0]";
+                    message=message+ "[CQ:image,file=明日方舟.png,subType=0,url="+src+",cache=0]\n\n";
                 }
                 message = message+spaceDesc;
-                sendMessage(group_id,message);
+
+                for(Long group_id:group_ids){
+                    HashMap<Object, Object> messageMap = getMessageMap(message,true);
+                    groupMessage.add(messageMap);
+                    sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
+                }
+
             }
 
             if ("DYNAMIC_TYPE_AV".equals(spaceType)) {
                 JSONObject module_dynamic_major = JSONObject.parseObject(module_dynamic.get("major").toString());
                 JSONObject archive = JSONObject.parseObject(module_dynamic_major.get("archive").toString());
-                Object cover = archive.get("cover");
+                String cover = "";
+                if(archive.get("cover")!=null){
+                    cover = archive.get("cover").toString();
+                }
+
+                String avDesc = "";
+                if(archive.get("desc")!=null){
+                    avDesc = archive.get("desc").toString();
+                }
                 Object jump_url = archive.get("jump_url");
-                message = "明日方舟发布了视频"+jump_url+"\n"+ "[CQ:image,file=明日方舟.png,subType=0,url="+cover+",cache=0]"
-                        + spaceDesc;
-                sendMessage(group_id,message);
+                message = "明日方舟发布了视频"+jump_url+"\n"+ "[CQ:image,file=明日方舟.png,subType=0,url="+cover+",cache=0]\n\n"
+                        + spaceDesc+"\n"+avDesc;
+                for(Long group_id:group_ids){
+
+                    HashMap<Object, Object> messageMap = getMessageMap(message,true);
+                    groupMessage.add(messageMap);
+                    sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
+                }
             }
 
 
@@ -380,6 +411,27 @@ public class QqRobotServiceImpl implements QqRobotService {
         SaveFile.save(botFilePath, "cake.json", cakeMapJson);
     }
 
+    @Override
+    public void sendGroupMessage(long group_id, String message) {
+        String str = null;
+
+        try {
+            str =  URLEncoder.encode(message, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String url = "http://"+idAddress+":5700/send_group_forward_msg?group_id=" + group_id + "&messages=" +
+                str;
+        String result = HttpRequestUtil.doGet(url);
+        log.info("发送成功:==>{}", result);
+    }
+
+    @Override
+    public void deleteMessage(Integer message_id) {
+        String url = "http://"+idAddress+":5700/delete_msg?message_id="+ message_id ;
+        String result = HttpRequestUtil.doGet(url);
+        log.info("发送成功:==>{}", result);
+    }
 
 
     public JSONObject getJSONParam(HttpServletRequest request) {
@@ -425,6 +477,33 @@ public class QqRobotServiceImpl implements QqRobotService {
                 {"3003", "赤金","3"},
         };
     }
+
+    private static HashMap<Object, Object> getMessageMap(String message,boolean messageType){
+        HashMap<Object, Object> messageMap = new HashMap<>();
+        HashMap<Object, Object> content = new HashMap<>();
+        content.put("name","桜");
+        content.put("uin","1820702789");
+        if(messageType){
+            content.put("content",message);
+        }else {
+            HashMap<Object, Object> text = new HashMap<>();
+            text.put("text",message);
+            HashMap<Object, Object> textMap = new HashMap<>();
+            textMap.put("type","text");
+            textMap.put("data",text);
+            List<HashMap<Object, Object>> list = new ArrayList<>();
+            list.add(textMap);
+            content.put("content",list);
+        }
+
+
+        messageMap.put("type","node");
+        messageMap.put("data",content);
+
+        return messageMap;
+    }
+
+
 
 
 }

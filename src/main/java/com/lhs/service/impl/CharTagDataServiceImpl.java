@@ -28,12 +28,6 @@ public class CharTagDataServiceImpl implements CharTagDataService {
     @Autowired
     private CharTagDataDao charTagDataDao;
 
-    @Autowired
-    private MaaApiService maaApiService;
-
-    @Autowired
-    private CharTagDataService charTagDataService;
-
     @Override
     public void importTagExcel(MultipartFile file) {
         List<CharTagData> list = new ArrayList<>();
@@ -187,11 +181,11 @@ public class CharTagDataServiceImpl implements CharTagDataService {
 
 
                 if ("资深干员".equals(resultList.get(i).getTags())) {
-                    result.append("【").append(resultList.get(i).getTags()).append("】:\n").append("当前版本可招募的五星").append("\n");
+                    result.append("【").append(resultList.get(i).getTags()).append("】:\n\n").append("当前版本可招募的五星").append("\n\n");
                 } else if ("高级资深干员".equals(resultList.get(i).getTags())) {
-                    result.append("【").append(resultList.get(i).getTags()).append("】:\n ").append("当前版本可招募的六星").append("\n");
+                    result.append("【").append(resultList.get(i).getTags()).append("】:\n\n").append("当前版本可招募的六星").append("\n\n");
                 } else {
-                    result.append("【").append(resultList.get(i).getTags()).append("】:\n ").append(resultList.get(i).getResult()).append("\n");
+                    result.append("【").append(resultList.get(i).getTags()).append("】:\n\n").append(resultList.get(i).getResult()).append("\n\n");
                 }
             }
         }
@@ -204,12 +198,7 @@ public class CharTagDataServiceImpl implements CharTagDataService {
         String string = result.toString().replace("[", "").replace("]", "")
                 .replace(",", "  ");
 
-        try {
-            string = URLEncoder.encode("本次公招结果 ：\n" + string, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
+        string = "本次公招结果 ：\n" + string;
 
         return string;
     }

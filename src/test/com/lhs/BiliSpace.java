@@ -87,7 +87,7 @@ public class BiliSpace {
                     message=message+ "[CQ:image,file=明日方舟.png,subType=0,url="+src+",cache=0]";
                 }
                 message = message+spaceDesc;
-                robotService.sendMessage(572030857,message);
+                robotService.sendMessage(572030857,message,true);
             }
 
             if ("DYNAMIC_TYPE_AV".equals(spaceType)) {
@@ -97,13 +97,19 @@ public class BiliSpace {
                 Object jump_url = archive.get("jump_url");
                 message = "明日方舟发布了视频"+jump_url+"\n"+ "[CQ:image,file=明日方舟.png,subType=0,url="+cover+",cache=0]"
                 + spaceDesc;
-                robotService.sendMessage(572030857,message);
+                robotService.sendMessage(572030857,message,true);
             }
 
             String cakeMapJson = JSONObject.toJSONString(cakeMap);
             SaveFile.save("E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\bot\\", "cake.json", cakeMapJson);
 
         }
+    }
+
+    @Test
+    public void sendTest() {
+        robotService.sendMessage(562528726,"",true);
+
     }
 
 }
