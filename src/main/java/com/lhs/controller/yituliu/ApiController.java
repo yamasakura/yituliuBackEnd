@@ -169,17 +169,7 @@ public class ApiController {
     }
 
 
-    @ApiOperation("关卡效率API（app用）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "times", value = "样本数默认值500", required = true, paramType = "path", defaultValue = "500"),
-            @ApiImplicitParam(name = "efficiency", value = "效率最小值", required = true, paramType = "path", defaultValue = "1.0")})
-    @GetMapping("/app/{times}/{efficiency}")
 
-    public Result findEfficiencyDescAPI(@PathVariable("times") Integer times,
-                                        @PathVariable("efficiency") Double efficiency) {
-        List<List<StageResultApiVo>> byTimesApi = apiService.getDataByEffAndTimesOrderByEffDescAppApi(times, efficiency);
-        return Result.success(byTimesApi);
-    }
 
 
 }

@@ -344,54 +344,6 @@ public class ApiServiceImpl implements ApiService {
         System.out.println(itemCostCopy.get("提纯源岩"));
     }
 
-    /**
-     *  这个是给别人的api可以不用管
-     */
-    @Override
-    public List<List<StageResultApiVo>> getDataByEffAndTimesOrderByEffDescAppApi(Integer times, Double efficiency) {
-        double start = System.currentTimeMillis();
-
-
-        if(times == null && efficiency == null) throw new ServiceException(ResultCode.PARAM_IS_BLANK);
-        Integer pageNum = 0;
-        Integer pageSize = 6;
-        String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
-                "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液"};
-        List<List<StageResultApiVo>> pageList = new ArrayList<>();
-
-        for (String main : mainName) {
-            Page<StageResultApiVo> stageResultVoPage = findDataByTypeAndTimesAndEffOrderByEffDescAppApi(
-                    main, times, efficiency, pageNum, pageSize);
-            List<StageResultApiVo> stageResultVoList = stageResultVoPage.getContent();
-            pageList.add(stageResultVoList);
-        }
-
-        double end = System.currentTimeMillis();
-//                System.out.println("查找用时:---" + (end - start) + "ms");
-        return pageList;
-
-    }
-
-
-    /**
-     *  这个是给别人的api可以不用管
-     */
-    @Override
-    public Page<StageResultApiVo> findDataByTypeAndTimesAndEffOrderByEffDescAppApi(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize) {
-        if (main != null && pageNum != null && pageSize != null) {
-            Pageable pageable = PageRequest.of(pageNum, pageSize);
-
-            Page<StageResultApiVo> page = stageResultVoApiDao.findByTypeAndEfficiencyGreaterThanAndTimesGreaterThanOrderByEfficiencyDesc(
-                    main,  efficiency,times, pageable);
-            if (page != null) {
-                return page;
-            } else {
-                throw new ServiceException(ResultCode.DATA_NONE);
-            }
-        } else {
-            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
-        }
-    }
 
 
 

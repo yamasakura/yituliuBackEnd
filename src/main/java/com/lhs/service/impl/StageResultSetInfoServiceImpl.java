@@ -335,10 +335,9 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         double reason = 18.0;
 
         long id = 0L;
-        if(version ==0.0)    id = 1000000L;
-        if(version ==0.76)   id = 2000000L;
-        if(version ==1.0)    id = 3000000L;
-        if(version ==0.625)  id = 4000000L;
+        if(version ==0.76)   id = 200L;
+        if(version ==1.0)    id = 300L;
+        if(version ==0.625)  id = 400L;
 
         if("auto".equals(dataType)) id = id*10;
 

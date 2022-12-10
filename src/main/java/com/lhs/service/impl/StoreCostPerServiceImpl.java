@@ -63,7 +63,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 		String str = ReadFileUtil.readFile(frontEndFilePath+"//permStoreData.json");
 		List<StoreJson> storeJsons = JSONArray.parseArray(str, StoreJson.class);
 
-		DecimalFormat dfbfb = new DecimalFormat("0.00");
+		DecimalFormat decimalFormat_00 = new DecimalFormat("0.00");
 
 		List<StoreCostPer> list = new ArrayList<>();
 
@@ -80,7 +80,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 					storeCostPer.setItemId(allItem.get(j).getItemId());
 					storeCostPer.setItemName(storeJsons.get(i).getItemName());
 					storeCostPer.setStoreType(storeJsons.get(i).getType());
-					storeCostPer.setCostPer(Double.valueOf(dfbfb.format(costPer)));
+					storeCostPer.setCostPer(Double.valueOf(decimalFormat_00.format(costPer)));
 					storeCostPer.setCost(Double.valueOf(storeJsons.get(i).getCost()));
 					storeCostPer.setRawCost(storeJsons.get(i).getRawCost());
 					storeCostPer.setItemValue(allItem.get(j).getItemValue());

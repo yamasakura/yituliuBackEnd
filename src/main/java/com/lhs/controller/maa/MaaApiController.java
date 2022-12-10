@@ -87,11 +87,11 @@ public class MaaApiController {
     @ApiOperation("生成基建排班协议文件")
     @PostMapping("/building/schedule/save")
     public Result MaaBuildingJsonSave( @RequestBody String scheduleJson,@RequestParam Long id) {
-        long time = new Date().getTime();
-        Random random = new Random();
-        int random_id = random.nextInt(999)%(900)+100;
-        String id_str = ""+time+random_id;
-        id = Long.valueOf(id_str);
+//        long time = new Date().getTime();
+//        Random random = new Random();
+//        int random_id = random.nextInt(999)%(900)+100;
+//        String id_str = ""+time+random_id;
+//        id = Long.valueOf(id_str);
 
         maaApiService.saveScheduleJson(scheduleJson,id);
         HashMap<Object, Object> hashMap = new HashMap<>();
