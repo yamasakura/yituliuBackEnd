@@ -317,7 +317,7 @@ public class ItemServiceImpl implements ItemService {
             String fileName = URLEncoder.encode("itemValue", "UTF-8");
             response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
 
-            List<ItemRevise> list = itemReviseDao.findAll();
+            List<ItemRevise> list = itemReviseDao.findByVersion("auto0.625");
             DecimalFormat DF3 = new DecimalFormat("0.0000");
 
             ArrayList<ItemValueVo> valueVoArrayList = new ArrayList<>();
@@ -342,7 +342,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void exportItemDataToJson(HttpServletResponse response) {
-        List<ItemRevise> list = itemReviseDao.findAll();
+        List<ItemRevise> list = itemReviseDao.findByVersion("auto0.625");
         DecimalFormat DF3 = new DecimalFormat("0.0000");
 
         ArrayList<ItemValueVo> valueVoArrayList = new ArrayList<>();

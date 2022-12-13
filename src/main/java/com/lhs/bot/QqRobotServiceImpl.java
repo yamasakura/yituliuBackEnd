@@ -364,7 +364,7 @@ public class QqRobotServiceImpl implements QqRobotService {
                 JSONObject module_dynamic_major = JSONObject.parseObject(module_dynamic.get("major").toString());
                 JSONObject draw = JSONObject.parseObject(module_dynamic_major.get("draw").toString());
                 JSONArray draw_items = JSONArray.parseArray(draw.get("items").toString());
-                message = "明日方舟更新了动态\n";
+                message = "明日方舟发布了动态\n";
                 for(Object draw_item:draw_items){
                     Object src = JSONObject.parseObject(draw_item.toString()).get("src");
                     message=message+ "[CQ:image,file=明日方舟.png,subType=0,url="+src+",cache=0]\n\n";
@@ -374,6 +374,7 @@ public class QqRobotServiceImpl implements QqRobotService {
                 for(Long group_id:group_ids){
                     HashMap<Object, Object> messageMap = getMessageMap(message,true);
                     groupMessage.add(messageMap);
+                    sendMessage(group_id,"Arknights发布了动态",true);
                     sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
                 }
 
@@ -398,7 +399,9 @@ public class QqRobotServiceImpl implements QqRobotService {
 
                     HashMap<Object, Object> messageMap = getMessageMap(message,true);
                     groupMessage.add(messageMap);
+                    sendMessage(group_id,"Arknights发布了视频",true);
                     sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
+
                 }
             }
 
