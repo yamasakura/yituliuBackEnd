@@ -51,43 +51,37 @@ public class WebSocketConfig {
                     JSONObject qqMessage = JSONObject.parseObject(message);
 
                     if(qqMessage.get("raw_message")!=null){
-                        String raw_message = qqMessage.get("raw_message").toString().trim();
+                        String raw_message = qqMessage.getString("raw_message").trim();
 
                         String roleName = "默认";
-                        long group_id = Long.parseLong( qqMessage.get("group_id").toString());
+                        long group_id = Long.parseLong(qqMessage.getString("group_id"));
 //                        group_id = 562528726;
 
-                        int message_id = Integer.parseInt( qqMessage.get("message_id").toString());
+                        int message_id = Integer.parseInt(qqMessage.getString("message_id"));
 
-                         if(raw_message.endsWith("专精")||raw_message.endsWith("材料")||raw_message.endsWith("精二")){
+                        if(raw_message.endsWith("专精")||raw_message.endsWith("材料")||raw_message.endsWith("精二")){
                             roleName = raw_message.substring(0,raw_message.length()-2);
                             robotService.sendSkillImg(group_id,roleName);
                             apiService.addVisits("bot");
-                            log.info("查询专精---"+roleName);
                         }if(raw_message.endsWith("模组")){
                             roleName = raw_message.substring(0,raw_message.length()-2);
                             robotService.sendModImg(group_id,roleName);
-                            log.info("查询模组---"+roleName);
                             apiService.addVisits("bot");
                         }if(raw_message.endsWith("技能")){
                             roleName = raw_message.substring(0,raw_message.length()-2);
                             robotService.sendCharImg(group_id,roleName);
-                            log.info("查询技能---"+roleName);
                             apiService.addVisits("bot");
                         }
                         if(raw_message.startsWith("材料一图流")||raw_message.startsWith("材料掉率")){
                             robotService.sendItemImg("",group_id);
-                            log.info("查询材料---"+roleName);
                             apiService.addVisits("bot");
                         }
                         if(raw_message.startsWith("活动材料")||raw_message.startsWith("活动材料掉率")){
                             robotService.sendItemImg("act",group_id);
-                            log.info("查询材料---"+roleName);
                             apiService.addVisits("bot");
                         }
                         if(raw_message.startsWith("商店性价比")){
                             robotService.sendItemImg("store",group_id);
-                            log.info("查询材料---"+roleName);
                             apiService.addVisits("bot");
                         }
 
@@ -95,7 +89,7 @@ public class WebSocketConfig {
                             String helpMessage  =  "可用命令格式：\n干员名模组\n干员名技能\n干员名专精\n查看材料掉率：材料掉率、材料一图流、活动材料掉率" +
                                     "\n直接发送游戏截图查询公招组合";
                             robotService.sendMessage(group_id,helpMessage,true);
-                            log.info("命令---"+roleName);
+
                         }
 
                         if (raw_message.startsWith("[CQ:image")) {
@@ -106,21 +100,6 @@ public class WebSocketConfig {
                                 apiService.addVisits("bot");
                             }
                         }
-
-
-
-//                        if (raw_message.contains("测试转发")) {
-//                            List<HashMap<Object,Object>> groupMessage = new ArrayList<>();
-//                            HashMap<Object, Object> messageMap = new HashMap<>();
-//                            HashMap<Object, Object> content = new HashMap<>();
-//                            content.put("name","桜");
-//                            content.put("uin","1820702789");
-//                            content.put("content","[CQ:image,file=明日方舟.png,subType=0,url=https://i0.hdslb.com/bfs/new_dyn/154ab2df3628728991940d62c01da3f61517060220.png,cache=0]"+"测试消息");
-//                            messageMap.put("type","node");
-//                            messageMap.put("data",content);
-//                            groupMessage.add(messageMap);
-//                            robotService.sendGroupMessage(group_id,JSON.toJSONString(groupMessage));
-//                        }
 
                     }
                 }
@@ -133,7 +112,7 @@ public class WebSocketConfig {
 
                 @Override
                 public void onError(Exception ex) {
-                    log.info("[websocket] 连接错误={}",ex.getMessage());
+//                    log.info("[websocket] 连接错误={}",ex.getMessage());
                 }
             };
 

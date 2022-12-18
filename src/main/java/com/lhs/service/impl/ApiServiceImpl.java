@@ -210,7 +210,6 @@ public class ApiServiceImpl implements ApiService {
             visits.setVisitsGacha(1);
         }
 
-//        log.info("域名是"+domainName+"   总浏览量："+visits.getVisits());
         visitsDao.save(visits);
 
 

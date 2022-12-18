@@ -166,9 +166,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public List<ItemRevise> itemRevise(HashMap<String, Double> hashMap,Double version,String dataType,Integer index) {
-//        for (Map.Entry<String, Double> entry : hashMap.entrySet()) {
-//            log.info(entry.getKey() + ": " + entry.getValue());
-//        }
+
 //        拿到上一次临时计算的材料等效价值
         List<Item> itemTemporaryDataList = itemDao.findAll();
 //        list转为map方便调用

@@ -1,37 +1,7 @@
-package com.lhs;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.lhs.bot.QqRobotService;
-import com.lhs.common.util.HttpRequestUtil;
-import com.lhs.common.util.ReadFileUtil;
-import com.lhs.common.util.SaveFile;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-
-@RunWith(SpringRunner.class)   //这两个注解是为了让测试类能拥有同等的spring boot上下文环境
-@SpringBootTest
-public class BiliSpace {
-
-    @Autowired
-    private QqRobotService robotService;
-
-    @Value("${penguin.path}")
-    private String penguinFilePath;
-
-    @Test
-    public void spaceTest() {
+public void biliSend(Long[] group_ids) {
         String url = "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset=&host_mid=161775300";
         String con = HttpRequestUtil.doGet(url);
-        String cakeInfo = ReadFileUtil.readFile("E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\bot\\cake.json");
+        String cakeInfo = ReadFileUtil.readFile(botFilePath + "cake.json");
         JSONObject cakeInfoJson = JSONObject.parseObject(cakeInfo);
         String cake_id_top = cakeInfoJson.get("id_str_top").toString();
         String cake_id = cakeInfoJson.get("id_str").toString();
@@ -69,48 +39,64 @@ public class BiliSpace {
                 }
             } else {
                 cakeMap.putIfAbsent("id_str", id_str);
+                if (!format_system.equals(format_space) || id_str.equals(cake_id)) {
+                    break;
+                }
+            }
+            String spaceDesc = "";
+
+            if (module_dynamic.get("desc") != null) {
+                spaceDesc = JSONObject.parseObject(module_dynamic.get("desc").toString()).get("text").toString();
             }
 
-            if (!format_system.equals(format_space) || id_str.equals(cake_id)) {
-                break;
-            }
 
-            String spaceDesc = JSONObject.parseObject(module_dynamic.get("desc").toString()).get("text").toString();
+            List<HashMap<Object, Object>> groupMessage = new ArrayList<>();
+
 
             if ("DYNAMIC_TYPE_DRAW".equals(spaceType)) {
                 JSONObject module_dynamic_major = JSONObject.parseObject(module_dynamic.get("major").toString());
                 JSONObject draw = JSONObject.parseObject(module_dynamic_major.get("draw").toString());
                 JSONArray draw_items = JSONArray.parseArray(draw.get("items").toString());
-                message = "明日方舟更新了动态\n";
-                for(Object draw_item:draw_items){
+                message = "明日方舟发布了动态\n";
+                for (Object draw_item : draw_items) {
                     Object src = JSONObject.parseObject(draw_item.toString()).get("src");
-                    message=message+ "[CQ:image,file=明日方舟.png,subType=0,url="+src+",cache=0]";
+                    message = message + "[CQ:image,file=明日方舟.png,subType=0,url=" + src + ",cache=0]\n\n";
                 }
-                message = message+spaceDesc;
-                robotService.sendMessage(572030857,message,true);
+                message = message + spaceDesc;
+                HashMap<Object, Object> messageMap = getMessageMap(message, true);
+                groupMessage.add(messageMap);
+                for (Long group_id : group_ids) {
+                    sendMessage(group_id, "Arknights发布了动态", true);
+                    sendGroupMessage(group_id, JSON.toJSONString(groupMessage));
+                }
             }
 
             if ("DYNAMIC_TYPE_AV".equals(spaceType)) {
                 JSONObject module_dynamic_major = JSONObject.parseObject(module_dynamic.get("major").toString());
                 JSONObject archive = JSONObject.parseObject(module_dynamic_major.get("archive").toString());
-                Object cover = archive.get("cover");
+                String cover = "";
+                if (archive.get("cover") != null) {
+                    cover = archive.get("cover").toString();
+                }
+
+                String avDesc = "";
+                if (archive.get("desc") != null) {
+                    avDesc = archive.get("desc").toString();
+                }
                 Object jump_url = archive.get("jump_url");
-                message = "明日方舟发布了视频"+jump_url+"\n"+ "[CQ:image,file=明日方舟.png,subType=0,url="+cover+",cache=0]"
-                + spaceDesc;
-                robotService.sendMessage(572030857,message,true);
+                message = "明日方舟发布了视频" + jump_url + "\n" + "[CQ:image,file=明日方舟.png,subType=0,url=" + cover + ",cache=0]\n\n"
+                        + spaceDesc + "\n" + avDesc;
+
+
+                HashMap<Object, Object> messageMap = getMessageMap(message, true);
+                groupMessage.add(messageMap);
+
+                for (Long group_id : group_ids) {
+                    sendMessage(group_id, "Arknights发布了视频", true);
+                    sendGroupMessage(group_id, JSON.toJSONString(groupMessage));
+                }
             }
-
-            String cakeMapJson = JSONObject.toJSONString(cakeMap);
-            SaveFile.save("E:\\Idea_Project\\yituliuBackEnd\\src\\main\\resources\\bot\\", "cake.json", cakeMapJson);
-
         }
+        String cakeMapJson = JSONObject.toJSONString(cakeMap);
+        SaveFile.save(botFilePath, "cake.json", cakeMapJson);
     }
-
-    @Test
-    public void sendTest() {
-        Long[] group_id ={562528726L};
-        robotService.wbSend(group_id);
-
-    }
-
-}

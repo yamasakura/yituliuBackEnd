@@ -29,7 +29,7 @@ public class CreateJsonFile {
             write.flush();
             write.close();
 
-            response.setContentType("application/force-download");
+//            response.setContentType("application/force-download");
             response.setCharacterEncoding("utf-8");
             response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".json");
             OutputStream outputStream = response.getOutputStream();

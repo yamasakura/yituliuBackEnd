@@ -1,13 +1,16 @@
 package com.lhs.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.vo.StoreJson;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.StoreJsonVo;
 import com.lhs.common.exception.ServiceException;
+import com.lhs.common.util.CreateJsonFile;
 import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.ResultCode;
 import com.lhs.common.util.SaveFile;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,6 +47,9 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Value("${frontEnd.path}")
 	private  String frontEndFilePath;
+
+	@Value("${frontEnd.buildingSchedule}")
+	private String buildingSchedulePath;
 
 	@Override
 	public void save(List<StoreCostPer> storeCostPer) {
@@ -171,23 +178,36 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 				double packPPRDraw = 0.0; // 每抽性价比，相比648
 				double packPPROriginium = 0.0; // 每石性价比，相比648
 
+				int gachaOrundum = 0;
+				int gachaOriginium = 0;
+				int gachaPermit = 0;
+				int gachaPermit10 = 0;
 
-				int gachaOrundum = Integer.parseInt(storePackMap.get("gachaOrundum").toString()); // 合成玉
-				int gachaOriginium = Integer.parseInt(storePackMap.get("gachaOriginium").toString());// 源石
-				int gachaPermit = Integer.parseInt(storePackMap.get("gachaPermit").toString());// 单抽
-				int gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());// 十连
-				int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());// 十连
+				System.out.println("断点1");
+				System.out.println(storePackMap.get("packName"));
 
+			    if(storePackMap.get("gachaOrundum")!=null)	{
+			    	 gachaOrundum = Integer.parseInt(storePackMap.get("gachaOrundum").toString()); // 合成玉
+				}
+				if(storePackMap.get("gachaOriginium")!=null)	{
+					 gachaOriginium = Integer.parseInt(storePackMap.get("gachaOriginium").toString());// 源石
+				}
+				if(storePackMap.get("gachaPermit")!=null)	{
+					 gachaPermit = Integer.parseInt(storePackMap.get("gachaPermit").toString());// 单抽
+				}
+				if(storePackMap.get("gachaPermit10")!=null)	{
+					 gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());// 十连
+				}
+				int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());// 价格
 
+				System.out.println("断点2");
 				//计算该理智的材料总理智折合源石
 				if (storePackMap.get("packContent") != null) {
 					JSONArray jsonArrayItem = JSONArray.parseArray(storePackMap.get("packContent").toString());
 					for (Object objectItem : jsonArrayItem) {
 						Map itemMap = JSONObject.parseObject(objectItem.toString());
-						Object itemName = itemMap.get("itemName");
-
-						int itemQuantity = Integer.parseInt(itemMap.get("itemQuantity").toString());
-
+						Object itemName = itemMap.get("packContentItem");
+						int itemQuantity = Integer.parseInt(itemMap.get("packContentQuantity").toString());
 						apValueToOriginium = apValueToOriginium + itemValueMap.get(itemName.toString()) * itemQuantity;
 					}
 				}
@@ -195,10 +215,10 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 					apValueToOriginium = apValueToOriginium / 135;
 				}
 
-
-				packDraw = gachaOrundum / 600.0 + gachaOriginium * 0.3 + gachaPermit + gachaPermit10;
+				System.out.println("断点3");
+				packDraw = gachaOrundum / 600.0 + gachaOriginium * 0.3 + gachaPermit + gachaPermit10*10;
 				packRmbPerDraw = packPrice / packDraw;
-				packOriginium = gachaOrundum / 180.0 + gachaOriginium + gachaPermit * 600 / 180.0 + gachaPermit10 * 600 / 180.0 + apValueToOriginium;
+				packOriginium = gachaOrundum / 180.0 + gachaOriginium + gachaPermit * 600 / 180.0 + gachaPermit10 * 6000 / 180.0 + apValueToOriginium;
 				packRmbPerOriginium = packPrice / packOriginium;
 				packPPRDraw = standard_gacha / packRmbPerDraw;
 				packPPROriginium = standard_ap / packRmbPerOriginium;
@@ -235,6 +255,18 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	@Override
 	public String readPackStoreJson() {
 		return ReadFileUtil.readFile(frontEndFilePath+"//storePack.json");
+	}
+
+	@Override
+	public void exportPackJson(HttpServletResponse response, Long id) {
+		String str = null;
+
+		str =  ReadFileUtil.readFile(buildingSchedulePath+id+".json");
+		String jsonForMat = JSON.toJSONString(JSONArray.parseArray(str), SerializerFeature.PrettyFormat,
+				SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteNullListAsEmpty);
+		String idStr = String.valueOf(id);
+		CreateJsonFile.createJsonFile(response,buildingSchedulePath,idStr,jsonForMat);
 	}
 
 

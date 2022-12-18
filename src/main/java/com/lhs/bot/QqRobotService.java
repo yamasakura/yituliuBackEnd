@@ -22,7 +22,9 @@ public interface QqRobotService {
 
     Boolean verificationPenguinsData();
 
-    void spaceSend(Long[] group_ids);
+
+
+    void wbSend(Long[] group_ids);
 
     void sendGroupMessage(long group_id,String message);
 

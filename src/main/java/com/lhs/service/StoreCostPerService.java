@@ -3,6 +3,7 @@ package com.lhs.service;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -24,4 +25,6 @@ public interface StoreCostPerService {
 	String readPermStoreJson();
 
     String readPackStoreJson();
+
+    void exportPackJson(HttpServletResponse response, Long uid);
 }

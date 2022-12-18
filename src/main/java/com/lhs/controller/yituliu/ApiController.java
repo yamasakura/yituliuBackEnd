@@ -2,18 +2,12 @@ package com.lhs.controller.yituliu;
 
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.StoreCostPer;
 import com.lhs.bean.vo.RecResultVo;
-import com.lhs.bean.vo.StageOrundumVo;
-import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.bot.QqRobotService;
-import com.lhs.common.util.HttpRequestUtil;
-import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.Result;
-import com.lhs.common.util.SaveFile;
 import com.lhs.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -22,9 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -83,10 +74,8 @@ public class ApiController {
     @ApiOperation("获取动态")
     @GetMapping("/get/space/bili/{group_ids}")
     public Result getBiliSpace(@PathVariable("group_ids") Long[] group_ids) {
-        for(Long group_id:group_ids){
-            System.out.println(group_id);
-        }
-        robotService.spaceSend(group_ids);
+
+        robotService.wbSend(group_ids);
 
      return Result.success("发送成功");
     }

@@ -79,10 +79,9 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.0");
         SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
-//        DecimalFormat DecimalFormat_3 = new DecimalFormat("0.000");
-        Random random = new Random();
         String updateTime = simpleDateFormat_ss.format(new Date());
-        log.info("更新时间是————" + updateTime + "，版本是" + dataType + version);
+        if(indexNum==0){log.info("更新时间是————" + updateTime + "，版本是" + dataType + version);}
+
 
 
         String saveTime = simpleDateFormat_dd.format(new Date());

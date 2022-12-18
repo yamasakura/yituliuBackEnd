@@ -65,7 +65,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             for (StageResultData stageResultData : stageResultByTypeList) {
                 if (stageResultData.getIsValue() == 1) {
                     standard = stageResultData.getEfficiency();
-//                   log.info("当前标准是"+stageResultData.getStageCode()+"——"+standard);
+//             log.info("当前标准是"+stageResultData.getStageCode()+"——"+standard);
                     break;
                 }
             }
