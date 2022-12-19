@@ -235,7 +235,7 @@ public class QqRobotServiceImpl implements QqRobotService {
 
         SimpleDateFormat simpleDateFormat_save = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
         SimpleDateFormat simpleDateFormat_HH = new SimpleDateFormat("HH");// 设置日期格式
-        String saveTime = simpleDateFormat_save.format(new Date(time - 3600000 * 4));
+        String saveTime = simpleDateFormat_save.format(new Date(time - 3600000 * 12));
         DecimalFormat decimalFormat_3 = new DecimalFormat("0.000");
 
         String jsonFile = ReadFileUtil.readFile(penguinFilePath + "matrix" + saveTime + "auto.json");  //从保存文件读取
@@ -246,9 +246,11 @@ public class QqRobotServiceImpl implements QqRobotService {
         for (PenguinDataVo penguinDataVo : penguinBackupDataList) {
             Integer quantity = penguinDataVo.getQuantity();
             Integer times = penguinDataVo.getTimes();
+            if (times < 300) continue;
             Double knockRating = (double) quantity / times;
             String stageId = penguinDataVo.getStageId();
             String itemId = penguinDataVo.getItemId();
+
             backupDataHashMap.put(stageId + itemId, knockRating);
         }
 
@@ -269,7 +271,6 @@ public class QqRobotServiceImpl implements QqRobotService {
             double threshold = 1 - knockRating_backup / knockRating;
             threshold = (threshold < 0) ? -threshold : threshold;
             if (itemNameMap.get(itemId) == null || stageNameMap.get(stageId + "code") == null) continue;
-
 
             if ("4".equals(itemNameMap.get(itemId + "rank")) && threshold > 0.1) {
                 message = message + stageNameMap.get(stageId + "code") + "的" + itemNameMap.get(itemId) + "掉率：" + decimalFormat_3.format(knockRating_backup * 100) +
