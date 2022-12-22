@@ -65,7 +65,7 @@ public class CharTagDataServiceImpl implements CharTagDataService {
     @Override
     public String OCRResult(List<String> orcTagList, Integer rarityMin, Integer rarityMax) {
         for (String string : orcTagList) {
-            log.info(string);
+//            log.info(string);
         }
 
         List<CharTagData> allData = charTagDataDao.findByTypeAndRarityBetween(0, rarityMin, rarityMax);

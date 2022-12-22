@@ -268,6 +268,7 @@ public class QqRobotServiceImpl implements QqRobotService {
             if (times < 300) continue;
             double knockRating = (double) quantity / times;
 
+
             double threshold = 1 - knockRating_backup / knockRating;
             threshold = (threshold < 0) ? -threshold : threshold;
             if (itemNameMap.get(itemId) == null || stageNameMap.get(stageId + "code") == null) continue;
@@ -378,6 +379,7 @@ public class QqRobotServiceImpl implements QqRobotService {
         String weiboMapJson = JSONObject.toJSONString(hashMap_weibo);
         SaveFile.save(botFilePath, "weibo.json", weiboMapJson);
     }
+
 
 
     @Override

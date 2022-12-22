@@ -22,8 +22,6 @@ public interface QqRobotService {
 
     Boolean verificationPenguinsData();
 
-
-
     void wbSend(Long[] group_ids);
 
     void sendGroupMessage(long group_id,String message);
