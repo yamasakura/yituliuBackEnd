@@ -40,6 +40,4 @@ public interface ApiService {
 
     void itemCostPlan (HashMap<String,Integer> itemCost);
 
-
-
 }

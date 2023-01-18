@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.common.util.ReadFileUtil;
 import com.lhs.dao.MaaTagResultDao;
+import com.lhs.service.MaaApiService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class Maa {
 
     @Autowired
     private MaaTagResultDao maaTagResultDao;
+
+    @Autowired
+    private MaaApiService maaApiService;
 
     @Test
     public  void maaCalculation() {
@@ -45,6 +49,14 @@ public class Maa {
         JSONObject byNameJson = JSONObject.parseObject(byName.toString());
         Object o = byNameJson.get("allSkill");
         System.out.println(o);
+    }
+
+
+    @Test
+    public  void maaCalculationLocal() {
+        String s = maaApiService.maaTagDataCalculationLocal();
+
+
     }
 
 

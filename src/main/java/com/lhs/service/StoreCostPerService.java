@@ -14,11 +14,11 @@ public interface StoreCostPerService {
 	//查找商店性价比信息
 	List<StoreCostPer> findAll(String type);
     //通过json更新常驻商店
-	void updateByJsonPerm();
+	void updateStorePermByJson();
 	//通过json更新活动商店
-	void updateByJsonAct(MultipartFile file);
+	void updateStoreActByJson(MultipartFile file);
 	//通过json更新活动礼包
-	void updateByJsonPack(MultipartFile file);
+	void updateStorePackByJson(String packStr);
     //读取活动商店json
 	String readActStoreJson();
 	//读取常驻商店json

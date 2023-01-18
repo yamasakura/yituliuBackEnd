@@ -75,7 +75,7 @@ public class ApiController {
     @GetMapping("/get/space/bili/{group_ids}")
     public Result getBiliSpace(@PathVariable("group_ids") Long[] group_ids) {
 
-        robotService.wbSend(group_ids);
+        robotService.wbSendByPhone(group_ids);
 
      return Result.success("发送成功");
     }

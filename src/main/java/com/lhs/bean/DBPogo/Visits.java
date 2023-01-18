@@ -25,6 +25,8 @@ public class Visits {
     private Integer visitsIndex;
     private Integer visitsGacha;
 
+    private Integer visitsPack;
+
     public Date getVisitsDay() {
         return visitsDay;
     }
@@ -73,6 +75,14 @@ public class Visits {
         this.visitsGacha = visitsGacha;
     }
 
+    public Integer getVisitsPack() {
+        return visitsPack;
+    }
+
+    public void setVisitsPack(Integer visitsPack) {
+        this.visitsPack = visitsPack;
+    }
+
     @Override
     public String toString() {
         return "Visits{" +
@@ -82,6 +92,7 @@ public class Visits {
                 ", visitsBuilding=" + visitsBuilding +
                 ", visitsIndex=" + visitsIndex +
                 ", visitsGacha=" + visitsGacha +
+                ", visitsPack=" + visitsPack +
                 '}';
     }
 }

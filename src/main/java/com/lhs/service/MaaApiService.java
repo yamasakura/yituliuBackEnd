@@ -14,6 +14,8 @@ public interface MaaApiService {
     List<MaaTagData> selectDataLimit10();
     //统计公招各项个数出率
     String maaTagDataCalculation();
+
+    String maaTagDataCalculationLocal();
     //读取公招统计结果
     String getMaaTagDataStatistical();
 
@@ -25,4 +27,6 @@ public interface MaaApiService {
     void exportScheduleFile(HttpServletResponse response, Long uid);
 
     String exportScheduleJson(Long id);
+
+
 }

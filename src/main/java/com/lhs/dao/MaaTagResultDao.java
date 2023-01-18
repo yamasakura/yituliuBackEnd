@@ -14,9 +14,8 @@ public interface MaaTagResultDao extends JpaRepository<MaaTagData, Long>{
 
     @Transactional
     @Modifying
-    @Query(value = "select * from maa_tag_data202211 order by maa_tag_data.create_time  desc limit 10",nativeQuery = true)
+    @Query(value = "select * from maa_tag_data202301 order by maa_tag_data.create_time  desc limit 10",nativeQuery = true)
     List<MaaTagData> selectDataLimit10();
-
 
 
     List<MaaTagData> findByCreateTimeIsGreaterThanEqualAndCreateTimeIsLessThan(Date createTime, Date createTime2);

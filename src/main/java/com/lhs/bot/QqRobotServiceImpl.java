@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.pojo.PenguinDataVo;
-import com.lhs.bean.pojo.qqMessage;
 import com.lhs.common.util.HttpRequestUtil;
 import com.lhs.common.util.HttpUtil;
 import com.lhs.common.util.ReadFileUtil;
@@ -348,7 +347,7 @@ public class QqRobotServiceImpl implements QqRobotService {
             if (ids.get(idstr) != null) continue;
             ids.put(idstr, idstr);
 
-            List<HashMap<Object, Object>> groupMessage = new ArrayList<>();  //转发消息数组
+            List<HashMap<Object, Object>> groupMessage = new ArrayList<>();  //QQ转发消息数组
             String message = "";
             message = message + text_raw;
 
@@ -380,7 +379,109 @@ public class QqRobotServiceImpl implements QqRobotService {
         SaveFile.save(botFilePath, "weibo.json", weiboMapJson);
     }
 
+    @Override
+    public void wbSendByPhone(Long[] group_ids) {
 
+        SimpleDateFormat simpleDateFormat_today = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+        String format_system = simpleDateFormat_today.format(new Date()); //获取系统日期
+//        format_system = "2023-01-01";
+
+
+        String url = "https://m.weibo.cn/api/container/getIndex?containerid=1076036279793937";
+        String wbStr = HttpRequestUtil.doGet_wb(url);    //微博动态初始数据
+        JSONArray wbData = JSONArray.parseArray(JSONObject.parseObject(JSONObject.parseObject(wbStr)
+                .getString("data")).getString("cards"));  //微博动态数组
+
+
+        String cakeStr = ReadFileUtil.readFile(botFilePath + "cake.json"); //每日已发送动态日志文件
+        JSONObject wbJson = JSONObject.parseObject(cakeStr);   //日志文件转json
+
+        String jsonDate = wbJson.getString("date");  //上次保存的时间获取
+        HashMap ids = new HashMap<>();   //已发送动态的id列表
+        ids.put("1111", "1111");   //默认值
+        if (format_system.equals(jsonDate)) {  //如果日志时间等于今天则不需要默认值
+            ids = JSONObject.parseObject(wbJson.getString("ids"), HashMap.class);//获取发送过的动态id
+        }
+
+        HashMap<Object, Object> map_cake = new HashMap<>();    //日志结果
+        map_cake.put("date",format_system);
+
+
+        int card_num = 0;
+        String htmlRegex = "<[^>]+>";
+
+
+        for (Object cards : wbData) {  //微博消息数组循环
+            if (0 == card_num) {
+                card_num++;
+                continue;
+            }
+
+
+            JSONObject wb_card = JSONObject.parseObject(cards.toString());
+            JSONObject blog = JSONObject.parseObject(wb_card.getString("mblog"));
+
+            String cst = blog.getString("created_at");//获取动态时间
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", java.util.Locale.US); // 格式转换
+            Date date = null;
+            try {
+                date = sdf.parse(cst);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            String format_wb = simpleDateFormat_today.format(date);
+            if (!format_system.equals(format_wb) && date != null) continue;//判断是否是今天
+
+            String text_raw = blog.getString("text");//动态内容
+            text_raw = text_raw.replaceAll(htmlRegex, "");
+            String mid = blog.getString("mid");//动态id
+            if (ids.get(mid) != null) continue;
+            ids.put(mid, mid);
+
+            List<HashMap<Object, Object>> groupMessage = new ArrayList<>();  //QQ转发消息数组
+            String message = "";
+            message = message + text_raw;
+            HashMap<Object, Object> messageMap = getMessageMap(message, false);
+            groupMessage.add(messageMap);
+
+            if (blog.getString("pics") != null) {
+                JSONArray pics = JSONArray.parseArray(blog.getString("pics"));
+                for (Object pic_item : pics) {
+                    JSONObject json_pic = JSONObject.parseObject(pic_item.toString());
+                    JSONObject large_pic = JSONObject.parseObject(json_pic.getString("large"));
+                    String pic_url = large_pic.getString("url");
+                    String message_pic = "";
+                    if (pic_url.contains("gif")) {
+                        message_pic = "[CQ:image,file=111.gif,subType=0,url=" + pic_url + ",cache=0]";
+                    } else {
+                        message_pic = "[CQ:image,file=111.jpg,subType=0,url=" + pic_url + ",cache=0]";
+                    }
+                    HashMap<Object, Object> messageMap_pic = getMessageMap(message_pic, true);
+                    groupMessage.add(messageMap_pic);
+                }
+            }
+
+
+            for (Long group_id : group_ids) {
+                sendMessage(group_id, "Arknights发布了动态", true);
+                sendGroupMessage(group_id, JSON.toJSONString(groupMessage));
+            }
+
+        }
+
+        map_cake.put("ids", ids);
+
+        String str_map_cake = JSONObject.toJSONString(map_cake);
+        SaveFile.save(botFilePath, "cake.json", str_map_cake);
+
+    }
+
+    public static void main(String[] args) {
+        String url = "https://m.weibo.cn/api/container/getIndex?containerid=1076036279793937";
+        String wbStr = HttpRequestUtil.doGet_wb(url);    //微博初始数据
+        System.out.println(wbStr);
+
+    }
 
     @Override
     public void sendGroupMessage(long group_id, String message) {

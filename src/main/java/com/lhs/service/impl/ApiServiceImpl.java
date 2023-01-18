@@ -197,10 +197,12 @@ public class ApiServiceImpl implements ApiService {
             visits.setVisitsIndex(todayVisitsData.getVisitsIndex());
             visits.setVisitsGacha(todayVisitsData.getVisitsGacha());
             visits.setVisitsBuilding(todayVisitsData.getVisitsBuilding());
+            visits.setVisitsPack(todayVisitsData.getVisitsPack() );
             visits.setVisitsBot(todayVisitsData.getVisitsBot() );
             if("index".equals(domainName)) visits.setVisitsIndex(todayVisitsData.getVisitsIndex() + 1);
             if("gacha".equals(domainName)) visits.setVisitsGacha(todayVisitsData.getVisitsGacha() + 1);
             if("building".equals(domainName)) visits.setVisitsBuilding(todayVisitsData.getVisitsBuilding() + 1);
+            if("pack".equals(domainName)) visits.setVisitsPack(todayVisitsData.getVisitsPack() + 1);
 
         } else {
             visits.setVisits(1);
@@ -208,6 +210,7 @@ public class ApiServiceImpl implements ApiService {
             visits.setVisitsIndex(1);
             visits.setVisitsBuilding(1);
             visits.setVisitsGacha(1);
+            visits.setVisitsPack(1);
         }
 
         visitsDao.save(visits);
@@ -236,6 +239,7 @@ public class ApiServiceImpl implements ApiService {
             visits.setVisitsGacha(todayVisitsData.getVisitsGacha());
             visits.setVisitsBuilding(todayVisitsData.getVisitsBuilding());
             visits.setVisitsBot(todayVisitsData.getVisitsBot());
+            visits.setVisitsPack(todayVisitsData.getVisitsPack());
             if("bot".equals(domainName)) visits.setVisitsBot(todayVisitsData.getVisitsBot() + 1);
         } else {
             visits.setVisits(1);
@@ -243,6 +247,7 @@ public class ApiServiceImpl implements ApiService {
             visits.setVisitsIndex(1);
             visits.setVisitsBuilding(1);
             visits.setVisitsGacha(1);
+            visits.setVisitsPack(1);
         }
         visitsDao.save(visits);
     }
@@ -257,6 +262,7 @@ public class ApiServiceImpl implements ApiService {
         List<Integer> buildingList = new ArrayList<>();
         List<Integer> botList = new ArrayList<>();
         List<Integer> indexList = new ArrayList<>();
+        List<Integer> packList = new ArrayList<>();
 
 
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -268,6 +274,7 @@ public class ApiServiceImpl implements ApiService {
             buildingList.add(visits.getVisitsBuilding());
             botList.add(visits.getVisitsBot());
             indexList.add(visits.getVisitsIndex());
+            packList.add(visits.getVisitsPack());
         }
 
         List<Object> visitVo = new ArrayList<>();
@@ -277,6 +284,7 @@ public class ApiServiceImpl implements ApiService {
         visitVo.add(buildingList);
         visitVo.add(botList);
         visitVo.add(indexList);
+        visitVo.add(packList);
         return visitVo;
     }
 

@@ -24,6 +24,8 @@ public interface QqRobotService {
 
     void wbSend(Long[] group_ids);
 
+    void wbSendByPhone(Long[] group_ids);
+
     void sendGroupMessage(long group_id,String message);
 
     void deleteMessage(Integer message_id);

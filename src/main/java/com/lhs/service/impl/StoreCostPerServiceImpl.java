@@ -65,7 +65,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 
 	@Override
-	public void updateByJsonPerm() {
+	public void updateStorePermByJson() {
 		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
 		String str = ReadFileUtil.readFile(frontEndFilePath+"//permStoreData.json");
 		List<StoreJson> storeJsons = JSONArray.parseArray(str, StoreJson.class);
@@ -101,7 +101,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	}
 
 	@Override
-	public void updateByJsonAct(MultipartFile file) {
+	public void updateStoreActByJson(MultipartFile file) {
 		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
 		HashMap<String, Double> itemValueMap = new HashMap<>();
 		HashMap<String, String> itemIdMap = new HashMap<>();
@@ -149,17 +149,19 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	}
 
 	@Override
-	public void updateByJsonPack(MultipartFile file) {
+	public void updateStorePackByJson(String packStr) {
 		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
 		HashMap<String, Double> itemValueMap = new HashMap<>();
-		HashMap<String, String> itemIdMap = new HashMap<>();
+
 		for(ItemRevise itemRevise:allItem){
 			itemValueMap.put(itemRevise.getItemName(),itemRevise.getItemValue()/1.25);
-			itemIdMap.put(itemRevise.getItemName(),itemRevise.getItemId());
 		}
 
-		String fileStr  = ReadFileUtil.readFile(file);
-		JSONArray jsonArray = JSONArray.parseArray(fileStr);
+		itemValueMap.put("理智",1.0);
+
+
+//		String fileStr  = ReadFileUtil.readFile(file);
+		JSONArray jsonArray = JSONArray.parseArray(packStr);
 
 		double 	standard_gacha = 648/55.5;
 		double  standard_ap = 3.5;
@@ -183,8 +185,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 				int gachaPermit = 0;
 				int gachaPermit10 = 0;
 
-				System.out.println("断点1");
-				System.out.println(storePackMap.get("packName"));
+
 
 			    if(storePackMap.get("gachaOrundum")!=null)	{
 			    	 gachaOrundum = Integer.parseInt(storePackMap.get("gachaOrundum").toString()); // 合成玉
@@ -198,9 +199,12 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 				if(storePackMap.get("gachaPermit10")!=null)	{
 					 gachaPermit10 = Integer.parseInt(storePackMap.get("gachaPermit10").toString());// 十连
 				}
+
+
+
 				int packPrice = Integer.parseInt(storePackMap.get("packPrice").toString());// 价格
 
-				System.out.println("断点2");
+
 				//计算该理智的材料总理智折合源石
 				if (storePackMap.get("packContent") != null) {
 					JSONArray jsonArrayItem = JSONArray.parseArray(storePackMap.get("packContent").toString());
@@ -215,7 +219,7 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 					apValueToOriginium = apValueToOriginium / 135;
 				}
 
-				System.out.println("断点3");
+
 				packDraw = gachaOrundum / 600.0 + gachaOriginium * 0.3 + gachaPermit + gachaPermit10*10;
 				packRmbPerDraw = packPrice / packDraw;
 				packOriginium = gachaOrundum / 180.0 + gachaOriginium + gachaPermit * 600 / 180.0 + gachaPermit10 * 6000 / 180.0 + apValueToOriginium;

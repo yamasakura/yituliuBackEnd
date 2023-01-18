@@ -9,6 +9,7 @@ import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.Result;
 import com.lhs.common.util.ResultCode;
+import com.lhs.dao.MaaTagResultDao;
 import com.lhs.service.MaaApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,9 @@ public class MaaApiController {
 
     @Autowired
     private MaaApiService maaApiService;
+
+    @Autowired
+    private MaaTagResultDao maaTagResultDao;
 
     @Value("${frontEnd.buildingSchedule}")
     private String buildingSchedulePath;
@@ -120,6 +124,11 @@ public class MaaApiController {
         hashMap.put("message","导入成功");
         return Result.success(hashMap);
     }
+
+
+
+
+
 
 
 }
