@@ -1,7 +1,6 @@
 package com.lhs.service;
 
 import com.lhs.bean.DBPogo.StageResultData;
-import com.lhs.bean.vo.StageResultApiVo;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,7 @@ public interface ApiService {
     //读取T2材料关卡效率文件
     String readStageFileT2(String version);
 
-    //搓玉计算
+    //读取搓玉结果文件
     String readStageFileOrundum(String version);
 
     //读取已结束活动材料关卡效率文件

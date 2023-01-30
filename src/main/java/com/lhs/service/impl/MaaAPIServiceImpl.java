@@ -74,10 +74,13 @@ public class MaaAPIServiceImpl implements MaaApiService {
         maaTagData.setVersion(maaTagRequestVo.getVersion());
         maaTagData.setId(Long.parseLong(id));
         maaTagData.setUid(maaTagRequestVo.getUuid());
-        if(maaTagRequestVo.getVersion().startsWith("v4.8")||maaTagRequestVo.getVersion().startsWith("v4.9.0")){
 
-        }else {
+
+        if(maaTagRequestVo.getVersion().startsWith("v4.10")||maaTagRequestVo.getVersion().startsWith("v4.11")
+           ||maaTagRequestVo.getVersion().startsWith("v4.12")||maaTagRequestVo.getVersion().startsWith("v4.13")){
             maaTagResultDao.save(maaTagData);
+        }else {
+
         }
 
 

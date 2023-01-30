@@ -233,7 +233,6 @@ public class QqRobotServiceImpl implements QqRobotService {
         long time = new Date().getTime();
 
         SimpleDateFormat simpleDateFormat_save = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
-        SimpleDateFormat simpleDateFormat_HH = new SimpleDateFormat("HH");// 设置日期格式
         String saveTime = simpleDateFormat_save.format(new Date(time - 3600000 * 12));
         DecimalFormat decimalFormat_3 = new DecimalFormat("0.000");
 
@@ -245,7 +244,7 @@ public class QqRobotServiceImpl implements QqRobotService {
         for (PenguinDataVo penguinDataVo : penguinBackupDataList) {
             Integer quantity = penguinDataVo.getQuantity();
             Integer times = penguinDataVo.getTimes();
-            if (times < 300) continue;
+            if (times < 500) continue;
             Double knockRating = (double) quantity / times;
             String stageId = penguinDataVo.getStageId();
             String itemId = penguinDataVo.getItemId();
@@ -253,7 +252,7 @@ public class QqRobotServiceImpl implements QqRobotService {
             backupDataHashMap.put(stageId + itemId, knockRating);
         }
 
-        String message = "检验样本截止时间" + saveTime + "\n";
+        String message = "检验样本截止时间" + simpleDateFormat_save.format(new Date()) + "\n";
 
         for (PenguinDataVo penguinDataVo : penguinDatalist) {
             String stageId = penguinDataVo.getStageId();
@@ -264,26 +263,30 @@ public class QqRobotServiceImpl implements QqRobotService {
             double knockRating_backup = backupDataHashMap.get(stageId + itemId);
             Integer quantity = penguinDataVo.getQuantity();
             Integer times = penguinDataVo.getTimes();
-            if (times < 300) continue;
+            if (times < 500) continue;
             double knockRating = (double) quantity / times;
 
 
             double threshold = 1 - knockRating_backup / knockRating;
             threshold = (threshold < 0) ? -threshold : threshold;
+
+            double difference = knockRating - knockRating_backup;
+            difference = (difference < 0) ? -difference : difference;
+
             if (itemNameMap.get(itemId) == null || stageNameMap.get(stageId + "code") == null) continue;
 
-            if ("4".equals(itemNameMap.get(itemId + "rank")) && threshold > 0.1) {
+            if ("4".equals(itemNameMap.get(itemId + "rank")) && difference > 0.005) {
                 message = message + stageNameMap.get(stageId + "code") + "的" + itemNameMap.get(itemId) + "掉率：" + decimalFormat_3.format(knockRating_backup * 100) +
-                        "%——>" + decimalFormat_3.format(knockRating * 100) + "%，变化幅度" + decimalFormat_3.format(threshold * 100) +
-                        "%，链接：penguin-stats.cn/result/stage/" + stageNameMap.get(stageId + "zoneId") + "/" + stageId + "\n";
+                        "%——>" + decimalFormat_3.format(knockRating * 100) + "%\n";
+//                ，链接：penguin-stats.cn/result/stage/" + stageNameMap.get(stageId + "zoneId") + "/" + stageId + "
             }
-            if ("3".equals(itemNameMap.get(itemId + "rank")) && knockRating > 0.2 && threshold > 0.04) {
+            if ("3".equals(itemNameMap.get(itemId + "rank"))  && difference > 0.03) {
                 message = message + stageNameMap.get(stageId + "code") + "的" + itemNameMap.get(itemId) + "掉率：" + decimalFormat_3.format(knockRating_backup * 100) +
-                        "%——>" + decimalFormat_3.format(knockRating * 100) + "%，变化幅度" + decimalFormat_3.format(threshold * 100) +
-                        "%，链接：penguin-stats.cn/result/stage/" + stageNameMap.get(stageId + "zoneId") + "/" + stageId + "\n";
+                        "%——>" + decimalFormat_3.format(knockRating * 100) + "\n";
             }
         }
 
+//            938710832
 
         if (message.length() < 30) {
             sendMessage(562528726, message + "本次检验未发现问题", true);

@@ -1,15 +1,9 @@
 package com.lhs.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.Visits;
 import com.lhs.bean.pojo.ItemCost;
-import com.lhs.bean.pojo.PenguinDataVo;
-import com.lhs.bean.vo.StageResultApiVo;
 import com.lhs.bean.vo.StageResultPlan;
-import com.lhs.bot.QqRobotService;
 import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.*;
 import com.lhs.dao.*;
@@ -21,11 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.introspector.PropertyUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,11 +31,6 @@ public class ApiServiceImpl implements ApiService {
     @Autowired
     private StageResultDataDao stageResultDataDao;
 
-    @Autowired
-    private StageResultVoApiDao stageResultVoApiDao;
-
-    @Autowired
-    private QqRobotService robotService;
 
     @Value("${frontEnd.path}")
     private  String frontEndFilePath ;

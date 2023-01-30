@@ -19,9 +19,6 @@ public class OrundumEfficiency {
 
     @Autowired
     private StageResultDataDao stageResultDataDao;
-
-
-
     @Test
     public void Orundum() {
 

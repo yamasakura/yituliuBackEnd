@@ -87,9 +87,8 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         String saveTime = simpleDateFormat_dd.format(new Date());
 
         //读取企鹅物流数据
-        JSONObject matrixJson = null;
         String jsonFile = ReadFileUtil.readFile(penguinFilePath + "matrix" + saveTime + dataType + ".json");  //从服务器保存的文件读取
-        matrixJson = JSONObject.parseObject(jsonFile); //json化
+        JSONObject matrixJson = JSONObject.parseObject(jsonFile); //json化
         List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //JSON转为集合
 
 //        企鹅物流的api，但是链接不稳定，目前采用本地读取
