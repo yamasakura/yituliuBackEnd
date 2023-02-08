@@ -3,18 +3,16 @@ package com.lhs.controller.maa;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.MaaTagData;
-import com.lhs.bean.vo.MaaTagDataVo;
-import com.lhs.bean.pojo.MaaTagRequestVo;
+import com.lhs.bean.vo.MaaTagDataResponseVo;
+import com.lhs.bean.vo.MaaTagRequestVo;
 import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.Result;
 import com.lhs.common.util.ResultCode;
-import com.lhs.dao.MaaTagResultDao;
 import com.lhs.service.MaaApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,21 +38,21 @@ public class MaaApiController {
     @GetMapping("/recruit/limit10")
     public Result MaaTagResultLimit10() {
         List<MaaTagData> maaTagDataList = maaApiService.selectDataLimit10();
-        List<MaaTagDataVo> maaTagDataVoList = new ArrayList<>();
+        List<MaaTagDataResponseVo> maaTagDataResponseVoList = new ArrayList<>();
         for(MaaTagData maaTagData:maaTagDataList){
-            MaaTagDataVo maaTagDataVO = new MaaTagDataVo();
-            maaTagDataVO.setTag1(maaTagData.getTag1());
-            maaTagDataVO.setTag2(maaTagData.getTag2());
-            maaTagDataVO.setTag3(maaTagData.getTag3());
-            maaTagDataVO.setTag4(maaTagData.getTag4());
-            maaTagDataVO.setTag5(maaTagData.getTag5());
-            maaTagDataVO.setLevel(maaTagData.getLevel());
-            maaTagDataVO.setServer(maaTagData.getServer());
-            maaTagDataVO.setUid(maaTagData.getUid());
-            maaTagDataVO.setCreateTime(maaTagData.getCreateTime());
-            maaTagDataVoList.add(maaTagDataVO);
+            MaaTagDataResponseVo maaTagDataResponseVO = new MaaTagDataResponseVo();
+            maaTagDataResponseVO.setTag1(maaTagData.getTag1());
+            maaTagDataResponseVO.setTag2(maaTagData.getTag2());
+            maaTagDataResponseVO.setTag3(maaTagData.getTag3());
+            maaTagDataResponseVO.setTag4(maaTagData.getTag4());
+            maaTagDataResponseVO.setTag5(maaTagData.getTag5());
+            maaTagDataResponseVO.setLevel(maaTagData.getLevel());
+            maaTagDataResponseVO.setServer(maaTagData.getServer());
+            maaTagDataResponseVO.setUid(maaTagData.getUid());
+            maaTagDataResponseVO.setCreateTime(maaTagData.getCreateTime());
+            maaTagDataResponseVoList.add(maaTagDataResponseVO);
         }
-        return Result.success(maaTagDataVoList);
+        return Result.success(maaTagDataResponseVoList);
     }
 
 

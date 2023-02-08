@@ -1,6 +1,6 @@
 package com.lhs.bean.vo;
 
-public class StoreJsonVo {
+public class StoreActJsonVo {
 
     private String itemName;
     private Integer itemQuantity;

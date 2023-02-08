@@ -1,0 +1,37 @@
+[
+  {
+    "name": "故事集",
+    "originium": 16,
+    "orundum": 0,
+    "permit": 0,
+    "permit10": 0
+  },
+  {
+    "name": "联动",
+    "originium": 28,
+    "orundum": 200,
+    "permit": 3,
+    "permit10": 2
+  },
+  {
+    "name": "复刻",
+    "originium": 0,
+    "orundum": 2000,
+    "permit": 3,
+    "permit10": 0
+  },
+  {
+    "name": "剿灭",
+    "originium": 0,
+    "orundum": 1500,
+    "permit": 0,
+    "permit10": 0
+  },
+  {
+    "name": "维护",
+    "originium": 5,
+    "orundum": 1600,
+    "permit": 0,
+    "permit10": 0
+  }
+]

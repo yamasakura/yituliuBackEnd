@@ -4,15 +4,13 @@ import com.lhs.bean.DBPogo.QuantileTable;
 import com.lhs.bean.DBPogo.StageResultData;
 
 import com.lhs.bean.vo.StageOrundumVo;
-import com.lhs.bean.vo.StageVo;
+import com.lhs.bean.pojo.StageInfoVo;
 import com.lhs.dao.StageResultDataDao;
 import com.lhs.service.StageResultSetInfoService;
 import com.lhs.service.StageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -225,7 +223,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         DecimalFormat decimalFormat_0 = new DecimalFormat("0");
         List<StageOrundumVo> list = new ArrayList<>();
 
-        List<StageVo> allVo = stageService.findAllVo();
+        List<StageInfoVo> allVo = stageService.findAllVo();
         List<StageResultData> stageResultDataStandard = stageResultDataDao.findByStageIdAndIsShow("main_01-07", 1);
         HashMap<String, Double> standardHashMap = orundumPerApCal(stageResultDataStandard);
         double standard = standardHashMap.get("orundumPerAp");
@@ -240,9 +238,9 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         list.add(stageOrundumVoStandard);
 
-        for (StageVo stageVo : allVo) {
-            if (stageVo.getIsShow() == 0 || "main_01-07".equals(stageVo.getStageId())) continue;
-            List<StageResultData> byStageCode = stageResultDataDao.findByStageIdAndIsShow(stageVo.getStageId(), 1);
+        for (StageInfoVo stageInfoVo : allVo) {
+            if (stageInfoVo.getIsShow() == 0 || "main_01-07".equals(stageInfoVo.getStageId())) continue;
+            List<StageResultData> byStageCode = stageResultDataDao.findByStageIdAndIsShow(stageInfoVo.getStageId(), 1);
             if (byStageCode.size() < 1) continue;
             HashMap<String, Double> hashMap = orundumPerApCal(byStageCode);
             Double orundumPerAp = hashMap.get("orundumPerAp");
@@ -360,14 +358,14 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
 
     @Override
-    public Double getConfidenceInterval(Integer penguinDataTimes, StageVo stageVo, double itemValue, double probability, List<QuantileTable> quantileTableList) {
+    public Double getConfidenceInterval(Integer penguinDataTimes, StageInfoVo stageInfoVo, double itemValue, double probability, List<QuantileTable> quantileTableList) {
         double confidenceInterval = 0.0;
         double quantileValue = 0.0;
         int quantileTableListCode = 0;
 
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
-        quantileValue = 0.03 * stageVo.getApCost() * 1.25 / itemValue / Math.sqrt(1 * probability * (1 - probability) / (penguinDataTimes - 1));
+        quantileValue = 0.03 * stageInfoVo.getApCost() * 1.25 / itemValue / Math.sqrt(1 * probability * (1 - probability) / (penguinDataTimes - 1));
         for (int j = 1; j < quantileTableList.size(); j++) {
             if (quantileValue < quantileTableList.get(j).getValue()) {
                 quantileTableListCode = j;

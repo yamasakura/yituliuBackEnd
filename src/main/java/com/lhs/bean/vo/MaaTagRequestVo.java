@@ -1,4 +1,4 @@
-package com.lhs.bean.pojo;
+package com.lhs.bean.vo;
 
 import com.alibaba.fastjson.JSONArray;
 

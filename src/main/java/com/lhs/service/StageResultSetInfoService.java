@@ -3,7 +3,7 @@ package com.lhs.service;
 import com.lhs.bean.DBPogo.QuantileTable;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.vo.StageOrundumVo;
-import com.lhs.bean.vo.StageVo;
+import com.lhs.bean.pojo.StageInfoVo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,11 +65,11 @@ public interface StageResultSetInfoService {
     /**
      * //添加置信度
      * @param penguinDataTimes  样本量
-     * @param stageVo   关卡对象
+     * @param stageInfoVo   关卡对象
      * @param itemValue  物品价值
      * @param probability  掉率
      * @param quantileTableList  分位表
      * @return
      */
-    Double getConfidenceInterval(Integer penguinDataTimes, StageVo stageVo , double itemValue, double probability, List<QuantileTable> quantileTableList);
+    Double getConfidenceInterval(Integer penguinDataTimes, StageInfoVo stageInfoVo, double itemValue, double probability, List<QuantileTable> quantileTableList);
 }

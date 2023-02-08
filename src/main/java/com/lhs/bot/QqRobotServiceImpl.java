@@ -3,7 +3,8 @@ package com.lhs.bot;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.lhs.bean.pojo.PenguinDataVo;
+import com.lhs.bean.vo.CodeAndContent;
+import com.lhs.bean.vo.PenguinDataRequestVo;
 import com.lhs.common.util.HttpRequestUtil;
 import com.lhs.common.util.HttpUtil;
 import com.lhs.common.util.ReadFileUtil;
@@ -91,7 +92,6 @@ public class QqRobotServiceImpl implements QqRobotService {
             List<HashMap<Object, Object>> groupMessage = new ArrayList<>();
 
             if (list.size() == 5) {
-
                 String message = charTagDataService.OCRResult(list, rarityMin, rarityMax);
                 HashMap<Object, Object> messageMap = getMessageMap(message, false);
                 groupMessage.add(messageMap);
@@ -105,8 +105,11 @@ public class QqRobotServiceImpl implements QqRobotService {
             }
 
             if (list.size() > 2 && list.size() < 5) {
-
-                sendMessage(group_id, "图片识别失败，只识别到了" + list.size() + "个TAG，请发送尽量清晰或者只截取TAG部分的图片", true);
+                String tagText = "";
+                for (String tag : list) {
+                    tagText = tagText + "，" + tag;
+                }
+                sendMessage(group_id, "识别失败，仅识别了：" + tagText + "，请重新截图", true);
                 return true;
             }
 
@@ -132,6 +135,17 @@ public class QqRobotServiceImpl implements QqRobotService {
     @Override
     public void sendCharImg(long group_id, String roleName) {
         // user_id 为QQ好友QQ号
+        String limitIdsStr = ReadFileUtil.readFile(botFilePath + "LimitIds.json");
+        JSONObject limitIds = JSONObject.parseObject(limitIdsStr);
+        CodeAndContent codeAndContent = limitTimes(limitIds, group_id, "char_date_", "char_times_");
+        if(!codeAndContent.getCode()){
+            sendMessage(group_id, "请勿频繁触发,触发间隔5分钟20次", true);
+            return;
+        }
+        limitIds = codeAndContent.getContent();
+        limitIdsStr = JSON.toJSONString(limitIds);
+        SaveFile.save(botFilePath, "LimitIds.json",limitIdsStr );
+
         String charNameJsonStr = ReadFileUtil.readFile(botFilePath + "charNameJson.json");
         String pathStr = ReadFileUtil.readFile(botFilePath + "Path.json");
         JSONObject charNameJson = JSONObject.parseObject(charNameJsonStr);
@@ -148,6 +162,18 @@ public class QqRobotServiceImpl implements QqRobotService {
     @Override
     public void sendSkillImg(long group_id, String roleName) {
         // user_id 为QQ好友QQ号
+        String limitIdsStr = ReadFileUtil.readFile(botFilePath + "LimitIds.json");
+        JSONObject limitIds = JSONObject.parseObject(limitIdsStr);
+        CodeAndContent codeAndContent = limitTimes(limitIds, group_id, "char_date_", "char_times_");
+        if(!codeAndContent.getCode()) {
+            sendMessage(group_id, "请勿频繁触发,触发间隔5分钟20次", true);
+            return;
+        }
+        limitIds = codeAndContent.getContent();
+        limitIdsStr = JSON.toJSONString(limitIds);
+        SaveFile.save(botFilePath, "LimitIds.json",limitIdsStr );
+
+
         String charNameJsonStr = ReadFileUtil.readFile(botFilePath + "charNameJson.json");
         String pathStr = ReadFileUtil.readFile(botFilePath + "Path.json");
         JSONObject charNameJson = JSONObject.parseObject(charNameJsonStr);
@@ -163,6 +189,17 @@ public class QqRobotServiceImpl implements QqRobotService {
 
     @Override
     public void sendModImg(long group_id, String roleName) {
+
+        String limitIdsStr = ReadFileUtil.readFile(botFilePath + "LimitIds.json");
+        JSONObject limitIds = JSONObject.parseObject(limitIdsStr);
+        CodeAndContent codeAndContent = limitTimes(limitIds, group_id, "char_date_", "char_times_");
+        if(!codeAndContent.getCode()){
+            sendMessage(group_id, "请勿频繁触发,触发间隔5分钟20次", true);
+            return;
+        }
+        limitIds = codeAndContent.getContent();
+        limitIdsStr = JSON.toJSONString(limitIds);
+        SaveFile.save(botFilePath, "LimitIds.json",limitIdsStr );
 
         String equipSumStr = ReadFileUtil.readFile(botFilePath + "equipSum.json");
         String pathStr = ReadFileUtil.readFile(botFilePath + "Path.json");
@@ -208,7 +245,7 @@ public class QqRobotServiceImpl implements QqRobotService {
         JSONObject matrixJson;
         String url = "https://penguin-stats.io/PenguinStats/api/v2/_private/result/matrix/CN/global/automated";   //API读取
         matrixJson = JSONObject.parseObject(HttpUtil.GetBody(url));
-        List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
+        List<PenguinDataRequestVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataRequestVo.class);  //转为集合
 
         String url_stage = "https://penguin-stats.io/PenguinStats/api/v2/stages";
         JSONArray stageJson;
@@ -238,31 +275,31 @@ public class QqRobotServiceImpl implements QqRobotService {
 
         String jsonFile = ReadFileUtil.readFile(penguinFilePath + "matrix" + saveTime + "auto.json");  //从保存文件读取
         matrixJson = JSONObject.parseObject(jsonFile); //json化
-        List<PenguinDataVo> penguinBackupDataList = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
+        List<PenguinDataRequestVo> penguinBackupDataList = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataRequestVo.class);  //转为集合
         HashMap<String, Double> backupDataHashMap = new HashMap<>();
 
-        for (PenguinDataVo penguinDataVo : penguinBackupDataList) {
-            Integer quantity = penguinDataVo.getQuantity();
-            Integer times = penguinDataVo.getTimes();
+        for (PenguinDataRequestVo penguinDataRequestVo : penguinBackupDataList) {
+            Integer quantity = penguinDataRequestVo.getQuantity();
+            Integer times = penguinDataRequestVo.getTimes();
             if (times < 500) continue;
             Double knockRating = (double) quantity / times;
-            String stageId = penguinDataVo.getStageId();
-            String itemId = penguinDataVo.getItemId();
+            String stageId = penguinDataRequestVo.getStageId();
+            String itemId = penguinDataRequestVo.getItemId();
 
             backupDataHashMap.put(stageId + itemId, knockRating);
         }
 
         String message = "检验样本截止时间" + simpleDateFormat_save.format(new Date()) + "\n";
 
-        for (PenguinDataVo penguinDataVo : penguinDatalist) {
-            String stageId = penguinDataVo.getStageId();
-            String itemId = penguinDataVo.getItemId();
+        for (PenguinDataRequestVo penguinDataRequestVo : penguinDatalist) {
+            String stageId = penguinDataRequestVo.getStageId();
+            String itemId = penguinDataRequestVo.getItemId();
             if (backupDataHashMap.get(stageId + itemId) == null) {
                 continue;
             }
             double knockRating_backup = backupDataHashMap.get(stageId + itemId);
-            Integer quantity = penguinDataVo.getQuantity();
-            Integer times = penguinDataVo.getTimes();
+            Integer quantity = penguinDataRequestVo.getQuantity();
+            Integer times = penguinDataRequestVo.getTimes();
             if (times < 500) continue;
             double knockRating = (double) quantity / times;
 
@@ -280,7 +317,7 @@ public class QqRobotServiceImpl implements QqRobotService {
                         "%——>" + decimalFormat_3.format(knockRating * 100) + "%\n";
 //                ，链接：penguin-stats.cn/result/stage/" + stageNameMap.get(stageId + "zoneId") + "/" + stageId + "
             }
-            if ("3".equals(itemNameMap.get(itemId + "rank"))  && difference > 0.03) {
+            if ("3".equals(itemNameMap.get(itemId + "rank")) && difference > 0.03) {
                 message = message + stageNameMap.get(stageId + "code") + "的" + itemNameMap.get(itemId) + "掉率：" + decimalFormat_3.format(knockRating_backup * 100) +
                         "%——>" + decimalFormat_3.format(knockRating * 100) + "\n";
             }
@@ -382,6 +419,8 @@ public class QqRobotServiceImpl implements QqRobotService {
         SaveFile.save(botFilePath, "weibo.json", weiboMapJson);
     }
 
+
+
     @Override
     public void wbSendByPhone(Long[] group_ids) {
 
@@ -407,7 +446,7 @@ public class QqRobotServiceImpl implements QqRobotService {
         }
 
         HashMap<Object, Object> map_cake = new HashMap<>();    //日志结果
-        map_cake.put("date",format_system);
+        map_cake.put("date", format_system);
 
 
         int card_num = 0;
@@ -502,6 +541,109 @@ public class QqRobotServiceImpl implements QqRobotService {
     }
 
     @Override
+    public void gacha(long group_id) {
+
+        int originium = 0; //源石
+        int orundum = 0;//合成玉
+        int permit = 0; //寻访
+        int permit10 = 0; //十连寻访
+        int remainingWeeks = 0;
+        int remainingCheckinTimes = 0;
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat daySdf = new SimpleDateFormat("dd");
+        SimpleDateFormat monthSdf = new SimpleDateFormat("MM");
+        String endTime = "2023-03-14 03:59:00";
+        Date endDate = null;
+
+        String limitIdsStr = ReadFileUtil.readFile(botFilePath + "LimitIds.json");
+        JSONObject limitIds = JSONObject.parseObject(limitIdsStr);
+        if(limitIds.get("gacha_date_"+group_id)!=null) {
+            long limitId_timeStamp = Long.parseLong(limitIds.getString("gacha_date_"+group_id));
+            System.out.println(limitId_timeStamp);
+            long time =  new Date().getTime() - limitId_timeStamp;
+            if ( time< 180000) {
+                sendMessage(group_id, "请勿频繁触发,触发间隔3分钟1次", true);
+                return;
+            } else {
+                limitIds.put("gacha_date_"+group_id, new Date().getTime());
+            }
+        }else {
+            limitIds.put("gacha_date_"+group_id, new Date().getTime());
+        }
+        limitIdsStr = JSON.toJSONString(limitIds);
+        SaveFile.save(botFilePath, "LimitIds.json",limitIdsStr );
+
+
+
+        String cakeStr = ReadFileUtil.readFile(botFilePath + "honeyCake.json"); //预测活动奖励
+        JSONArray honeyCakeList = JSONArray.parseArray(cakeStr);
+        assert honeyCakeList != null;
+        for(Object obj:honeyCakeList){
+            JSONObject jsonObject = JSONObject.parseObject(obj.toString());
+            originium += Integer.parseInt(jsonObject.getString("originium"));
+            orundum += Integer.parseInt(jsonObject.getString("orundum"));
+            permit += Integer.parseInt(jsonObject.getString("permit"));
+            permit10 += Integer.parseInt(jsonObject.getString("permit10"));
+        }
+
+        try {
+            endDate = simpleDateFormat.parse(endTime);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        long startTimeStamp = new Date().getTime();
+        long endTimeStamp = endDate.getTime();
+        int days = (int) ((endTimeStamp - startTimeStamp) / 86400 / 1000);
+
+
+
+        Calendar c = Calendar.getInstance();
+        String month_now = monthSdf.format(new Date());
+        int months = 0;
+        for (int i = 1; i < (days+1); i++) {
+            Date nextDate = new Date(startTimeStamp + 86400L * 1000 * i);
+            c.setTime(nextDate);
+            int weekday = c.get(Calendar.DAY_OF_WEEK);
+            String nextMonth = monthSdf.format(nextDate);
+            if (!month_now.equals(nextMonth)) {
+                month_now = nextMonth;
+                months++;
+            }
+            if (2 == weekday) remainingWeeks++;
+            String today = daySdf.format(nextDate);
+            if ("17".equals(today)) remainingCheckinTimes++;
+        }
+
+//        System.out.println(remainingWeeks*1800);
+//        System.out.println(remainingWeeks*500);
+//        System.out.println(days * 100);
+//        System.out.println(months*600);
+//        System.out.println(months*4);
+//        System.out.println(remainingCheckinTimes);
+
+        orundum += remainingWeeks * (1800 + 500) + days * 100 +months*600;
+        permit += remainingCheckinTimes+months*4;
+
+         int gachaTime = (int) (originium*0.3+orundum/600+permit+permit10*10);
+
+
+        String resultText = "距离下次限定池还有" + days + "天";
+        resultText = resultText + "\n还可获得"+gachaTime+"抽";
+        resultText = resultText + "\n源石："+originium+"颗" ;
+        resultText = resultText + "\n合成玉："+orundum+"颗" ;
+        resultText = resultText + "\n单抽："+permit+"张" ;
+        resultText = resultText + "\n十连："+permit10+"张";
+        resultText = resultText + "\n需要更加自定义的数据请移步攒抽计算器";
+
+        sendMessage(group_id, resultText, true);
+        sendMessage(group_id, "https://yituliu.site/gachaCal/", true);
+
+    }
+
+    @Override
     public void deleteMessage(Integer message_id) {
         String url = "http://" + idAddress + ":5700/delete_msg?message_id=" + message_id;
         String result = HttpRequestUtil.doGet(url);
@@ -571,12 +713,40 @@ public class QqRobotServiceImpl implements QqRobotService {
             content.put("content", list);
         }
 
-
         messageMap.put("type", "node");
         messageMap.put("data", content);
-
         return messageMap;
     }
+
+
+    private static CodeAndContent limitTimes(JSONObject limitIds, Long group_id, String key_date, String key_times){
+        CodeAndContent codeAndContent = new CodeAndContent();
+        if(limitIds.get("char_date_"+group_id)!=null) {
+            long limitId_timeStamp = Long.parseLong(limitIds.getString(key_date+group_id));
+            int limitId_times = Integer.parseInt(limitIds.getString(key_times+group_id));
+            if (limitId_times > 30 && new Date().getTime() - limitId_timeStamp < 300000) {
+              codeAndContent.setCode(false);
+            }else if(limitId_times > 30 && new Date().getTime() - limitId_timeStamp > 300000){
+                limitIds.put(key_date+group_id, new Date().getTime());
+                limitIds.put(key_times+group_id, 1);
+                codeAndContent.setCode(true);
+            } else {
+                limitIds.put(key_date+group_id, new Date().getTime());
+                limitIds.put(key_times+group_id, limitId_times+1);
+                codeAndContent.setCode(true);
+            }
+        }else {
+            limitIds.put(key_date+group_id, new Date().getTime());
+            limitIds.put(key_times+group_id, 1);
+            codeAndContent.setCode(true);
+        }
+
+        codeAndContent.setContent(limitIds);
+
+        return codeAndContent;
+    }
+
+
 
 
 }

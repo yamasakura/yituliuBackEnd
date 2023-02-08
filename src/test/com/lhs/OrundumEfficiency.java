@@ -2,7 +2,7 @@ package com.lhs;
 
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.pojo.ItemCost;
-import com.lhs.bean.vo.StageResultPlan;
+import com.lhs.bean.pojo.StageResultPlan;
 import com.lhs.dao.StageResultDataDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;

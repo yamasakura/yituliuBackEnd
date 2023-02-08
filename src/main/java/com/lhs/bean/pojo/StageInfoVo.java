@@ -1,50 +1,28 @@
-package com.lhs.bean.vo;
+package com.lhs.bean.pojo;
 
 
-public class StageVo  {
-
-
+public class StageInfoVo {
 
 	private String stageId;
-
 	private String stageCode;
-
 	private String zoneId;
-
 	private Integer code;
-
 	private Double apCost;
-
 	private Double apCostEx;
-
 	private String main;
-
 	private Integer mainLevel;
-
 	private String secondary;
-
 	private String secondaryId;
-
 	private Double spm;
-
 	private String itemType;
-
 	private Integer isOpen;
-
 	private Integer stageState;
-
 	private Integer isValue;
-
 	private Integer isShow;
-
 	private String stageType;
-
 	private String activityName;
-
 	private Integer part;
-
 	private Integer partNo;
-
 	public String getStageId() {
 		return stageId;
 	}

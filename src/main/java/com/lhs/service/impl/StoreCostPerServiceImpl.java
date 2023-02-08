@@ -6,9 +6,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.ItemRevise;
-import com.lhs.bean.vo.StoreJson;
+import com.lhs.bean.pojo.ItemCustomValue;
+import com.lhs.bean.vo.StorePermJsonVo;
 import com.lhs.bean.DBPogo.StoreCostPer;
-import com.lhs.bean.vo.StoreJsonVo;
+import com.lhs.bean.vo.StoreActJsonVo;
 import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.CreateJsonFile;
 import com.lhs.common.util.ReadFileUtil;
@@ -67,8 +68,8 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 	@Override
 	public void updateStorePermByJson() {
 		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
-		String str = ReadFileUtil.readFile(frontEndFilePath+"//permStoreData.json");
-		List<StoreJson> storeJsons = JSONArray.parseArray(str, StoreJson.class);
+		String str = ReadFileUtil.readFile(frontEndFilePath+"permStoreData.json");
+		List<StorePermJsonVo> storePermJsonVos = JSONArray.parseArray(str, StorePermJsonVo.class);
 
 		DecimalFormat decimalFormat_00 = new DecimalFormat("0.00");
 
@@ -77,19 +78,19 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 		Long count = 1L;
 
 
-		for (int i = 0; i < Objects.requireNonNull(storeJsons).size(); i++) {
+		for (int i = 0; i < Objects.requireNonNull(storePermJsonVos).size(); i++) {
 			for (int j = 0; j < allItem.size(); j++) {
-				if (storeJsons.get(i).getItemName().equals(allItem.get(j).getItemName())) {
-					Double costPer = allItem.get(j).getItemValue() / Double.parseDouble(storeJsons.get(i).getCost());
+				if (storePermJsonVos.get(i).getItemName().equals(allItem.get(j).getItemName())) {
+					Double costPer = allItem.get(j).getItemValue() / Double.parseDouble(storePermJsonVos.get(i).getCost());
 					StoreCostPer storeCostPer = new StoreCostPer();
 					storeCostPer.setId(count);
 					count++;
 					storeCostPer.setItemId(allItem.get(j).getItemId());
-					storeCostPer.setItemName(storeJsons.get(i).getItemName());
-					storeCostPer.setStoreType(storeJsons.get(i).getType());
+					storeCostPer.setItemName(storePermJsonVos.get(i).getItemName());
+					storeCostPer.setStoreType(storePermJsonVos.get(i).getType());
 					storeCostPer.setCostPer(Double.valueOf(decimalFormat_00.format(costPer)));
-					storeCostPer.setCost(Double.valueOf(storeJsons.get(i).getCost()));
-					storeCostPer.setRawCost(storeJsons.get(i).getRawCost());
+					storeCostPer.setCost(Double.valueOf(storePermJsonVos.get(i).getCost()));
+					storeCostPer.setRawCost(storePermJsonVos.get(i).getRawCost());
 					storeCostPer.setItemValue(allItem.get(j).getItemValue());
 					list.add(storeCostPer);
 				}
@@ -117,24 +118,24 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 		for(Object object:jsonArray){
 			Map storeMap = JSONObject.parseObject(object.toString());
 			Object o = storeMap.get("actStore");
-			List<StoreJsonVo> storeJsonVos = JSONArray.parseArray(o.toString(),StoreJsonVo.class);
+			List<StoreActJsonVo> storeActJsonVos = JSONArray.parseArray(o.toString(), StoreActJsonVo.class);
 
-			List<StoreJsonVo>  storeJsonVoResult = new ArrayList<>();
+			List<StoreActJsonVo> storeActJsonVoResult = new ArrayList<>();
 
-			Integer itemArea = storeJsonVos.get(storeJsonVos.size() - 1).getItemArea();
+			Integer itemArea = storeActJsonVos.get(storeActJsonVos.size() - 1).getItemArea();
 			for(int i=1;i<=itemArea;i++){
-				List<StoreJsonVo> storeJsonVoCopy = new ArrayList<>();
-				for(StoreJsonVo storeJsonVo:storeJsonVos){
-					if(storeJsonVo.getItemArea()==i){
-						storeJsonVo.setItemPPR(itemValueMap.get(storeJsonVo.getItemName())*storeJsonVo.getItemQuantity()/storeJsonVo.getItemPrice());
-						storeJsonVo.setItemId(itemIdMap.get(storeJsonVo.getItemName()));
-						storeJsonVoCopy.add(storeJsonVo);
+				List<StoreActJsonVo> storeActJsonVoCopy = new ArrayList<>();
+				for(StoreActJsonVo storeActJsonVo : storeActJsonVos){
+					if(storeActJsonVo.getItemArea()==i){
+						storeActJsonVo.setItemPPR(itemValueMap.get(storeActJsonVo.getItemName())* storeActJsonVo.getItemQuantity()/ storeActJsonVo.getItemPrice());
+						storeActJsonVo.setItemId(itemIdMap.get(storeActJsonVo.getItemName()));
+						storeActJsonVoCopy.add(storeActJsonVo);
 					}
 				}
-				storeJsonVoCopy.sort(Comparator.comparing(StoreJsonVo::getItemPPR).reversed());
-				storeJsonVoResult.addAll(storeJsonVoCopy);
+				storeActJsonVoCopy.sort(Comparator.comparing(StoreActJsonVo::getItemPPR).reversed());
+				storeActJsonVoResult.addAll(storeActJsonVoCopy);
 			}
-			storeMap.put("actStore",storeJsonVoResult);
+			storeMap.put("actStore", storeActJsonVoResult);
 			jsonList.add(storeMap);
 		}
 
@@ -150,17 +151,20 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public void updateStorePackByJson(String packStr) {
-		List<ItemRevise> allItem =itemService.findAllItemRevise("auto0.625");
+
+		List<ItemRevise> itemValueList =itemService.findAllItemRevise("auto0.625");
+		String fileStr = ReadFileUtil.readFile(frontEndFilePath+"itemCustomValue.json");
+		List<ItemCustomValue> itemCustomValues = JSONArray.parseArray(fileStr, ItemCustomValue.class);
 		HashMap<String, Double> itemValueMap = new HashMap<>();
 
-		for(ItemRevise itemRevise:allItem){
+		for(ItemCustomValue itemCustomValue:itemCustomValues){
+			itemValueMap.put(itemCustomValue.getItemName(),itemCustomValue.getItemValue());
+		}
+
+		for(ItemRevise itemRevise:itemValueList){
 			itemValueMap.put(itemRevise.getItemName(),itemRevise.getItemValue()/1.25);
 		}
 
-		itemValueMap.put("理智",1.0);
-
-
-//		String fileStr  = ReadFileUtil.readFile(file);
 		JSONArray jsonArray = JSONArray.parseArray(packStr);
 
 		double 	standard_gacha = 648/55.5;
@@ -248,34 +252,22 @@ public class StoreCostPerServiceImpl implements StoreCostPerService {
 
 	@Override
 	public String readActStoreJson() {
-		return ReadFileUtil.readFile(frontEndFilePath+"//storeAct.json");
+		return ReadFileUtil.readFile(frontEndFilePath+"storeAct.json");
 	}
 
 	@Override
 	public String readPermStoreJson() {
-		return ReadFileUtil.readFile(frontEndFilePath+"//storePerm.json");
+		return ReadFileUtil.readFile(frontEndFilePath+"storePerm.json");
 	}
 
 	@Override
 	public String readPackStoreJson() {
-		return ReadFileUtil.readFile(frontEndFilePath+"//storePack.json");
-	}
-
-	@Override
-	public void exportPackJson(HttpServletResponse response, Long id) {
-		String str = null;
-
-		str =  ReadFileUtil.readFile(buildingSchedulePath+id+".json");
-		String jsonForMat = JSON.toJSONString(JSONArray.parseArray(str), SerializerFeature.PrettyFormat,
-				SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteMapNullValue,
-				SerializerFeature.WriteNullListAsEmpty);
-		String idStr = String.valueOf(id);
-		CreateJsonFile.createJsonFile(response,buildingSchedulePath,idStr,jsonForMat);
+		return ReadFileUtil.readFile(frontEndFilePath+"storePack.json");
 	}
 
 
 	@Override
-	public List<StoreCostPer> findAll(String type) {
+	public List<StoreCostPer> findStorePermByType(String type) {
 		return storeCostPerDao.findByStoreTypeOrderByCostPerDesc(type);
 	}
 

@@ -28,5 +28,7 @@ public interface QqRobotService {
 
     void sendGroupMessage(long group_id,String message);
 
+    void gacha(long group_id);
+
     void deleteMessage(Integer message_id);
 }

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.PoolData;
 import com.lhs.bean.vo.Chars;
-import com.lhs.bean.vo.GachaClass;
+import com.lhs.bean.vo.PoolInfoClass;
 import com.lhs.common.util.HttpUtil;
 import com.lhs.dao.PoolDataDao;
 import com.lhs.service.PoolDataService;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -65,7 +64,7 @@ public class PoolDataServiceImpl implements PoolDataService {
             poolDataResponse = HttpUtil.GetBody(url);
             poolDataJson = JSONObject.parseObject(poolDataResponse);
             data = JSONObject.parseObject(JSON.toJSONString(poolDataJson.get("data")));
-            List<GachaClass> poolList = JSONObject.parseArray(JSON.toJSONString(data.get("list")), GachaClass.class);
+            List<PoolInfoClass> poolList = JSONObject.parseArray(JSON.toJSONString(data.get("list")), PoolInfoClass.class);
 
             for (int j = 0; j < poolList.size(); j++) {
                 String pool = poolList.get(j).getPool();

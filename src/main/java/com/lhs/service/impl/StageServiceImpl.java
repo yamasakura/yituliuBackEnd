@@ -4,8 +4,8 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.lhs.bean.DBPogo.Stage;
-import com.lhs.bean.pojo.PenguinDataVo;
-import com.lhs.bean.vo.StageVo;
+import com.lhs.bean.vo.PenguinDataRequestVo;
+import com.lhs.bean.pojo.StageInfoVo;
 import com.lhs.dao.StageDao;
 import com.lhs.service.StageService;
 import org.springframework.beans.BeanUtils;
@@ -32,15 +32,15 @@ public class StageServiceImpl implements StageService {
     }
 
     @Override
-    public List<StageVo> findAllVo() {
+    public List<StageInfoVo> findAllVo() {
         List<Stage> all = stageDao.findAll();
 
-        List<StageVo> allStage = new ArrayList<>();
+        List<StageInfoVo> allStage = new ArrayList<>();
         for (Stage stage : all) {
-            StageVo stageVo = new StageVo();
-            BeanUtils.copyProperties(stage,stageVo);
-            stageVo.setApCostEx(stage.getApCost());
-            allStage.add(stageVo);
+            StageInfoVo stageInfoVo = new StageInfoVo();
+            BeanUtils.copyProperties(stage, stageInfoVo);
+            stageInfoVo.setApCostEx(stage.getApCost());
+            allStage.add(stageInfoVo);
         }
         return allStage;
     }
@@ -49,10 +49,8 @@ public class StageServiceImpl implements StageService {
     public void importStageData(MultipartFile file) {
 
         List<Stage> list = new ArrayList<>();
-
         try {
             EasyExcel.read(file.getInputStream(), Stage.class, new AnalysisEventListener<Stage>() {
-
                 @Override
                 public void invoke(Stage stage, AnalysisContext analysisContext) {
                     if("1-7".equals(stage.getStageCode()))  stage.setMainLevel(3);
@@ -65,23 +63,17 @@ public class StageServiceImpl implements StageService {
                         if(stage.getZoneId().endsWith("perm")){
                             stage.setIsShow(1);
                             stage.setIsValue(1);
-
                         }
                     }else {
                         stage.setIsValue(1);
                         stage.setIsShow(1);
                         stage.setStageState(1);
-
                     }
-
-
 //                    System.out.println(stage.getZoneId()+"关卡类型"+stage.getStageState()+"是否定价"+stage.getIsValue()+"是否显示"+stage.getIsShow());
                     list.add(stage);
                 }
-
                 @Override
                 public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-
                 }
             }).sheet().doRead();
         } catch (IOException e) {
@@ -117,58 +109,58 @@ public class StageServiceImpl implements StageService {
     }
 
     @Override
-    public List<PenguinDataVo> penguinDataMerge(List<PenguinDataVo> penguinDataList) {
+    public List<PenguinDataRequestVo> penguinDataMerge(List<PenguinDataRequestVo> penguinDataList) {
 
-        List<PenguinDataVo> tough_10List = new ArrayList<>();
-        List<PenguinDataVo> main_10List = new ArrayList<>();
-        List<PenguinDataVo> tough_11List = new ArrayList<>();
-        List<PenguinDataVo> main_11List = new ArrayList<>();
-        List<PenguinDataVo> normalList = new ArrayList<>();
+        List<PenguinDataRequestVo> tough_10List = new ArrayList<>();
+        List<PenguinDataRequestVo> main_10List = new ArrayList<>();
+        List<PenguinDataRequestVo> tough_11List = new ArrayList<>();
+        List<PenguinDataRequestVo> main_11List = new ArrayList<>();
+        List<PenguinDataRequestVo> normalList = new ArrayList<>();
 
-        for(PenguinDataVo penguinDataVo:penguinDataList){
-            if(penguinDataVo.getStageId().startsWith("tough_10")) {
-                tough_10List.add(penguinDataVo);
+        for(PenguinDataRequestVo penguinDataRequestVo :penguinDataList){
+            if(penguinDataRequestVo.getStageId().startsWith("tough_10")) {
+                tough_10List.add(penguinDataRequestVo);
                 continue;
             }
-            if(penguinDataVo.getStageId().startsWith("main_10"))  {
-                main_10List.add(penguinDataVo);
+            if(penguinDataRequestVo.getStageId().startsWith("main_10"))  {
+                main_10List.add(penguinDataRequestVo);
                 continue;
             }
 
 
-            if(penguinDataVo.getStageId().startsWith("tough_11")) {
-                tough_11List.add(penguinDataVo);
+            if(penguinDataRequestVo.getStageId().startsWith("tough_11")) {
+                tough_11List.add(penguinDataRequestVo);
                 continue;
             }
-            if(penguinDataVo.getStageId().startsWith("main_11")) {
-                main_11List.add(penguinDataVo);
+            if(penguinDataRequestVo.getStageId().startsWith("main_11")) {
+                main_11List.add(penguinDataRequestVo);
                 continue;
             }
-             normalList.add(penguinDataVo);
+             normalList.add(penguinDataRequestVo);
         }
 
-        List<PenguinDataVo> penguinDataVo_10 = zoneMerge(tough_10List, main_10List);
-        List<PenguinDataVo> penguinDataVo_11 = zoneMerge(tough_11List, main_11List);
-        normalList.addAll(penguinDataVo_10);
-        normalList.addAll(penguinDataVo_11);
+        List<PenguinDataRequestVo> penguinDataRequestVo_10 = zoneMerge(tough_10List, main_10List);
+        List<PenguinDataRequestVo> penguinDataRequestVo_11 = zoneMerge(tough_11List, main_11List);
+        normalList.addAll(penguinDataRequestVo_10);
+        normalList.addAll(penguinDataRequestVo_11);
 
 
         return normalList;
     }
 
 
-    private static List<PenguinDataVo> zoneMerge(List<PenguinDataVo> toughList,List<PenguinDataVo> mainList){
-         for(PenguinDataVo penguinDataVo:toughList){
-             String  toughStageId  = penguinDataVo.getStageId();
+    private static List<PenguinDataRequestVo> zoneMerge(List<PenguinDataRequestVo> toughList, List<PenguinDataRequestVo> mainList){
+         for(PenguinDataRequestVo penguinDataRequestVo :toughList){
+             String  toughStageId  = penguinDataRequestVo.getStageId();
              toughStageId  = toughStageId.substring(toughStageId.indexOf("_")+1);
              for (int i = 0; i < mainList.size(); i++) {
                  String  mainStageId  = mainList.get(i).getStageId();
                  mainStageId  = mainStageId.substring(mainStageId.indexOf("_")+1);
 
                  if((toughStageId.equals(mainStageId))
-                         &&(penguinDataVo.getItemId().equals(mainList.get(i).getItemId()))){
-                     mainList.get(i).setTimes(mainList.get(i).getTimes()+penguinDataVo.getTimes());
-                     mainList.get(i).setQuantity(mainList.get(i).getQuantity()+penguinDataVo.getQuantity());
+                         &&(penguinDataRequestVo.getItemId().equals(mainList.get(i).getItemId()))){
+                     mainList.get(i).setTimes(mainList.get(i).getTimes()+ penguinDataRequestVo.getTimes());
+                     mainList.get(i).setQuantity(mainList.get(i).getQuantity()+ penguinDataRequestVo.getQuantity());
                  }
              }
          }

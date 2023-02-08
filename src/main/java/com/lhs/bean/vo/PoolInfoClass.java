@@ -4,8 +4,7 @@ package com.lhs.bean.vo;
 import java.util.List;
 
 
-public class GachaClass {
-
+public class PoolInfoClass {
 
     private Long ts;
 

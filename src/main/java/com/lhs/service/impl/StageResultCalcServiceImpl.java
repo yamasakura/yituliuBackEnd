@@ -5,9 +5,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lhs.bean.DBPogo.StageResultData;
 import com.lhs.bean.DBPogo.Item;
-import com.lhs.bean.pojo.PenguinDataVo;
+import com.lhs.bean.vo.PenguinDataRequestVo;
 import com.lhs.bean.DBPogo.QuantileTable;
-import com.lhs.bean.vo.StageVo;
+import com.lhs.bean.pojo.StageInfoVo;
 import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.ReadFileUtil;
 import com.lhs.common.util.ResultCode;
@@ -89,13 +89,13 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         //读取企鹅物流数据
         String jsonFile = ReadFileUtil.readFile(penguinFilePath + "matrix" + saveTime + dataType + ".json");  //从服务器保存的文件读取
         JSONObject matrixJson = JSONObject.parseObject(jsonFile); //json化
-        List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //JSON转为集合
+        List<PenguinDataRequestVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataRequestVo.class);  //JSON转为集合
 
 //        企鹅物流的api，但是链接不稳定，目前采用本地读取
 //        String url = "https://penguin-stats.io/PenguinStats/api/v2/result/matrix?show_closed_zones=true";   //API读取
 //        matrixJson =  JSONObject.parseObject(HttpUtil.GetBody(url));
 
-        List<StageVo> stageInfoList = stageService.findAllVo();  //获取所有关卡信息
+        List<StageInfoVo> stageInfoList = stageService.findAllVo();  //获取所有关卡信息
         List<StageResultData> stageResultDataList = new ArrayList<>();  //临时关卡效率结果，有部分字段仅在计算中使用
         List<Item> itemList = itemService.findAll();    //获取临时材料价值
         HashMap<String, Double> itemValueMap = new HashMap<>();

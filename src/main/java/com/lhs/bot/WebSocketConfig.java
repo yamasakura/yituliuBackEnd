@@ -55,7 +55,10 @@ public class WebSocketConfig {
 
                         String roleName = "默认";
                         long group_id = Long.parseLong(qqMessage.getString("group_id"));
-//                        group_id = 562528726;
+//                      group_id = 562528726;
+//                    group_id =  938710832;
+//                    group_id =  761817128;
+
 
                         int message_id = Integer.parseInt(qqMessage.getString("message_id"));
 
@@ -76,20 +79,24 @@ public class WebSocketConfig {
                             robotService.sendItemImg("",group_id);
                             apiService.addVisits("bot");
                         }
-                        if(raw_message.startsWith("活动材料")||raw_message.startsWith("活动材料掉率")){
+                        if(raw_message.startsWith("活动一图流")||raw_message.startsWith("活动掉率")){
                             robotService.sendItemImg("act",group_id);
                             apiService.addVisits("bot");
                         }
-                        if(raw_message.startsWith("商店性价比")){
-                            robotService.sendItemImg("store",group_id);
+//                        if(raw_message.startsWith("商店性价比")){
+//                            robotService.sendItemImg("store",group_id);
+//                            apiService.addVisits("bot");
+//                        }
+                        if(raw_message.startsWith(".攒抽")){
+                            robotService.gacha(group_id);
                             apiService.addVisits("bot");
                         }
-
                         if(raw_message.startsWith("help")){
-                            String helpMessage  =  "可用命令格式：\n干员名模组\n干员名技能\n干员名专精\n查看材料掉率：材料掉率、材料一图流、活动材料掉率" +
+                            String helpMessage  =  "可用命令格式：\n干员名模组\n干员名技能\n干员名专精" +
+                                    "\n查看材料掉率：材料一图流、活动一图流" +
+                                    "\n发送 .攒抽  获得下个限定池前还有多少抽" +
                                     "\n直接发送游戏截图查询公招组合";
                             robotService.sendMessage(group_id,helpMessage,true);
-
                         }
 
                         if (raw_message.startsWith("[CQ:image")) {
@@ -139,5 +146,7 @@ public class WebSocketConfig {
         }
         return null;
     }
+
+
 
 }

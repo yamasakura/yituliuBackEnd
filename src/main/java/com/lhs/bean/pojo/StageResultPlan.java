@@ -1,4 +1,4 @@
-package com.lhs.bean.vo;
+package com.lhs.bean.pojo;
 
 public class StageResultPlan {
 

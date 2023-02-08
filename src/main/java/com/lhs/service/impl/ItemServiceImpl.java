@@ -1,14 +1,19 @@
 package com.lhs.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.lhs.bean.DBPogo.CharTagData;
 import com.lhs.bean.DBPogo.ItemRevise;
 import com.lhs.bean.DBPogo.Item;
 
+import com.lhs.bean.pojo.ItemCustomValue;
 import com.lhs.bean.vo.ItemValueVo;
 import com.lhs.common.util.CreateJsonFile;
+import com.lhs.common.util.SaveFile;
 import com.lhs.dao.ItemDao;
 import com.lhs.dao.ItemReviseDao;
 import com.lhs.service.ItemService;
@@ -16,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -368,6 +374,32 @@ public class ItemServiceImpl implements ItemService {
 
 
     }
+
+    @Override
+    public String importItemCustomValue(MultipartFile file) {
+        List<ItemCustomValue> itemCustomValueList = new ArrayList<>();
+
+        try {
+            EasyExcel.read(file.getInputStream(), ItemCustomValue.class, new AnalysisEventListener<ItemCustomValue>() {
+                @Override
+                public void invoke(ItemCustomValue itemCustomValue, AnalysisContext analysisContext) {
+                    itemCustomValueList.add(itemCustomValue);
+                }
+
+                @Override
+                public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+                }
+            }).sheet().doRead();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String itemCustomValueStr = JSONObject.toJSONString(itemCustomValueList);
+        SaveFile.save(frontEndFilePath,"itemCustomValue.json",itemCustomValueStr);
+
+        return itemCustomValueStr;
+    }
+
     /**
      * 物品表的初始信息，理论上可以用json，但是我懒得改了
      *

@@ -7,7 +7,8 @@ import java.io.*;
 public class ReadFileUtil {
 
     public static String readFile(String fileName) {
-        String jsonStr = "";
+//        System.out.println(fileName);
+        String str = "";
         try {
             File jsonFile = new File(fileName);
             Reader reader = new InputStreamReader(new FileInputStream(jsonFile), "utf-8");
@@ -18,8 +19,9 @@ public class ReadFileUtil {
             }
 
             reader.close();
-            jsonStr = sb.toString();
-            return jsonStr;
+            str = sb.toString();
+            return str;
+
         } catch (IOException e) {
             e.printStackTrace();
             return null;

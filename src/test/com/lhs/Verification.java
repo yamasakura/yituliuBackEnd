@@ -3,7 +3,7 @@ package com.lhs;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.lhs.bean.pojo.PenguinDataVo;
+import com.lhs.bean.vo.PenguinDataRequestVo;
 import com.lhs.bot.QqRobotService;
 import com.lhs.common.util.HttpUtil;
 import com.lhs.common.util.ReadFileUtil;
@@ -35,7 +35,7 @@ public class Verification {
         JSONObject matrixJson ;
         String url = "https://penguin-stats.io/PenguinStats/api/v2/_private/result/matrix/CN/global/automated";   //API读取
         matrixJson =  JSONObject.parseObject(HttpUtil.GetBody(url));
-        List<PenguinDataVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
+        List<PenguinDataRequestVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataRequestVo.class);  //转为集合
 
         String url_stage = "https://penguin-stats.io/PenguinStats/api/v2/stages";
         JSONArray stageJson ;
@@ -64,31 +64,31 @@ public class Verification {
         String saveTime = simpleDateFormat_save.format(new Date(time-3600000));
         DecimalFormat decimalFormat_3 = new DecimalFormat("0.000");
 
-        String jsonFile = ReadFileUtil.readFile(penguinFilePath+"matrix"  + saveTime + "auto.json");  //从保存文件读取
+        String jsonFile = ReadFileUtil.readFile(penguinFilePath +"matrix"  + saveTime + "auto.json");  //从保存文件读取
         matrixJson = JSONObject.parseObject(jsonFile); //json化
-        List<PenguinDataVo> penguinBackupDataList = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataVo.class);  //转为集合
+        List<PenguinDataRequestVo> penguinBackupDataList = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataRequestVo.class);  //转为集合
         HashMap<String, Double> backupDataHashMap = new HashMap<>();
 
-        for (PenguinDataVo penguinDataVo : penguinBackupDataList) {
-            Integer quantity = penguinDataVo.getQuantity();
-            Integer times = penguinDataVo.getTimes();
+        for (PenguinDataRequestVo penguinDataRequestVo : penguinBackupDataList) {
+            Integer quantity = penguinDataRequestVo.getQuantity();
+            Integer times = penguinDataRequestVo.getTimes();
             Double knockRating = (double) quantity / times;
-            String stageId = penguinDataVo.getStageId();
-            String itemId = penguinDataVo.getItemId();
+            String stageId = penguinDataRequestVo.getStageId();
+            String itemId = penguinDataRequestVo.getItemId();
             backupDataHashMap.put(stageId+itemId, knockRating);
         }
 
         String  message = "检验样本截止时间"+saveTime+"\n";
 
-        for (PenguinDataVo penguinDataVo : penguinDatalist) {
-            String stageId = penguinDataVo.getStageId();
-            String itemId = penguinDataVo.getItemId();
+        for (PenguinDataRequestVo penguinDataRequestVo : penguinDatalist) {
+            String stageId = penguinDataRequestVo.getStageId();
+            String itemId = penguinDataRequestVo.getItemId();
             if (backupDataHashMap.get(stageId+itemId) == null) {
                 continue;
             }
             double knockRating_backup = backupDataHashMap.get(stageId+itemId);
-            Integer quantity = penguinDataVo.getQuantity();
-            Integer times = penguinDataVo.getTimes();
+            Integer quantity = penguinDataRequestVo.getQuantity();
+            Integer times = penguinDataRequestVo.getTimes();
             if(times<300) continue;
             double knockRating = (double) quantity / times;
 

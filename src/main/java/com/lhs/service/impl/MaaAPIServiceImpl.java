@@ -6,7 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lhs.bean.DBPogo.BuildingSchedule;
 import com.lhs.bean.DBPogo.MaaTagData;
 import com.lhs.bean.DBPogo.MaaTagDataStatistical;
-import com.lhs.bean.pojo.MaaTagRequestVo;
+import com.lhs.bean.vo.MaaTagRequestVo;
 import com.lhs.common.exception.ServiceException;
 import com.lhs.common.util.CreateJsonFile;
 import com.lhs.common.util.ReadFileUtil;

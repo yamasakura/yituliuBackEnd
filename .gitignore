@@ -40,4 +40,4 @@ build/
 /src/main/resources/frontEnd/
 /src/main/resources/application.properties
 /src/main/resources/schedule/
-/src/main/resources/bot/
+#/src/main/resources/bot/

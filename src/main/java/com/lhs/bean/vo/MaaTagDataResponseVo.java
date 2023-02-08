@@ -1,14 +1,13 @@
 package com.lhs.bean.vo;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 //maa返回前端用的实体类
-public class MaaTagDataVo {
+public class MaaTagDataResponseVo {
 
     private String uid;
     private String tag1;

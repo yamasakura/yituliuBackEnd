@@ -120,7 +120,7 @@
     </dependencies>
 
     <build>
-        <finalName>yituliuBackEnd_v2.7.6</finalName>
+        <finalName>yituliuBackEnd_v2.7.8</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

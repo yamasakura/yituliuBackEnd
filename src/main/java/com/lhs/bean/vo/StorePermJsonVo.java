@@ -3,7 +3,7 @@ package com.lhs.bean.vo;
 import com.alibaba.excel.annotation.ExcelProperty;
 
 //用于读取常驻商店的json
-public class StoreJson {
+public class StorePermJsonVo {
 
     @ExcelProperty("素材名称")
     private  String itemName;
@@ -49,7 +49,7 @@ public class StoreJson {
         this.type = type;
     }
 
-    public StoreJson() {
+    public StorePermJsonVo() {
     }
 
     @Override

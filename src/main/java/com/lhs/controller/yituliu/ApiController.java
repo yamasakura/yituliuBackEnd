@@ -137,7 +137,7 @@ public class ApiController {
     @ApiOperation(value = "按照商店类型获取")
     @GetMapping("/find/store/{type}")
     public Result findStoreType(@PathVariable("type") String type) {
-        List<StoreCostPer> all = storeCostPerService.findAll(type);
+        List<StoreCostPer> all = storeCostPerService.findStorePermByType(type);
         return Result.success(all);
     }
 

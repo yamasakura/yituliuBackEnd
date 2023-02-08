@@ -2,6 +2,7 @@ package com.lhs.service;
 
 import com.lhs.bean.DBPogo.Item;
 import com.lhs.bean.DBPogo.ItemRevise;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -30,8 +31,10 @@ public interface ItemService {
 	 */
 	List<ItemRevise> itemRevise(HashMap<String, Double> hashMap,Double version,String dataType,Integer index);
 
-   //导出等效理智/绿票价值
+   //导出等效理智/绿票价值 Excel格式
 	void exportItemDataToExcel(HttpServletResponse response);
-
+	//导出等效理智/绿票价值 Json格式
 	void exportItemDataToJson(HttpServletResponse response);
+	//导入自定义价值计算礼包商店性价比 Excel格式
+	String importItemCustomValue(MultipartFile file);
 }

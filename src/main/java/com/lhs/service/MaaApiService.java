@@ -1,7 +1,7 @@
 package com.lhs.service;
 
 import com.lhs.bean.DBPogo.MaaTagData;
-import com.lhs.bean.pojo.MaaTagRequestVo;
+import com.lhs.bean.vo.MaaTagRequestVo;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
