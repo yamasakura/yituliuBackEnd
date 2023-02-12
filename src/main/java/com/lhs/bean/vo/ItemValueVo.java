@@ -14,8 +14,8 @@ public class ItemValueVo {
     private Double itemValueGreen;
     @ExcelProperty("物品稀有度")
     private String itemType;
-    @ExcelProperty("价值版本：auto为自动收集，all为全平台数据，数字代表经验书价值比例")
-    private String version;
+    @ExcelProperty("经验书价值比例")
+    private Double expCoefficient;
 
 
     public String getItemId() {
@@ -58,12 +58,12 @@ public class ItemValueVo {
         this.itemValueReason = itemValueReason;
     }
 
-    public String getVersion() {
-        return version;
+    public Double getExpCoefficient() {
+        return expCoefficient;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setExpCoefficient(Double expCoefficient) {
+        this.expCoefficient = expCoefficient;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ItemValueVo {
                 ", itemValueReason=" + itemValueReason +
                 ", itemValueGreen=" + itemValueGreen +
                 ", itemType='" + itemType + '\'' +
-                ", version='" + version + '\'' +
+                ", version='" + expCoefficient + '\'' +
                 '}';
     }
 }

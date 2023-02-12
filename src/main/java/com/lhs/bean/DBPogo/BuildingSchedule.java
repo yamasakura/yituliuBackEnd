@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "building_schedule")//干员tag库
+@Table(name = "building_schedule")//基建表
 public class BuildingSchedule {
 
     @Id

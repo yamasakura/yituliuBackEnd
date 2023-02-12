@@ -37,8 +37,8 @@ public class StageResultData {
     private Double efficiencyEx;  // 绿票转化率（ 理智小样
     private Double sampleConfidence;  // 样本置信度
     private String updateTime;  //更新时间
-    private String version;
-    private Integer minClearTime;
+    private Double expCoefficient;   //经验书系数
+    private Integer minClearTime;  //最短时间
     private Integer part;
     private Integer partNo;
 
@@ -278,12 +278,12 @@ public class StageResultData {
         return minClearTime;
     }
 
-    public String getVersion() {
-        return version;
+    public Double getExpCoefficient() {
+        return expCoefficient;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setExpCoefficient(Double expCoefficient) {
+        this.expCoefficient = expCoefficient;
     }
 
     public void setMinClearTime(Integer minClearTime) {
@@ -337,7 +337,7 @@ public class StageResultData {
                 ", efficiencyEx=" + efficiencyEx +
                 ", sampleConfidence=" + sampleConfidence +
                 ", updateTime='" + updateTime + '\'' +
-                ", version=" + version +
+                ", version=" + expCoefficient +
                 ", minClearTime=" + minClearTime +
                 ", part=" + part +
                 ", partNo=" + partNo +

@@ -12,16 +12,16 @@ import java.util.List;
 public interface ApiService {
 
     //读取T3材料关卡效率文件
-    String readStageFileT3(String version);
+    String readStageFileT3(String expCoefficient);
 
     //读取T2材料关卡效率文件
-    String readStageFileT2(String version);
+    String readStageFileT2(String expCoefficient);
 
     //读取搓玉结果文件
-    String readStageFileOrundum(String version);
+    String readStageFileOrundum();
 
     //读取已结束活动材料关卡效率文件
-    String readStageClosedFile(String version);
+    String readStageClosedFile(String expCoefficient);
 
     //根据掉落物品类型和样本数查询关卡  按效率倒序 数据库查询用
     Page<StageResultData> findDataByTypeAndTimesAndEffOrderByEffDesc(String main, Integer times, Double efficiency, Integer pageNum, Integer pageSize);

@@ -12,43 +12,42 @@ public interface StageResultSetInfoService {
 
     //这个服务主要是用于设置各种二次计算的数值
 
-
     /**
-     *
+     *添加T3类材料的理智转化率
      * @param times  样本量
      * @param efficiency  关卡效率
      * @param stageState  关卡类型
-     * @param version  效率版本（区别为经验书的价值系数）
+     * @param expCoefficient  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double version,String dataType);
+    List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency,Integer stageState,Double expCoefficient);
 
     /**
      * 添加T2类材料的理智转化率
      * @param times  样本量
      * @param expect  期望理智
      * @param stageState  关卡类型
-     * @param version  效率版本（区别为经验书的价值系数）
+     * @param expCoefficient  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double version,String dataType);
+    List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect,Integer stageState,Double expCoefficient);
 
     /**
      * //添加已关闭活动副本的理智转化率
      * @param actNameList  活动名称集合
      * @param stageState  关卡类型
-     * @param version  效率版本（区别为经验书的价值系数）
+     * @param expCoefficient  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double version,String dataType);
+    List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList,Integer stageState,Double expCoefficient);
 
     /**
      * //添加部分特殊关卡的效率（多索雷斯）
      * @param stageResultData  关卡对象
-     * @param version  效率版本（区别为经验书的价值系数）
+     * @param expCoefficient  效率版本（区别为经验书的价值系数）
      * @return
      */
-    List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double version,String dataType);
+    List<StageResultData> setSpecialActivityStage(StageResultData stageResultData,Double expCoefficient);
 
     /**
      * 计算关卡搓玉的效率

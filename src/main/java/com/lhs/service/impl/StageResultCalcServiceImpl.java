@@ -75,19 +75,19 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
      * @return
      */
     @Override
-    public List<StageResultData> stageResult(Integer indexNum, Integer countNum, Integer times, Double version, String dataType) {
+    public List<StageResultData> stageResult(Integer indexNum, Integer countNum, Integer times, Double  expCoefficient) {
         SimpleDateFormat simpleDateFormat_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm");// 设置日期格式
         DecimalFormat DecimalFormat_2 = new DecimalFormat("0.0");
         SimpleDateFormat simpleDateFormat_dd = new SimpleDateFormat("yyyy-MM-dd HH");// 设置日期格式
         String updateTime = simpleDateFormat_ss.format(new Date());
-        if(indexNum==0){log.info("更新时间是————" + updateTime + "，版本是" + dataType + version);}
+        if(indexNum==0){log.info("更新时间是————" + updateTime + "，经验书系数是：" +  expCoefficient);}
 
 
 
         String saveTime = simpleDateFormat_dd.format(new Date());
 
         //读取企鹅物流数据
-        String jsonFile = ReadFileUtil.readFile(penguinFilePath + "matrix" + saveTime + dataType + ".json");  //从服务器保存的文件读取
+        String jsonFile = ReadFileUtil.readFile(penguinFilePath + "matrix" + saveTime + "auto.json");  //从服务器保存的文件读取
         JSONObject matrixJson = JSONObject.parseObject(jsonFile); //json化
         List<PenguinDataRequestVo> penguinDatalist = JSONObject.parseArray(JSON.toJSONString(matrixJson.get("matrix")), PenguinDataRequestVo.class);  //JSON转为集合
 
@@ -116,12 +116,12 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         double confidenceInterval = 0.0;  //置信度
 
         long id = 0L;
-        if (version == 0.0) id = 100000L;
-        if (version == 0.76) id = 200000L;
-        if (version == 1.0) id = 300000L;
-        if (version == 0.625) id = 400000L;
+        if (expCoefficient == 0.0) id = 100000L;
+        if (expCoefficient == 0.76) id = 200000L;
+        if (expCoefficient == 1.0) id = 300000L;
+        if (expCoefficient == 0.625) id = 400000L;
 
-        if ("auto".equals(dataType)) id = id * 100;
+
 
         for (int i = 0; i < penguinDatalist.size(); i++) {
             int stageInfoListIndex = 0;  //匹配关卡id后记录关卡信息集合的索引
@@ -258,7 +258,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             stageResultData.setEfficiencyEx(efficiencyEx);
             stageResultData.setMainLevel(stageInfoList.get(stageInfoListIndex).getMainLevel());
             stageResultData.setActivityName(stageInfoList.get(stageInfoListIndex).getActivityName());
-            stageResultData.setVersion(dataType + version);
+            stageResultData.setExpCoefficient(expCoefficient);
             stageResultData.setPart(stageInfoList.get(stageInfoListIndex).getPart());
             stageResultData.setPartNo(stageInfoList.get(stageInfoListIndex).getPartNo());
             stageResultDataList.add(stageResultData);
@@ -276,7 +276,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
             //这里是将多索雷斯的关卡转化为通用关卡存储格式
             for (int i = 0; i < stageResultDataList.size(); i++) {
                 if ("双日城大乐透".equals(stageResultDataList.get(i).getItemType()) && stageResultDataList.get(i).getSampleSize() > times) {
-                    List<StageResultData> dataList = stageResultSetInfoService.setSpecialActivityStage(stageResultDataList.get(i), version, dataType);
+                    List<StageResultData> dataList = stageResultSetInfoService.setSpecialActivityStage(stageResultDataList.get(i), expCoefficient);
                     stageResultDataList.addAll(dataList);
                 }
             }
@@ -312,7 +312,7 @@ public class StageResultCalcServiceImpl implements StageResultCalcService {
         if (indexNum != (countNum - 1)) {
             //这里是进行材料等效价值的计算
 
-            itemService.itemRevise(iterationItemValue, version, dataType, indexNum - countNum + 2);
+            itemService.itemRevise(iterationItemValue, expCoefficient, indexNum - countNum + 2);
         }
 
 

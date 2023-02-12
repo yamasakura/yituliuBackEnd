@@ -56,8 +56,8 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public String readStageFileT3(String version) {
-        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stageT3"+version+".json");  //从保存文件读取
+    public String readStageFileT3(String expCoefficient) {
+        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stage_t3_expCoefficient="+expCoefficient+".json");  //从保存文件读取
         if(jsonFile==null){
             throw new ServiceException(ResultCode.DATA_NONE);
         }
@@ -69,9 +69,9 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public String readStageFileT2(String version) {
+    public String readStageFileT2(String expCoefficient) {
 
-        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stageT2"+version+".json");  //从保存文件读取
+        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stage_t2_expCoefficient="+expCoefficient+".json");  //从保存文件读取
               if(jsonFile==null){
                   throw new ServiceException(ResultCode.DATA_NONE);
               }
@@ -83,8 +83,8 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public String readStageFileOrundum(String version) {
-        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stageOrundum"+version+".json");  //从保存文件读取
+    public String readStageFileOrundum() {
+        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stage_Orundum.json");  //从保存文件读取
         if(jsonFile==null){
             throw new ServiceException(ResultCode.DATA_NONE);
         }
@@ -96,9 +96,9 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public String readStageClosedFile(String version) {
+    public String readStageClosedFile(String expCoefficient) {
 
-        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"closedStage"+version+".json");  //从保存文件读取
+        String jsonFile = ReadFileUtil.readFile(frontEndFilePath+"stage_closed_expCoefficient="+expCoefficient+".json");  //从保存文件读取
         if(jsonFile==null){
             throw new ServiceException(ResultCode.DATA_NONE);
         }

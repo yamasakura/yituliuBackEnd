@@ -23,7 +23,7 @@ public class ItemRevise {
 
     private String cardNum;  //前端排序的用索引
 
-    private String version;
+    private Double expCoefficient;
 
     public Long getId() {
         return id;
@@ -78,12 +78,12 @@ public class ItemRevise {
         this.cardNum = cardNum;
     }
 
-    public String getVersion() {
-        return version;
+    public Double getExpCoefficient() {
+        return expCoefficient;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setExpCoefficient(Double expCoefficient) {
+        this.expCoefficient = expCoefficient;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ItemRevise {
                 ", itemValue=" + itemValue +
                 ", type='" + type + '\'' +
                 ", cardNum='" + cardNum + '\'' +
-                ", version='" + version + '\'' +
+                ", version='" + expCoefficient + '\'' +
                 '}';
     }
 }

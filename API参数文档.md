@@ -1,16 +1,28 @@
-API参数
+# API
+*****
 
+## 请求说明
+
+使用 HTTP GET:
+
+|名称|说明|
+|请求 URL|/终结点?参数名=参数值&参数名=参数值......|
 
 
 ### 获取蓝材料最优图(JsonArray)
 
  ```
-url:  /api/find/stage/t3/{times}/{version}
-参数{times}//  样本量   (目前无用
-{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本。
-数据来源分为自动auto和全平台all，有000，076，062，100四个版本。
-api示例：/api/find/stage/t3/300/auto062
+url:  /api/find/stage/t3
  ```
+请求类型：Get
+expCoefficient  类型Double 经验书系数  默认经验书价值为龙门币价值的0.625倍。
+有000，076，062，100四个版本。
+API示例：/api/find/stage/t3/300/auto062
+
+abc|bcd|cde
+abc|bcd|cde
+abc|bcd|cde
+
  ```
 {
   "code": 200,
@@ -38,14 +50,16 @@ api示例：/api/find/stage/t3/300/auto062
 }
  ```
 
-
 ### 获取绿材料最优图(JsonArray)
+
  ```
 url:  /api/find/stage/t2/{version}
-参数{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本。
-数据来源分为自动auto和全平台all，有000，076，062，100四个版本。
-api示例：/api/find/stage/t2/auto062
+请求类型：Get
+参数{version}  //经验书系数   默认经验书价值为龙门币价值的0.625倍。
+有000，076，062，100四个版本。
+API示例：/api/find/stage/t2/auto062
  ```
+
  ```
 {
   "code": 200,
@@ -74,10 +88,13 @@ api示例：/api/find/stage/t2/auto062
  ```
 
 ### 获取常驻商店性价比(JsonArray)
+
  ```
 url:  /api/find/store/perm
+请求类型：Get
 无参数
  ```
+
  ```
 类型String   名称 itemId;  //物品id
 类型String   名称 itemName; //物品名称
@@ -88,12 +105,14 @@ url:  /api/find/store/perm
 类型String   名称 storeType;  //商店类型
  ```
 
-
 ### 获取活动商店性价比(JsonArray)
+
  ```
 url:  /api/find/store/act
+请求类型：Get
 无参数
  ```
+
  ```
 名称actStartData  类型Long  活动开始时间
 名称actEndData  类型Long  活动结束时间
@@ -114,15 +133,17 @@ url:  /api/find/store/act
 
  ```
 
-
 ### 获取所有物品价值(JsonArray)
+
  ```
+       接口/表示查找/物品相关/具体的内容/版本
 url:  /api/find/item/value/{version}
-api示例：/api/find/stage/t3/300/auto062
-{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本。
-分为自动auto和全平台all，有0.0，0.76，0.625，1.0四个版本。
-api示例：/api/find/stage/t3/300/auto0.625
+请求类型：Get
+{version}//  经验书系数   默认经验书价值为龙门币价值的0.625倍。
+有0.0，0.76，0.625，1.0四个版本。
+API示例：/api/find/item/value/auto0.625
  ```
+
  ```
 类型String    名称itemId;  //物品id
 类型String    名称itemName; //物品名称
@@ -132,12 +153,15 @@ api示例：/api/find/stage/t3/300/auto0.625
  ```
 
 ### 获取历史活动最优图(JsonArray)
+
  ```
 url:  /api/find/stage/activity/closed/{version}
-参数{version}//  一图流版本  默认经验书价值为龙门币价值0.625倍版本。
-数据来源分为自动auto和全平台all，有000，076，062，100四个版本。
-api示例： /api/find/stage/activity/closed/auto062
+请求类型：Get
+参数{version}//  经验书系数   默认经验书价值为龙门币价值的0.625倍。
+有000，076，062，100四个版本。
+API示例： /api/find/stage/activity/closed/auto062
  ```
+
  ```
 {
   "code": 200,
@@ -164,5 +188,43 @@ api示例： /api/find/stage/activity/closed/auto062
       ……
 }
  ```
+
+### 获取商店礼包性价比(JsonArray)
+
+ ```
+url:  /api/find/store/act
+请求类型：Get
+无参数
+ ```
+
+ ```
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "packShowName": "新人寻访组合包",  //礼包展示名称
+      "packType": "once",  //礼包售卖类型
+      "packDraw": 20,  //礼包包含抽数
+      "packPPRDraw": 1.8243243243243241,    //礼包相对大月卡的折扣幅度
+      "packPPROriginium": 1.8229166666666667,   //礼包相对648源石的折扣幅度
+      "packImg": "新人寻访组合包", //礼包图片名称 
+      "packPrice": 128,  //礼包售价
+      "packID": 51,     //礼包ID
+      "packRmbPerOriginium": 1.92,   //礼包全部物品折算源石后每颗源石的氪金性价比
+      "gachaPermit": 0,   //礼包内单抽数量
+      "packState": 1,  //是否正在售卖
+      "packOriginium": 66.66666666666667   //礼包全部物品折算为源石的数量
+      "packRmbPerDraw": 6.4,  //礼包每一抽的氪金性价比
+      "gachaPermit10": 2,  //礼包内十连数量
+      "gachaOriginium": 0, //礼包内源石数量
+      "packName": "新人寻访组合包", //礼包名称
+      "gachaOrundum": 0  //礼包内合成玉数量
+    },
+      ……
+     ]
+}
+ ```
+
 
 

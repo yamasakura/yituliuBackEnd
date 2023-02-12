@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface ItemReviseDao extends JpaRepository<ItemRevise, Long>{
 	//查询物品价值按id升序
-	List<ItemRevise> findByVersion(String version);
+	List<ItemRevise> findByExpCoefficient(Double expCoefficient);
 
 }

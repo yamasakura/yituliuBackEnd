@@ -11,18 +11,18 @@ import java.util.List;
 public interface StageResultDataDao extends JpaRepository<StageResultData, Long> {
 
     //根据活动名称前缀如act12_side，效率降序
-    List<StageResultData> findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String zoneId, String version, Integer mainLevel);
+    List<StageResultData> findByZoneIdAndExpCoefficientAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(String zoneId, Double expCoefficient, Integer mainLevel);
 
     //根据物品类别查询，效率降序
-    List<StageResultData> findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyExDesc(
-            String itemType, Integer isShow, String version, Double efficiency, Integer sampleSize);
+    List<StageResultData> findByItemTypeAndIsShowAndExpCoefficientAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyExDesc(
+            String itemType, Integer isShow, Double expCoefficient, Double efficiency, Integer sampleSize);
     //根据物品类别查询，效率降序
-    List<StageResultData> findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
-            String itemType, Integer isShow,String version, Double efficiency, Integer times);
+    List<StageResultData> findByItemTypeAndIsShowAndExpCoefficientAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc(
+            String itemType, Integer isShow, Double expCoefficient, Double efficiency, Integer sampleSize);
 
     //根据物品名称查询，期望理智升序
-    List<StageResultData> findByItemNameAndIsShowAndVersionAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
-            String itemName, Integer isShow, String version, Double apExpect, Integer sampleSize);
+    List<StageResultData> findByItemNameAndIsShowAndExpCoefficientAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
+            String itemName, Integer isShow, Double expCoefficient, Double apExpect, Integer sampleSize);
 
     //根据关卡id查询，效率降序
     List<StageResultData> findByStageIdAndIsShow(String stageId, Integer isShow);

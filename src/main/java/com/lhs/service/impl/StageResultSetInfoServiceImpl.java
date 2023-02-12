@@ -33,10 +33,11 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      *
      * @param times      样本数
      * @param efficiency 最低效率  理智转化率100%=绿票绝对效率1.25
+     * @param expCoefficient 经验书价值系数
      * @return
      */
     @Override
-    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency, Integer stageState, Double version, String dataType) {
+    public List<List<StageResultData>> setStageResultPercentageT3(Integer times, Double efficiency, Integer stageState, Double expCoefficient) {
         Random random = new Random();
         String[] mainName = new String[]{"全新装置", "异铁组", "轻锰矿", "凝胶", "扭转醇", "酮凝集组", "RMA70-12", "炽合金", "研磨石", "糖组",
                 "聚酸酯组", "晶体元件", "固源岩组", "半自然溶剂", "化合切削液", "转质盐组"};
@@ -48,8 +49,8 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         for (String main : mainName) {
 //            根据材料类型查出关卡,是否可查出取决于isShow属性,1为可显示
             List<StageResultData> stageResultByTypeList = new ArrayList<>();
-            stageResultByTypeList = stageResultDataDao.findByItemTypeAndIsShowAndVersionAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc
-                    (main, 1, dataType + version, efficiency, times);
+            stageResultByTypeList = stageResultDataDao.findByItemTypeAndIsShowAndExpCoefficientAndEfficiencyGreaterThanAndSampleSizeGreaterThanOrderByEfficiencyDesc
+                    (main, 1,expCoefficient, efficiency, times);
 
 //            复制一个集合 ,对数据库查出的集合直接进行set操作会改变session缓存中的数据，数据库的值也会更新,虽然好像也没啥事,但是还是复制了一下
             List<StageResultData> stageResultByTypeListCopy = new ArrayList<>();
@@ -151,11 +152,11 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
      * @param times      样本量
      * @param expect     期望理智
      * @param stageState 关卡类型
-     * @param version    效率版本（区别为经验书的价值系数）
+     * @param expCoefficient    经验书的价值系数
      * @return
      */
     @Override
-    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect, Integer stageState, Double version, String dataType) {
+    public List<List<StageResultData>> setStageResultPercentageT2(Integer times, Double expect, Integer stageState, Double expCoefficient) {
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListT2 = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -166,8 +167,8 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
         for (int i = 0; i < mainName.length; i++) {
             //  根据材料名称查出关卡,是否可查出取决于isShow属性,1为可显示
-            List<StageResultData> stageResultByExpect = stageResultDataDao.findByItemNameAndIsShowAndVersionAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
-                    mainName[i], 1, dataType + version, 50.0, 100);
+            List<StageResultData> stageResultByExpect = stageResultDataDao.findByItemNameAndIsShowAndExpCoefficientAndApExpectLessThanAndSampleSizeGreaterThanOrderByApExpectAsc(
+                    mainName[i], 1, expCoefficient, 50.0, 100);
             List<StageResultData> page = new ArrayList<>(stageResultByExpect);
             // 根据材料类型(这里查的是t2材料的上位t3材料)查出关卡,是否可查出取决于isShow属性,1为可显示
             double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
@@ -190,18 +191,18 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
     /**
      * @param actNameList 活动名称集合
      * @param stageState  关卡类型
-     * @param version     效率版本（区别为经验书的价值系数）
+     * @param expCoefficient    经验书的价值系数
      * @return
      */
     @Override
-    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList, Integer stageState, Double version, String dataType) {
+    public List<List<StageResultData>> setClosedActivityStagePercentage(String[] actNameList, Integer stageState, Double expCoefficient) {
         //最终返回的结果集合
         List<List<StageResultData>> stageResultListClosed = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         for (String actName : actNameList) {
             //查出循环中当前活动名称的关卡
-            List<StageResultData> list = stageResultDataDao.findByZoneIdAndVersionAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName, dataType + version, 2);
+            List<StageResultData> list = stageResultDataDao.findByZoneIdAndExpCoefficientAndMainLevelGreaterThanAndMainIsNotNullOrderByCodeAsc(actName, expCoefficient, 2);
             if (list.size() < 1) continue;
             for (StageResultData stageResultData : list) {
                 double standard = 1.25; //绿票绝对效率的上限  等同于理智转化率100%
@@ -302,11 +303,11 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
 
     /**
      * @param stageResultData 关卡对象
-     * @param version         效率版本（区别为经验书的价值系数）
+     * @param expCoefficient         效率版本（区别为经验书的价值系数）
      * @return
      */
     @Override
-    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData, Double version, String dataType) {
+    public List<StageResultData> setSpecialActivityStage(StageResultData stageResultData, Double expCoefficient) {
         double number = stageResultData.getEfficiency() - 0.054;
         DecimalFormat decimalFormat2 = new DecimalFormat("0.00");
         List<StageResultData> list = new ArrayList<>();
@@ -319,11 +320,11 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
         double reason = 18.0;
 
         long id = 0L;
-        if (version == 0.76) id = 200L;
-        if (version == 1.0) id = 300L;
-        if (version == 0.625) id = 400L;
+        if (expCoefficient == 0.76) id = 200L;
+        if (expCoefficient == 1.0) id = 300L;
+        if (expCoefficient == 0.625) id = 400L;
 
-        if ("auto".equals(dataType)) id = id * 10;
+//        if ("auto".equals(dataType)) id = id * 10;
 
         for (int i = 0; i < item.length; i++) {
             StageResultData stageData = new StageResultData();
@@ -349,7 +350,7 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             stageData.setApExpect(Double.valueOf(decimalFormat2.format(cost[i] / number)));
             stageData.setEfficiency(Double.valueOf(decimalFormat2.format(
                     (((reason * number) / cost[i]) * value[i] + reason * 0.06) / reason)));
-            stageData.setVersion(dataType + version);
+            stageData.setExpCoefficient(expCoefficient);
 //            System.out.println(stageData);
             list.add(stageData);
         }
