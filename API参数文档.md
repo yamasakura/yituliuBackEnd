@@ -137,6 +137,7 @@ API的响应数据，一般是一个JSON，部分情况为String
 |  actPPRBase  | Double |  商店原始售价   |
 | actPPRStair  | String |    性价比    |
 |   actStore   | Object | 商店性价比具体内容 |
+
 其中`actStore`字段包含六个字段
 
 |     字段名      |  数据类型  |          说明          |
