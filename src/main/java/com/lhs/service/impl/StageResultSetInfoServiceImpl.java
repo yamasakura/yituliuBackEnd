@@ -117,7 +117,6 @@ public class StageResultSetInfoServiceImpl implements StageResultSetInfoService 
             }
 
 
-
             for (int i = indexStart; i < stageResultByTypeListCopy.size(); i++) {
               int color =  stageResultByTypeListCopy.get(i).getStageColor();
                  if(i==stageColorIndex){
