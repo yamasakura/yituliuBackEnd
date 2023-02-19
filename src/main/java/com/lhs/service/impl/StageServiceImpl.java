@@ -117,6 +117,7 @@ public class StageServiceImpl implements StageService {
         List<PenguinDataRequestVo> main_11List = new ArrayList<>();
         List<PenguinDataRequestVo> normalList = new ArrayList<>();
 
+        
         for(PenguinDataRequestVo penguinDataRequestVo :penguinDataList){
             if(penguinDataRequestVo.getStageId().startsWith("tough_10")) {
                 tough_10List.add(penguinDataRequestVo);
@@ -126,7 +127,6 @@ public class StageServiceImpl implements StageService {
                 main_10List.add(penguinDataRequestVo);
                 continue;
             }
-
 
             if(penguinDataRequestVo.getStageId().startsWith("tough_11")) {
                 tough_11List.add(penguinDataRequestVo);
@@ -153,14 +153,13 @@ public class StageServiceImpl implements StageService {
          for(PenguinDataRequestVo penguinDataRequestVo :toughList){
              String  toughStageId  = penguinDataRequestVo.getStageId();
              toughStageId  = toughStageId.substring(toughStageId.indexOf("_")+1);
-             for (int i = 0; i < mainList.size(); i++) {
-                 String  mainStageId  = mainList.get(i).getStageId();
-                 mainStageId  = mainStageId.substring(mainStageId.indexOf("_")+1);
+             for (PenguinDataRequestVo dataRequestVo : mainList) {
+                 String mainStageId = dataRequestVo.getStageId();
+                 mainStageId = mainStageId.substring(mainStageId.indexOf("_") + 1);
 
-                 if((toughStageId.equals(mainStageId))
-                         &&(penguinDataRequestVo.getItemId().equals(mainList.get(i).getItemId()))){
-                     mainList.get(i).setTimes(mainList.get(i).getTimes()+ penguinDataRequestVo.getTimes());
-                     mainList.get(i).setQuantity(mainList.get(i).getQuantity()+ penguinDataRequestVo.getQuantity());
+                 if ((toughStageId.equals(mainStageId)) && (penguinDataRequestVo.getItemId().equals(dataRequestVo.getItemId()))) {
+                     dataRequestVo.setTimes(dataRequestVo.getTimes() + penguinDataRequestVo.getTimes());
+                     dataRequestVo.setQuantity(dataRequestVo.getQuantity() + penguinDataRequestVo.getQuantity());
                  }
              }
          }

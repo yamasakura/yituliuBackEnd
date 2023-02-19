@@ -20,7 +20,7 @@ public class StageResultVo {//返回前端的结果
     private String activityName; //活动名称
     private Double sampleConfidence;  // 样本置信度
     private String updateTime;  // 更新时间
-    private Integer stageState;
+    private Integer stageState;   //
     private Integer minClearTime;
 
 

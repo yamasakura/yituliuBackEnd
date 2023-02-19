@@ -13,7 +13,7 @@ public interface ItemService {
 	//查找临时的等效理智价值
 	List<Item> findAll();
 	//查找最终的等效理智价值
-	List<ItemRevise> findAllItemRevise(Double version);
+	List<ItemRevise> findAllItemRevise(Double expCoefficient);
 
 	/**
 	 *重置临时价值为绿票商店的价值

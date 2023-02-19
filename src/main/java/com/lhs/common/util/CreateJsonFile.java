@@ -3,6 +3,7 @@ package com.lhs.common.util;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class CreateJsonFile {
 
@@ -24,12 +25,12 @@ public class CreateJsonFile {
             // 格式化json字符串
             FileInputStream fileInputStream = new FileInputStream(file);
             // 将格式化后的字符串写入文件
-            Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+            Writer write = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
             write.write(jsonForMat);
             write.flush();
             write.close();
 
-//            response.setContentType("application/force-download");
+//          response.setContentType("application/force-download");
             response.setCharacterEncoding("utf-8");
             response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".json");
             OutputStream outputStream = response.getOutputStream();
