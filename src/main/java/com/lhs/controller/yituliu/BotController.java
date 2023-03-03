@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("/yituliu/")
-public class YituliuController {
+@RequestMapping("/bot/")
+public class BotController {
 
     @ApiOperation(value = "打包文件并下载zip文件")
     @GetMapping(value = "/downloadZip")
